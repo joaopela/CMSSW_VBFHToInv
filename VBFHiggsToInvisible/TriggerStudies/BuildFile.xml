@@ -1,0 +1,10 @@
+<use name="FWCore/Framework"/>
+<use name="FWCore/Common"/>
+<use name="FWCore/PluginManager"/>
+<use name="FWCore/ParameterSet"/>
+<use name="DataFormats/HLTReco"/>
+<use name="DataFormats/Common"/>
+<use name="DataFormats/L1GlobalTrigger"/>
+<use name="CondFormats/L1TObjects"/>
+<use name="CondFormats/DataRecord"/>
+<flags EDM_PLUGIN="1"/>
