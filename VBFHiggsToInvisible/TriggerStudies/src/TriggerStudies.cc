@@ -105,17 +105,7 @@ TriggerStudies::~TriggerStudies(){
 
 void TriggerStudies::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup){
   
-  if(m_doL1TAnalysis){
-    
-    ESHandle<L1GtTriggerMenu> menuRcd;
-    iSetup.get<L1GtTriggerMenuRcd>().get(menuRcd);
-    const L1GtTriggerMenu* menu = menuRcd.product();
-    
-    // Filling Alias-Bit Map
-    for (CItAlgo algo = menu->gtAlgorithmAliasMap().begin(); algo!=menu->gtAlgorithmAliasMap().end(); ++algo){
-      m_algoBit[(algo->second).algoAlias()] = (algo->second).algoBitNumber();
-    }
-  }  
+
   
   evCount++;
    
@@ -229,6 +219,18 @@ TriggerStudies::endJob()
 // ------------ method called when starting to processes a run  ------------
 void 
 TriggerStudies::beginRun(edm::Run const& iRun, edm::EventSetup const& iSetup){
+  
+  if(m_doL1TAnalysis){
+    
+    ESHandle<L1GtTriggerMenu> menuRcd;
+    iSetup.get<L1GtTriggerMenuRcd>().get(menuRcd);
+    const L1GtTriggerMenu* menu = menuRcd.product();
+    
+    // Filling Alias-Bit Map
+    for (CItAlgo algo = menu->gtAlgorithmAliasMap().begin(); algo!=menu->gtAlgorithmAliasMap().end(); ++algo){
+      m_algoBit[(algo->second).algoAlias()] = (algo->second).algoBitNumber();
+    }
+  }
   
 }
 
