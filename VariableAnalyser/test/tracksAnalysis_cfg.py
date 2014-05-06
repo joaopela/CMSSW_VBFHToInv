@@ -1,20 +1,12 @@
 import FWCore.ParameterSet.Config as cms
 
-process = cms.Process("Demo")
+process = cms.Process("Tracks")
 
 process.load("FWCore.MessageService.MessageLogger_cfi")
+process.load("VBFHiggsToInvisible.Samples.Summer12_DR53X_VBF_HToInvisible_M-125_8TeV-powheg-pythia6_AODSIM_cfi")
 
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10) )
 
-process.source = cms.Source("PoolSource",
-    # replace 'myfile.root' with the source file you want to use
-    fileNames = cms.untracked.vstring(
-        'file:myfile.root'
-    )
-)
+process.tracksAnalyser = cms.EDAnalyzer('TracksAnalyser')
 
-process.demo = cms.EDAnalyzer('VariableAnalyser'
-)
-
-
-process.p = cms.Path(process.demo)
+process.p = cms.Path(process.tracksAnalyser)
