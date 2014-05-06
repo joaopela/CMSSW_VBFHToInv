@@ -1,9 +1,15 @@
 #include "VBFHiggsToInvisible/VariableAnalyser/interface/TracksAnalyser.h"
 
-TracksAnalyser::TracksAnalyser(const edm::ParameterSet& iConfig)
+#include "DataFormats/VertexReco/interface/Vertex.h"
+#include "DataFormats/VertexReco/interface/VertexFwd.h"
+#include "DataFormats/TrackReco/interface/Track.h"
+#include "DataFormats/Math/interface/deltaR.h"
 
-{
-   //now do what ever initialization is needed
+using namespace std;
+using namespace edm;
+
+TracksAnalyser::TracksAnalyser(const edm::ParameterSet& iConfig){
+
 
 }
 
@@ -23,21 +29,38 @@ TracksAnalyser::~TracksAnalyser()
 
 // ------------ method called for each event  ------------
 void
-TracksAnalyser::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
-{
-   using namespace edm;
+TracksAnalyser::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup){
 
-
-
-#ifdef THIS_IS_AN_EVENT_EXAMPLE
-   Handle<ExampleData> pIn;
-   iEvent.getByLabel("example",pIn);
-#endif
+  edm::Handle<reco::VertexCollection> vertexCollection;
+  edm::Handle<reco::TrackCollection>  trackCollection;
+  
+  iEvent.getByLabel(edm::InputTag("goodOfflinePrimaryVertices"),vertexCollection);
+  iEvent.getByLabel("generalTracks",trackCollection);
+    
+  cout << "Vertex size : " << vertexCollection->size() << endl;
+  cout << "Tracks size : " << trackCollection ->size() << endl;
+  /* 
+   // Tracks Outside Cone Jet  
+   edm::View<reco::Track>::const_iterator track      = trackColl.begin();
+   edm::View<reco::Track>::const_iterator tracks_end = trackColl.end();
    
-#ifdef THIS_IS_AN_EVENTSETUP_EXAMPLE
-   ESHandle<SetupData> pSetup;
-   iSetup.get<SetupRecord>().get(pSetup);
-#endif
+   
+   
+   
+   for (; track != tracks_end; ++track)
+     
+     
+   {
+     if ((deltaR(track->eta(),track->phi(),jet1.eta(),jet1.phi()) > 0.5) && (deltaR(track->eta(),track->phi(),jet2.eta(),jet2.phi()) > 0.5))
+       
+       
+     {
+       goodTracksCount++;
+     }
+     
+     
+     
+   }*/
 }
 
 
