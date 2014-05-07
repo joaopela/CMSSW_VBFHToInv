@@ -28,14 +28,20 @@ process.source = cms.Source("PoolSource",fileNames = cms.untracked.vstring('file
 
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10) )
 
-#PAT has a hissy fit if this OutputModule isn't defined before we try and "removeMCMatching"
+################################################################
+### Output files
+################################################################
 from PhysicsTools.PatAlgos.patEventContent_cff import patEventContent
 process.out = cms.OutputModule("PoolOutputModule",
                                fileName = cms.untracked.string('patTuple.root'),
                                SelectEvents   = cms.untracked.PSet( SelectEvents = cms.vstring('p') ),             
-                               outputCommands = cms.untracked.vstring('drop *') #,*patEventContent )
+                               outputCommands = cms.untracked.vstring('keep *') #,*patEventContent )
                                )
 
+process.TFileService = cms.Service("TFileService", 
+                                   fileName = cms.string("TracksAnalysis.root"),
+                                   closeFileFast = cms.untracked.bool(True) # Needs to be disabled if there are multiple references to same object (ex: TCanvas to TH1D)
+                                   )
 
 ################################################################
 ### Vertex Modules
@@ -64,10 +70,10 @@ switchOnTrigger(process, outputModule="")
 switchJetCollection(process,
   cms.InputTag('ak5PFJets'),
   doJTA=True,
-  doBTagging=True,
+  doBTagging=False,
   jetCorrLabel=('AK5PF',['L1FastJet','L2Relative', 'L3Absolute']),
   doType1MET=True,
-  genJetCollection=cms.InputTag("ak5GenJetsNoNuBSM"),
+  #genJetCollection=cms.InputTag("ak5GenJetsNoNuBSM"),
   doJetID = True,
   jetIdLabel = "ak5"
   )
