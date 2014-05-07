@@ -24,11 +24,16 @@
 // user include files
 #include "FWCore/Framework/interface/Frameworkfwd.h"
 #include "FWCore/Framework/interface/EDAnalyzer.h"
-
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/Framework/interface/MakerMacros.h"
-
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
+
+#include "TH1D.h"
+#include "TH2D.h"
+
+#include <vector>
+#include <string>
+
 //
 // class declaration
 //
@@ -50,6 +55,16 @@ private:
   virtual void endRun(edm::Run const&, edm::EventSetup const&);
   virtual void beginLuminosityBlock(edm::LuminosityBlock const&, edm::EventSetup const&);
   virtual void endLuminosityBlock(edm::LuminosityBlock const&, edm::EventSetup const&);
+  
+  unsigned eventCount;
+  unsigned nEventsTrackDistribution;
+  
+  std::vector<TH2D*> hEvTrackDistribution;
+  std::vector<TH2D*> hEvTrackPtDistribution;
+
+  std::vector<TH2D*> hEvPvTrackDistribution;
+  std::vector<TH2D*> hEvPvTrackPtDistribution;  
+  
   
   // ----------member data ---------------------------
 };

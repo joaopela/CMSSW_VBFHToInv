@@ -1,16 +1,50 @@
 #include "VBFHiggsToInvisible/VariableAnalyser/interface/TracksAnalyser.h"
 
+// CMSSW includes
+#include "CommonTools/UtilAlgos/interface/TFileService.h"
 #include "DataFormats/VertexReco/interface/Vertex.h"
 #include "DataFormats/VertexReco/interface/VertexFwd.h"
 #include "DataFormats/TrackReco/interface/Track.h"
+#include "DataFormats/TrackReco/interface/TrackFwd.h"
 #include "DataFormats/Math/interface/deltaR.h"
+#include "FWCore/ServiceRegistry/interface/Service.h"
+
+// ROOT included
+#include "TDirectory.h"
+#include "TMath.h"
 
 using namespace std;
 using namespace edm;
 
 TracksAnalyser::TracksAnalyser(const edm::ParameterSet& iConfig){
 
+  nEventsTrackDistribution = iConfig.getUntrackedParameter<unsigned>("nEventsTrackDistribution",10);
+  
+  // Variable initialisation
+  eventCount = 0;
+  
+  edm::Service<TFileService> fs;
+ 
+  double pi = TMath::Pi();
+ 
 
+  
+  for(unsigned i=0; i<nEventsTrackDistribution; i++){
+    
+    char* nName;
+    nName = Form("Event%d_TrackDistribution",i);
+    hEvTrackDistribution  .push_back(fs->make<TH2D>(nName,nName,48,-2.4,2.4,32,-pi,pi));
+    nName = Form("Event%d_TrackPtDistribution",i);
+    hEvTrackPtDistribution.push_back(fs->make<TH2D>(nName,nName,48,-2.4,2.4,32,-pi,pi));    
+    
+    nName = Form("Event%d_PvTrackDistribution",i);
+    hEvPvTrackDistribution   .push_back(fs->make<TH2D>(nName,nName,48,-2.4,2.4,32,-pi,pi));
+    nName = Form("Event%d_PvTrackPtDistribution",i);
+    hEvPvTrackPtDistribution .push_back(fs->make<TH2D>(nName,nName,48,-2.4,2.4,32,-pi,pi));
+    
+  }
+
+  
 }
 
 
@@ -37,8 +71,37 @@ TracksAnalyser::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   iEvent.getByLabel(edm::InputTag("goodOfflinePrimaryVertices"),vertexCollection);
   iEvent.getByLabel("generalTracks",trackCollection);
     
-  cout << "Vertex size : " << vertexCollection->size() << endl;
-  cout << "Tracks size : " << trackCollection ->size() << endl;
+  reco::Vertex pV = vertexCollection->at(0);
+  
+  cout << "Vertex size            : " << vertexCollection->size() << endl;
+  cout << "Tracks size            : " << trackCollection ->size() << endl;
+  cout << "Primary vertex nTracks : " << pV.tracksSize() << endl;
+  
+  TH2D* hEvTrackDist   = hEvTrackDistribution[eventCount];
+  TH2D* hEvTrackPtDist = hEvTrackPtDistribution[eventCount];
+  
+  TH2D* hEvPvTrackDist   = hEvPvTrackDistribution[eventCount];
+  TH2D* hEvPvTrackPtDist = hEvPvTrackPtDistribution[eventCount];
+  
+  
+  
+  if(eventCount<nEventsTrackDistribution){
+  
+    for(unsigned i=0; i<trackCollection->size();i++){
+    
+      hEvTrackDist  ->Fill((*trackCollection)[i].eta(),(*trackCollection)[i].phi());
+      hEvTrackPtDist->Fill((*trackCollection)[i].eta(),(*trackCollection)[i].phi(),(*trackCollection)[i].pt());
+    }
+
+    for(reco::Vertex::trackRef_iterator it = pV.tracks_begin(); it!=pV.tracks_end(); it++){
+      
+      hEvPvTrackDist  ->Fill((*it)->eta(),(*it)->phi());
+      hEvPvTrackPtDist->Fill((*it)->eta(),(*it)->phi(),(*it)->pt());
+    }    
+        
+  }
+  
+
   /* 
    // Tracks Outside Cone Jet  
    edm::View<reco::Track>::const_iterator track      = trackColl.begin();
@@ -61,6 +124,8 @@ TracksAnalyser::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
      
      
    }*/
+  
+  eventCount++;
 }
 
 
