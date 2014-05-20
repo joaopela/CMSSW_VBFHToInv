@@ -21,21 +21,21 @@ process.GlobalTag.globaltag = cms.string('START53_V27::All')
 ### Input files
 ################################################################
 # MC POWHEG Signal VBF Higgs to Invisible mH=125 GeV 
-# process.load("VBFHiggsToInvisible.Samples.Summer12_DR53X_VBF_HToInvisible_M-125_8TeV-powheg-pythia6_AODSIM_cfi")
+process.load("VBFHiggsToInvisible.Samples.Summer12_DR53X_VBF_HToInvisible_M-125_8TeV-powheg-pythia6_AODSIM_cfi")
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 
 # Local tests
-process.source = cms.Source("PoolSource",fileNames = cms.untracked.vstring('file:/afs/cern.ch/user/p/pela/go/ws/public/42D9D6F7-3D80-E211-9AEC-00266CFFCCC8.root'))
-
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10) )
+#process.source = cms.Source("PoolSource",fileNames = cms.untracked.vstring('file:/afs/cern.ch/user/p/pela/go/ws/public/42D9D6F7-3D80-E211-9AEC-00266CFFCCC8.root'))
+#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 
 ################################################################
 ### Output files
 ################################################################
 from PhysicsTools.PatAlgos.patEventContent_cff import patEventContent
 process.out = cms.OutputModule("PoolOutputModule",
-                               fileName = cms.untracked.string('patTuple.root'),
+                               fileName = cms.untracked.string('file:/tmp/pela/ntupleTracks_sigH125_V0.root'),
                                SelectEvents   = cms.untracked.PSet( SelectEvents = cms.vstring('p') ),             
-                               outputCommands = cms.untracked.vstring('keep *') #,*patEventContent )
+                               outputCommands = cms.untracked.vstring('drop *')
                                )
 
 process.TFileService = cms.Service("TFileService", 
@@ -123,6 +123,13 @@ process.patPFMETtype0Corr.correction.par1 = cms.double(-0.703151)
 process.patPFMETtype0Corr.correction.par0 = cms.double(0.0)
 
 ################################################################
+### PAT Selections
+################################################################
+process.selectedAndFilteredPatJets = process.selectedPatJets.clone(
+  cut = 'pt > 15. & abs(eta) < 100.'
+)
+
+################################################################
 ### MET Filters-curretly from Sasha's code
 #################################################################
 ## The iso-based HBHE noise filter
@@ -197,8 +204,18 @@ process.tracksAnalyser = cms.EDAnalyzer('TracksAnalyser')
 ### Sequence
 ################################################################
 process.p = cms.Path(process.goodOfflinePrimaryVertices
-                    +process.type0PFMEtCorrection
-                    +process.patDefaultSequence
-                    +process.puJetMva
-                    +process.filterSequence
-                    +process.tracksAnalyser)
+                    *process.type0PFMEtCorrection
+                    *process.patDefaultSequence
+                    *process.selectedAndFilteredPatJets
+                    *process.puJetMva
+                    *process.filterSequence
+                    #*process.tracksAnalyser
+                    )
+
+myContents = [ 'drop *',
+               'keep *_selectedAndFilteredPatJets_*_*',
+               'keep *_goodOfflinePrimaryVertices_*_*',
+               'keep *_generalTracks_*_*']
+process.out.outputCommands = myContents
+
+process.e = cms.EndPath(process.out)
