@@ -22,6 +22,9 @@
 #include <memory>
 
 // user include files
+#include "CommonTools/UtilAlgos/interface/TFileService.h"
+#include "CommonTools/Utils/interface/TFileDirectory.h"
+#include "FWCore/ServiceRegistry/interface/Service.h"
 #include "FWCore/Framework/interface/Frameworkfwd.h"
 #include "FWCore/Framework/interface/EDAnalyzer.h"
 #include "FWCore/Framework/interface/Event.h"
@@ -30,6 +33,7 @@
 
 #include "TH1D.h"
 #include "TH2D.h"
+#include "TFile.h"
 
 #include <vector>
 #include <string>
@@ -56,15 +60,19 @@ private:
   virtual void beginLuminosityBlock(edm::LuminosityBlock const&, edm::EventSetup const&);
   virtual void endLuminosityBlock(edm::LuminosityBlock const&, edm::EventSetup const&);
   
-  unsigned eventCount;
-  unsigned nEventsTrackDistribution;
-  
-  std::vector<TH2D*> hEvTrackDistribution;
-  std::vector<TH2D*> hEvTrackPtDistribution;
+  unsigned cEvCount,cEvPass,cEvBBPass,cEvBEPass,cEvEEPass;
+  unsigned nEvDraw;
 
-  std::vector<TH2D*> hEvPvTrackDistribution;
-  std::vector<TH2D*> hEvPvTrackPtDistribution;  
+  edm::Service<TFileService> fs;
   
+  TFile          *outFile;
+  std::vector<TH1D*> hOutsideTrackNumber,
+                hOutsideTrackNumberRatio,
+                hOutsideTrackEnergy,
+                hOutsideTrackEnergyRatio; 
+  
+  TFileDirectory dirBB,dirBE,dirEE;
+    
   
   // ----------member data ---------------------------
 };
