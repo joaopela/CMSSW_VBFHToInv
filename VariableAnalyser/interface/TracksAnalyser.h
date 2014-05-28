@@ -52,7 +52,6 @@ public:
   
   static void fillDescriptions(edm::ConfigurationDescriptions& descriptions);
   
-  
 private:
   virtual void beginJob() ;
   virtual void analyze(const edm::Event&, const edm::EventSetup&);
@@ -81,6 +80,7 @@ private:
   edm::Handle<reco::VertexCollection> vertexCollection;
   edm::Handle<reco::TrackCollection>  trackCollection;
   edm::Handle<std::vector<pat::Jet> > jetCollection;
+  edm::Handle<edm::ValueMap<float> >  puJetIdMVA;
   
   const reco::Vertex *pV;
   const pat::Jet     *jet0,*jet1;
@@ -88,8 +88,8 @@ private:
   TFile *outFile;
   TH1D  *hCount;
   
-  std::map<std::string,TH1D*>       h1D; 
-  std::map<std::string,TDirectory*> dirs;
+  std::map<std::string,TH1D*>       m_h1D; 
+  std::map<std::string,TDirectory*> m_dirs;
     
   
   // ----------member data ---------------------------
