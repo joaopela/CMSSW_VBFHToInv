@@ -6,7 +6,7 @@ process = cms.Process("Tracks")
 ### Messages
 ################################################################
 process.load("FWCore.MessageService.MessageLogger_cfi")
-process.MessageLogger.cerr.FwkReport.reportEvery = 1
+process.MessageLogger.cerr.FwkReport.reportEvery = 1000
 process.options = cms.untracked.PSet( wantSummary = cms.untracked.bool(True))
                                        
 ################################################################
@@ -22,7 +22,7 @@ process.GlobalTag.globaltag = cms.string('START53_V27::All')
 ################################################################
 # MC POWHEG Signal VBF Higgs to Invisible mH=125 GeV 
 process.load("VBFHiggsToInvisible.Samples.Summer12_DR53X_VBF_HToInvisible_M-125_8TeV-powheg-pythia6_AODSIM_cfi")
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(5) )
 
 # Local tests
 #process.source = cms.Source("PoolSource",fileNames = cms.untracked.vstring('file:/afs/cern.ch/user/p/pela/go/ws/public/42D9D6F7-3D80-E211-9AEC-00266CFFCCC8.root'))
@@ -31,17 +31,12 @@ process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 ################################################################
 ### Output files
 ################################################################
-from PhysicsTools.PatAlgos.patEventContent_cff import patEventContent
+#from PhysicsTools.PatAlgos.patEventContent_cff import patEventContent
 process.out = cms.OutputModule("PoolOutputModule",
-                               fileName = cms.untracked.string('file:/tmp/pela/ntupleTracks_sigH125_V0.root'),
+                               fileName = cms.untracked.string('file:ntupleTracks.root'),
                                SelectEvents   = cms.untracked.PSet( SelectEvents = cms.vstring('p') ),             
                                outputCommands = cms.untracked.vstring('drop *')
                                )
-
-process.TFileService = cms.Service("TFileService", 
-                                   fileName = cms.string("TracksAnalysis.root"),
-                                   closeFileFast = cms.untracked.bool(True) # Needs to be disabled if there are multiple references to same object (ex: TCanvas to TH1D)
-                                   )
 
 ################################################################
 ### Vertex Modules
@@ -126,7 +121,7 @@ process.patPFMETtype0Corr.correction.par0 = cms.double(0.0)
 ### PAT Selections
 ################################################################
 process.selectedAndFilteredPatJets = process.selectedPatJets.clone(
-  cut = 'pt > 15. & abs(eta) < 100.'
+  cut = 'pt > 29. & abs(eta)<5.0'
 )
 
 ################################################################
@@ -212,10 +207,13 @@ process.p = cms.Path(process.goodOfflinePrimaryVertices
                     #*process.tracksAnalyser
                     )
 
-myContents = [ 'drop *',
-               'keep *_selectedAndFilteredPatJets_*_*',
-               'keep *_goodOfflinePrimaryVertices_*_*',
-               'keep *_generalTracks_*_*']
+myContents = [ 
+  'drop *',
+  'keep *_selectedAndFilteredPatJets__*',
+  'keep *_goodOfflinePrimaryVertices_*_*',
+  'keep *_generalTracks_*_*',
+  'keep *_puJetMva_fullDiscriminant_*'
+             ]
 process.out.outputCommands = myContents
 
 process.e = cms.EndPath(process.out)
