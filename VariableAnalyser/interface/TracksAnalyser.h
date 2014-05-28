@@ -21,9 +21,14 @@
 // system include files
 #include <memory>
 
-// user include files
-#include "CommonTools/UtilAlgos/interface/TFileService.h"
-#include "CommonTools/Utils/interface/TFileDirectory.h"
+
+#include "DataFormats/VertexReco/interface/Vertex.h"
+#include "DataFormats/VertexReco/interface/VertexFwd.h"
+#include "DataFormats/TrackReco/interface/Track.h"
+#include "DataFormats/TrackReco/interface/TrackFwd.h"
+#include "DataFormats/Math/interface/deltaR.h"
+#include "DataFormats/PatCandidates/interface/Jet.h"
+
 #include "FWCore/ServiceRegistry/interface/Service.h"
 #include "FWCore/Framework/interface/Frameworkfwd.h"
 #include "FWCore/Framework/interface/EDAnalyzer.h"
@@ -31,16 +36,14 @@
 #include "FWCore/Framework/interface/MakerMacros.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 
+
 #include "TH1D.h"
 #include "TH2D.h"
 #include "TFile.h"
 
-#include <vector>
 #include <string>
-
-//
-// class declaration
-//
+#include <vector>
+#include <map>
 
 class TracksAnalyser : public edm::EDAnalyzer {
 public:
@@ -60,18 +63,33 @@ private:
   virtual void beginLuminosityBlock(edm::LuminosityBlock const&, edm::EventSetup const&);
   virtual void endLuminosityBlock(edm::LuminosityBlock const&, edm::EventSetup const&);
   
+  void printEvSummary();
+  void doTracksHist    (TDirectory* d);
+  void doTracksAnalysis(TDirectory* d,double minTrackPt);
+  void doTracksDisplay (TDirectory* f,int n,double minTrackPt);  
+  
+  //____________________________________
+  
+  bool m_verbose;
+  
+  int cBarrel; 
+  
   unsigned cEvCount,cEvPass,cEvBBPass,cEvBEPass,cEvEEPass;
   unsigned nEvDraw;
-
-  edm::Service<TFileService> fs;
   
-  TFile          *outFile;
-  std::vector<TH1D*> hOutsideTrackNumber,
-                hOutsideTrackNumberRatio,
-                hOutsideTrackEnergy,
-                hOutsideTrackEnergyRatio; 
+  // Handles for event content
+  edm::Handle<reco::VertexCollection> vertexCollection;
+  edm::Handle<reco::TrackCollection>  trackCollection;
+  edm::Handle<std::vector<pat::Jet> > jetCollection;
   
-  TFileDirectory dirBB,dirBE,dirEE;
+  const reco::Vertex *pV;
+  const pat::Jet     *jet0,*jet1;
+  
+  TFile *outFile;
+  TH1D  *hCount;
+  
+  std::map<std::string,TH1D*>       h1D; 
+  std::map<std::string,TDirectory*> dirs;
     
   
   // ----------member data ---------------------------
