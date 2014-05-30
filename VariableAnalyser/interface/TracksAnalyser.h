@@ -66,9 +66,9 @@ private:
   void doTracksHist    (TDirectory* d);
   void doTracksAnalysis(TDirectory* d,double minTrackPt);
   void doTracksDisplay (TDirectory* f,int n,double minTrackPt);  
-  
+  bool pu_id_mva_loose (double mvaValue,double pt,double eta);
+  bool cjvPass         ();
   //____________________________________
-  
   bool m_verbose;
   
   int cBarrel; 

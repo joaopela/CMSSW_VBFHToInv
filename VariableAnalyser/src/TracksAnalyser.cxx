@@ -21,48 +21,55 @@ using namespace std;
 using namespace edm;
 
 TracksAnalyser::TracksAnalyser(const edm::ParameterSet& iConfig){
+
+  m_verbose = false;
   
   outFile = new TFile("out.root","RECREATE");
 
+  TDirectory *d;
+  d = outFile->mkdir("BB"); m_dirs["BB"] = d;
+  d = outFile->mkdir("BE"); m_dirs["BE"] = d;
+  d = outFile->mkdir("EE"); m_dirs["EE"] = d;
   
-  m_dirs["BB"] = outFile->mkdir("BB");
-  m_dirs["BE"] = outFile->mkdir("BE");
-  m_dirs["EE"] = outFile->mkdir("EE");
+  for(int i=0; i<4; i++){
+    d = outFile     ->mkdir(Form("Tracks%1d",i)); doTracksHist(d);
+    d = m_dirs["BB"]->mkdir(Form("Tracks%1d",i)); doTracksHist(d);
+    d = m_dirs["BE"]->mkdir(Form("Tracks%1d",i)); doTracksHist(d);
+    d = m_dirs["EE"]->mkdir(Form("Tracks%1d",i)); doTracksHist(d);
+  }
   
-  m_h1D["count"] = new TH1D("count","count",5,-0.5, 4.5);
+  m_h1D["count"] = new TH1D("count","count",7,-0.5, 6.5);
   m_h1D["count"]->SetDirectory(outFile);
   m_h1D["count"]->GetXaxis()->SetBinLabel(1,"Count");
   m_h1D["count"]->GetXaxis()->SetBinLabel(2,"Pass");
   m_h1D["count"]->GetXaxis()->SetBinLabel(3,"BB Pass");
   m_h1D["count"]->GetXaxis()->SetBinLabel(4,"BE Pass");
   m_h1D["count"]->GetXaxis()->SetBinLabel(5,"EE Pass");
+  m_h1D["count"]->GetXaxis()->SetBinLabel(6,"CJV Pass");
+  m_h1D["count"]->GetXaxis()->SetBinLabel(7,"CJV Fail");
   
-//   for(unsigned i=0; i<3; i++){
-//   
-//     TDirectory *d;
-//     if(i==0){d=&dirBB;}
-//     if(i==1){d=&dirBE;}
-//     if(i==2){d=&dirEE;}
-//     
-//     hOutsideTrackNumber     .push_back(d->make<TH1D>("hOutsideTrackNumber",     "hOutsideTrackNumber",     100,-0.5, 99));
-//     hOutsideTrackNumberRatio.push_back(d->make<TH1D>("hOutsideTrackNumberRatio","hOutsideTrackNumberRatio",100,   0,  1));
-//     hOutsideTrackEnergy     .push_back(d->make<TH1D>("hOutsideTrackEnergy",     "hOutsideTrackEnergy",     200,   0,200));
-//     hOutsideTrackEnergyRatio.push_back(d->make<TH1D>("hOutsideTrackEnergyRatio","hOutsideTrackEnergyRatio",100,   0,  1));
-// 
-//   }
-//   nEvDraw = iConfig.getUntrackedParameter<unsigned>("nEvDraw",10);
-    
+  nEvDraw = iConfig.getUntrackedParameter<unsigned>("nEvDraw",10);  
 }
 
 
 TracksAnalyser::~TracksAnalyser(){}
 
+void TracksAnalyser::doTracksHist(TDirectory* d){
+  
+  TH1D *h;
+  h = new TH1D("TrackOutN",     "TrackOutN",     250,-0.5,249); h->SetDirectory(d); 
+  h = new TH1D("TrackOutNRatio","TrackOutNRatio",100,   0,  1); h->SetDirectory(d);
+  h = new TH1D("TrackOutE",     "TrackOutE",     500,   0,500); h->SetDirectory(d);
+  h = new TH1D("TrackOutERatio","TrackOutERatio",100,   0,  1); h->SetDirectory(d);
+  
+  TDirectory* CJVFail = d->mkdir("CJVFail");
+  h = new TH1D("TrackOutN",     "TrackOutN",     250,-0.5,249); h->SetDirectory(CJVFail); 
+  h = new TH1D("TrackOutNRatio","TrackOutNRatio",100,   0,  1); h->SetDirectory(CJVFail);
+  h = new TH1D("TrackOutE",     "TrackOutE",     500,   0,500); h->SetDirectory(CJVFail);
+  h = new TH1D("TrackOutERatio","TrackOutERatio",100,   0,  1); h->SetDirectory(CJVFail);
+  
+}
 
-//
-// member functions
-//
-
-// ------------ method called for each event  ------------
 void TracksAnalyser::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup){
  
   iEvent.getByLabel(edm::InputTag("selectedAndFilteredPatJets"), jetCollection);
@@ -76,11 +83,6 @@ void TracksAnalyser::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
   
   bool evPass = false;
   
-  int    nTracksIn       = 0;
-  int    nTracksOut      = 0;
-  double energyTracksIn  = 0;
-  double energyTracksOut = 0;
-  
   const pat::Jet *jet0,*jet1;
   
   if(jetCollection->size()>2){
@@ -91,14 +93,20 @@ void TracksAnalyser::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
     double jet0ID = (*puJetIdMVA)[jet0->originalObjectRef()];
     double jet1ID = (*puJetIdMVA)[jet1->originalObjectRef()];
     
-    math::XYZTLorentzVector dijet = jet0->p4()+jet1->p4();
+    bool passJet0MVALoose = pu_id_mva_loose(jet0ID,jet0->pt(),jet0->eta());
+    bool passJet1MVALoose = pu_id_mva_loose(jet1ID,jet1->pt(),jet1->eta());
     
-    double dEta = abs(jet1->eta() - jet0->eta()); 
-    double mjj  = dijet.mass();
+    // Jet selection
+    if(passJet0MVALoose && passJet1MVALoose && jet1->pt()>50){
+      
+      math::XYZTLorentzVector dijet = jet0->p4()+jet1->p4();
+      
+      double dEta = abs(jet1->eta() - jet0->eta()); 
+      double mjj  = dijet.mass();
     
-    if(jet1->pt()>50 && dEta>3.5 && mjj>700){
-      evPass = true;
-    }    
+      // Dijet selection
+      if(dEta>3.5 && mjj>700){evPass = true;}       
+    }
   }
   
   if(evPass){
@@ -107,14 +115,64 @@ void TracksAnalyser::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
     if(abs(jet0->eta())<2.4){cBarrel++;}
     if(abs(jet1->eta())<2.4){cBarrel++;}
     
+    bool cjv = cjvPass();
+    
+    doTracksAnalysis((TDirectory*) outFile->Get("Tracks0"),0);
+    doTracksAnalysis((TDirectory*) outFile->Get("Tracks1"),1);
+    doTracksAnalysis((TDirectory*) outFile->Get("Tracks2"),2);
+    doTracksAnalysis((TDirectory*) outFile->Get("Tracks3"),3);
+
+    if(cjv){m_h1D["count"]->Fill("CJV Pass",1);}
+    else{
+      m_h1D["count"]->Fill("CJV Fail",1);
+      doTracksAnalysis((TDirectory*) outFile->Get("BB/Tracks0/CJVFail"),0);
+      doTracksAnalysis((TDirectory*) outFile->Get("BB/Tracks1/CJVFail"),1);
+      doTracksAnalysis((TDirectory*) outFile->Get("BB/Tracks2/CJVFail"),2);
+      doTracksAnalysis((TDirectory*) outFile->Get("BB/Tracks3/CJVFail"),3);
+    }
+    
     if(cBarrel==2){
       m_h1D["count"]->Fill("BB Pass",1);
+      
+      doTracksAnalysis((TDirectory*) outFile->Get("BB/Tracks0"),0);
+      doTracksAnalysis((TDirectory*) outFile->Get("BB/Tracks1"),1);
+      doTracksAnalysis((TDirectory*) outFile->Get("BB/Tracks2"),2);
+      doTracksAnalysis((TDirectory*) outFile->Get("BB/Tracks3"),3);
+      
+      if(!cjv){
+        doTracksAnalysis((TDirectory*) outFile->Get("BB/Tracks0/CJVFail"),0);
+        doTracksAnalysis((TDirectory*) outFile->Get("BB/Tracks1/CJVFail"),1);
+        doTracksAnalysis((TDirectory*) outFile->Get("BB/Tracks2/CJVFail"),2);
+        doTracksAnalysis((TDirectory*) outFile->Get("BB/Tracks3/CJVFail"),3);        
+      }
     }
     else if(cBarrel==1){
       m_h1D["count"]->Fill("BE Pass",1);
+
+      doTracksAnalysis((TDirectory*) outFile->Get("BE/Tracks0"),0);
+      doTracksAnalysis((TDirectory*) outFile->Get("BE/Tracks1"),1);
+      doTracksAnalysis((TDirectory*) outFile->Get("BE/Tracks2"),2);
+      doTracksAnalysis((TDirectory*) outFile->Get("BE/Tracks3"),3);
+      if(!cjv){
+        doTracksAnalysis((TDirectory*) outFile->Get("BE/Tracks0/CJVFail"),0);
+        doTracksAnalysis((TDirectory*) outFile->Get("BE/Tracks1/CJVFail"),1);
+        doTracksAnalysis((TDirectory*) outFile->Get("BE/Tracks2/CJVFail"),2);
+        doTracksAnalysis((TDirectory*) outFile->Get("BE/Tracks3/CJVFail"),3);        
+      }
     }    
     else if(cBarrel==0){
       m_h1D["count"]->Fill("EE Pass",1);
+      
+      doTracksAnalysis((TDirectory*) outFile->Get("EE/Tracks0"),0);
+      doTracksAnalysis((TDirectory*) outFile->Get("EE/Tracks1"),1);
+      doTracksAnalysis((TDirectory*) outFile->Get("EE/Tracks2"),2);
+      doTracksAnalysis((TDirectory*) outFile->Get("EE/Tracks3"),3);
+      if(!cjv){
+        doTracksAnalysis((TDirectory*) outFile->Get("EE/Tracks0/CJVFail"),0);
+        doTracksAnalysis((TDirectory*) outFile->Get("EE/Tracks1/CJVFail"),1);
+        doTracksAnalysis((TDirectory*) outFile->Get("EE/Tracks2/CJVFail"),2);
+        doTracksAnalysis((TDirectory*) outFile->Get("EE/Tracks3/CJVFail"),3);        
+      }
     }
     
     /*
@@ -229,24 +287,122 @@ void TracksAnalyser::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
         hOutsideTrackEnergyRatio[2]->Fill(energyTracksOut/(energyTracksIn+energyTracksOut));
       }
       
-      TStyle st;
-      st.SetPalette(1);
-      
-      cPvTrackPt->cd();
-      hPvTrackPt->Draw("colz");
-      TEllipse *ell0 = new TEllipse(jet0->eta(),jet0->phi(),0.5,0.5);
-      TEllipse *ell1 = new TEllipse(jet1->eta(),jet1->phi(),0.5,0.5);
-      ell0->SetLineColor(kRed); ell0->SetFillStyle(4000);
-      ell1->SetLineColor(kRed); ell1->SetFillStyle(4000);
-      ell0->Draw();
-      ell1->Draw();     
-      outFile->Append(cPvTrackPt);
     }*/
 
     m_h1D["count"]->Fill("Pass",1);
   }  
 
   m_h1D["count"]->Fill("Count",1);
+}
+
+void TracksAnalyser::doTracksDisplay(TDirectory* f,int n,double minTrackPt){
+  
+  const pat::Jet *jet0,*jet1;
+  jet0 = &(*jetCollection)[0];
+  jet1 = &(*jetCollection)[1];
+  
+  TStyle st;
+  st.SetPalette(1);
+  
+  TH2D *hPvTrackPt = new TH2D("hPvTrackPt","hPvTrackPt",100,-5.0,5.0,32,-TMath::Pi(),TMath::Pi());
+  hPvTrackPt->Draw("colz");
+  
+  TEllipse *ell0 = new TEllipse(jet0->eta(),jet0->phi(),0.5,0.5);
+  TEllipse *ell1 = new TEllipse(jet1->eta(),jet1->phi(),0.5,0.5);
+  ell0->SetLineColor(kRed); ell0->SetFillStyle(4000);
+  ell1->SetLineColor(kRed); ell1->SetFillStyle(4000);
+  ell0->Draw();
+  ell1->Draw();     
+  
+  outFile->Append(hPvTrackPt);
+}
+
+void TracksAnalyser::doTracksAnalysis(TDirectory* d,double minTrackPt){
+  
+  int    nTracks    = 0;
+  int    nTracksOut = 0;
+  double eTracks    = 0;
+  double eTracksOut = 0;
+  
+  const pat::Jet *jet0,*jet1;
+  jet0 = &(*jetCollection)[0];
+  jet1 = &(*jetCollection)[1];
+  
+  for(reco::Vertex::trackRef_iterator it = pV->tracks_begin(); it!=pV->tracks_end(); it++){
+        
+    if((*it)->pt() < minTrackPt){continue;}
+      
+    nTracks++;
+    eTracks += (*it)->pt();
+    
+    if(deltaR((*it)->eta(),(*it)->phi(),jet0->eta(),jet0->phi()) < 0.5){continue;}
+    if(deltaR((*it)->eta(),(*it)->phi(),jet1->eta(),jet1->phi()) < 0.5){continue;}
+    
+    nTracksOut++;
+    eTracksOut += (*it)->pt();
+  }
+  
+  TH1D *h; 
+  h = (TH1D*) d->Get("TrackOutN");      h->Fill(nTracksOut);
+  h = (TH1D*) d->Get("TrackOutNRatio"); h->Fill(double(nTracksOut)/double(nTracks));
+  h = (TH1D*) d->Get("TrackOutE");      h->Fill(eTracksOut);
+  h = (TH1D*) d->Get("TrackOutERatio"); h->Fill(eTracksOut/eTracks); 
+  
+}
+
+
+bool TracksAnalyser::pu_id_mva_loose(double mvaValue,double pt,double eta){ 
+  // Pt2030_Loose   = cms.vdouble(-0.80,-0.85,-0.84,-0.85),
+  // Pt3050_Loose   = cms.vdouble(-0.80,-0.74,-0.68,-0.77)
+  // #4 Eta Categories  0-2.5 2.5-2.75 2.75-3.0 3.0-5.0
+  double abs_eta = fabs(eta);
+  if(pt > 20. && pt <= 30){
+    if     (abs_eta < 2.5 ){return (mvaValue > -0.80);} 
+    else if(abs_eta < 2.75){return (mvaValue > -0.85);} 
+    else if(abs_eta < 3.0) {return (mvaValue > -0.84);} 
+    else if(abs_eta < 5.0) {return (mvaValue > -0.85);} 
+    else return true;
+  } 
+  else if(pt > 30.){
+    if     (abs_eta < 2.5) {return (mvaValue > -0.80);} 
+    else if(abs_eta < 2.75){return (mvaValue > -0.74);} 
+    else if(abs_eta < 3.0) {return (mvaValue > -0.68);} 
+    else if(abs_eta < 5.0) {return (mvaValue > -0.77);} 
+    else return true;
+  } 
+  else return true;
+}
+
+bool TracksAnalyser::cjvPass(){
+  
+  bool   pass=true;
+  double valL=0,valR=0;
+  
+  jet0 = &(*jetCollection)[0];
+  jet1 = &(*jetCollection)[1];
+  
+  if(jet0->eta() < jet1->eta()){
+    valL = jet0->eta();
+    valR = jet1->eta();
+  }else{
+    valL = jet1->eta();
+    valR = jet0->eta();
+  }
+  
+  for (unsigned i=2; i<jetCollection->size();i++) {
+    
+    const pat::Jet *jet = &((*jetCollection)[i]);
+    
+    double jetID            = (*puJetIdMVA)[jet->originalObjectRef()];
+    bool   passJet0MVALoose = pu_id_mva_loose(jetID,jet->pt(),jet->eta());
+    
+    if(jet->pt()>30 && jet->eta()>valL && jet->eta()<valR && passJet0MVALoose){
+      pass=false; 
+      break; 
+    }
+  }  
+  
+  return pass;
 }
 
 void TracksAnalyser::printEvSummary(){
