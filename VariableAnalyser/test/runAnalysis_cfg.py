@@ -33,14 +33,6 @@ process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 #process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 
 ################################################################
-### Output files
-################################################################
-process.TFileService = cms.Service("TFileService", 
-                                   fileName = cms.string("TracksAnalysis.root"),
-                                   closeFileFast = cms.untracked.bool(True) # Needs to be disabled if there are multiple references to same object (ex: TCanvas to TH1D)
-                                   )
-
-################################################################
 ### Analysis
 ################################################################
 process.tracksAnalyser = cms.EDAnalyzer('TracksAnalyser')
