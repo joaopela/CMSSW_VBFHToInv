@@ -125,10 +125,10 @@ void TracksAnalyser::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
     if(cjv){m_h1D["count"]->Fill("CJV Pass",1);}
     else{
       m_h1D["count"]->Fill("CJV Fail",1);
-      doTracksAnalysis((TDirectory*) outFile->Get("BB/Tracks0/CJVFail"),0);
-      doTracksAnalysis((TDirectory*) outFile->Get("BB/Tracks1/CJVFail"),1);
-      doTracksAnalysis((TDirectory*) outFile->Get("BB/Tracks2/CJVFail"),2);
-      doTracksAnalysis((TDirectory*) outFile->Get("BB/Tracks3/CJVFail"),3);
+      doTracksAnalysis((TDirectory*) outFile->Get("Tracks0/CJVFail"),0);
+      doTracksAnalysis((TDirectory*) outFile->Get("Tracks1/CJVFail"),1);
+      doTracksAnalysis((TDirectory*) outFile->Get("Tracks2/CJVFail"),2);
+      doTracksAnalysis((TDirectory*) outFile->Get("Tracks3/CJVFail"),3);
     }
     
     if(cBarrel==2){
@@ -139,7 +139,7 @@ void TracksAnalyser::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
       doTracksAnalysis((TDirectory*) outFile->Get("BB/Tracks2"),2);
       doTracksAnalysis((TDirectory*) outFile->Get("BB/Tracks3"),3);
       
-      if(!cjv){
+      if(cjv){
         doTracksAnalysis((TDirectory*) outFile->Get("BB/Tracks0/CJVFail"),0);
         doTracksAnalysis((TDirectory*) outFile->Get("BB/Tracks1/CJVFail"),1);
         doTracksAnalysis((TDirectory*) outFile->Get("BB/Tracks2/CJVFail"),2);
@@ -153,7 +153,7 @@ void TracksAnalyser::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
       doTracksAnalysis((TDirectory*) outFile->Get("BE/Tracks1"),1);
       doTracksAnalysis((TDirectory*) outFile->Get("BE/Tracks2"),2);
       doTracksAnalysis((TDirectory*) outFile->Get("BE/Tracks3"),3);
-      if(!cjv){
+      if(cjv){
         doTracksAnalysis((TDirectory*) outFile->Get("BE/Tracks0/CJVFail"),0);
         doTracksAnalysis((TDirectory*) outFile->Get("BE/Tracks1/CJVFail"),1);
         doTracksAnalysis((TDirectory*) outFile->Get("BE/Tracks2/CJVFail"),2);
@@ -167,7 +167,7 @@ void TracksAnalyser::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
       doTracksAnalysis((TDirectory*) outFile->Get("EE/Tracks1"),1);
       doTracksAnalysis((TDirectory*) outFile->Get("EE/Tracks2"),2);
       doTracksAnalysis((TDirectory*) outFile->Get("EE/Tracks3"),3);
-      if(!cjv){
+      if(cjv){
         doTracksAnalysis((TDirectory*) outFile->Get("EE/Tracks0/CJVFail"),0);
         doTracksAnalysis((TDirectory*) outFile->Get("EE/Tracks1/CJVFail"),1);
         doTracksAnalysis((TDirectory*) outFile->Get("EE/Tracks2/CJVFail"),2);
