@@ -57,16 +57,22 @@ TracksAnalyser::~TracksAnalyser(){}
 void TracksAnalyser::doTracksHist(TDirectory* d){
   
   TH1D *h;
-  h = new TH1D("TrackOutN",     "TrackOutN",     250,-0.5,249); h->SetDirectory(d); 
-  h = new TH1D("TrackOutNRatio","TrackOutNRatio",100,   0,  1); h->SetDirectory(d);
-  h = new TH1D("TrackOutE",     "TrackOutE",     500,   0,500); h->SetDirectory(d);
-  h = new TH1D("TrackOutERatio","TrackOutERatio",100,   0,  1); h->SetDirectory(d);
+  h = new TH1D("TracksN",   "TracksN",   250,-0.5,249); h->SetDirectory(d); 
+  h = new TH1D("TracksNOut","TracksNOut",250,-0.5,249); h->SetDirectory(d);
+  h = new TH1D("TracksE",   "TracksE",   500,   0,500); h->SetDirectory(d);
+  h = new TH1D("TracksEOut","TracksEOut",500,   0,500); h->SetDirectory(d);
+
+  TDirectory* CJVPass = d->mkdir("CJVPass");
+  h = new TH1D("TracksN",   "TracksN",   250,-0.5,249); h->SetDirectory(CJVPass); 
+  h = new TH1D("TracksNOut","TracksNOut",250,-0.5,249); h->SetDirectory(CJVPass);
+  h = new TH1D("TracksE",   "TracksE",   500,   0,500); h->SetDirectory(CJVPass);
+  h = new TH1D("TracksEOut","TracksEOut",500,   0,500); h->SetDirectory(CJVPass);
   
   TDirectory* CJVFail = d->mkdir("CJVFail");
-  h = new TH1D("TrackOutN",     "TrackOutN",     250,-0.5,249); h->SetDirectory(CJVFail); 
-  h = new TH1D("TrackOutNRatio","TrackOutNRatio",100,   0,  1); h->SetDirectory(CJVFail);
-  h = new TH1D("TrackOutE",     "TrackOutE",     500,   0,500); h->SetDirectory(CJVFail);
-  h = new TH1D("TrackOutERatio","TrackOutERatio",100,   0,  1); h->SetDirectory(CJVFail);
+  h = new TH1D("TracksN",   "TracksN",   250,-0.5,249); h->SetDirectory(CJVFail); 
+  h = new TH1D("TracksNOut","TracksNOut",250,-0.5,249); h->SetDirectory(CJVFail);
+  h = new TH1D("TracksE",   "TracksE",   500,   0,500); h->SetDirectory(CJVFail);
+  h = new TH1D("TracksEOut","TracksEOut",500,   0,500); h->SetDirectory(CJVFail);
   
 }
 
@@ -122,7 +128,13 @@ void TracksAnalyser::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
     doTracksAnalysis((TDirectory*) outFile->Get("Tracks2"),2);
     doTracksAnalysis((TDirectory*) outFile->Get("Tracks3"),3);
 
-    if(cjv){m_h1D["count"]->Fill("CJV Pass",1);}
+    if(cjv){
+      m_h1D["count"]->Fill("CJV Pass",1);
+      doTracksAnalysis((TDirectory*) outFile->Get("Tracks0/CJVPass"),0);
+      doTracksAnalysis((TDirectory*) outFile->Get("Tracks1/CJVPass"),1);
+      doTracksAnalysis((TDirectory*) outFile->Get("Tracks2/CJVPass"),2);
+      doTracksAnalysis((TDirectory*) outFile->Get("Tracks3/CJVPass"),3);      
+    }
     else{
       m_h1D["count"]->Fill("CJV Fail",1);
       doTracksAnalysis((TDirectory*) outFile->Get("Tracks0/CJVFail"),0);
@@ -140,10 +152,16 @@ void TracksAnalyser::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
       doTracksAnalysis((TDirectory*) outFile->Get("BB/Tracks3"),3);
       
       if(cjv){
+        doTracksAnalysis((TDirectory*) outFile->Get("BB/Tracks0/CJVPass"),0);
+        doTracksAnalysis((TDirectory*) outFile->Get("BB/Tracks1/CJVPass"),1);
+        doTracksAnalysis((TDirectory*) outFile->Get("BB/Tracks2/CJVPass"),2);
+        doTracksAnalysis((TDirectory*) outFile->Get("BB/Tracks3/CJVPass"),3);        
+      }
+      else{
         doTracksAnalysis((TDirectory*) outFile->Get("BB/Tracks0/CJVFail"),0);
         doTracksAnalysis((TDirectory*) outFile->Get("BB/Tracks1/CJVFail"),1);
         doTracksAnalysis((TDirectory*) outFile->Get("BB/Tracks2/CJVFail"),2);
-        doTracksAnalysis((TDirectory*) outFile->Get("BB/Tracks3/CJVFail"),3);        
+        doTracksAnalysis((TDirectory*) outFile->Get("BB/Tracks3/CJVFail"),3);
       }
     }
     else if(cBarrel==1){
@@ -153,11 +171,18 @@ void TracksAnalyser::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
       doTracksAnalysis((TDirectory*) outFile->Get("BE/Tracks1"),1);
       doTracksAnalysis((TDirectory*) outFile->Get("BE/Tracks2"),2);
       doTracksAnalysis((TDirectory*) outFile->Get("BE/Tracks3"),3);
+
       if(cjv){
+        doTracksAnalysis((TDirectory*) outFile->Get("BE/Tracks0/CJVPass"),0);
+        doTracksAnalysis((TDirectory*) outFile->Get("BE/Tracks1/CJVPass"),1);
+        doTracksAnalysis((TDirectory*) outFile->Get("BE/Tracks2/CJVPass"),2);
+        doTracksAnalysis((TDirectory*) outFile->Get("BE/Tracks3/CJVPass"),3);        
+      }
+      else{
         doTracksAnalysis((TDirectory*) outFile->Get("BE/Tracks0/CJVFail"),0);
         doTracksAnalysis((TDirectory*) outFile->Get("BE/Tracks1/CJVFail"),1);
         doTracksAnalysis((TDirectory*) outFile->Get("BE/Tracks2/CJVFail"),2);
-        doTracksAnalysis((TDirectory*) outFile->Get("BE/Tracks3/CJVFail"),3);        
+        doTracksAnalysis((TDirectory*) outFile->Get("BE/Tracks3/CJVFail"),3);
       }
     }    
     else if(cBarrel==0){
@@ -167,11 +192,18 @@ void TracksAnalyser::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
       doTracksAnalysis((TDirectory*) outFile->Get("EE/Tracks1"),1);
       doTracksAnalysis((TDirectory*) outFile->Get("EE/Tracks2"),2);
       doTracksAnalysis((TDirectory*) outFile->Get("EE/Tracks3"),3);
+
       if(cjv){
+        doTracksAnalysis((TDirectory*) outFile->Get("EE/Tracks0/CJVPass"),0);
+        doTracksAnalysis((TDirectory*) outFile->Get("EE/Tracks1/CJVPass"),1);
+        doTracksAnalysis((TDirectory*) outFile->Get("EE/Tracks2/CJVPass"),2);
+        doTracksAnalysis((TDirectory*) outFile->Get("EE/Tracks3/CJVPass"),3);        
+      }
+      else{
         doTracksAnalysis((TDirectory*) outFile->Get("EE/Tracks0/CJVFail"),0);
         doTracksAnalysis((TDirectory*) outFile->Get("EE/Tracks1/CJVFail"),1);
         doTracksAnalysis((TDirectory*) outFile->Get("EE/Tracks2/CJVFail"),2);
-        doTracksAnalysis((TDirectory*) outFile->Get("EE/Tracks3/CJVFail"),3);        
+        doTracksAnalysis((TDirectory*) outFile->Get("EE/Tracks3/CJVFail"),3);
       }
     }
     
@@ -343,10 +375,10 @@ void TracksAnalyser::doTracksAnalysis(TDirectory* d,double minTrackPt){
   }
   
   TH1D *h; 
-  h = (TH1D*) d->Get("TrackOutN");      h->Fill(nTracksOut);
-  h = (TH1D*) d->Get("TrackOutNRatio"); h->Fill(double(nTracksOut)/double(nTracks));
-  h = (TH1D*) d->Get("TrackOutE");      h->Fill(eTracksOut);
-  h = (TH1D*) d->Get("TrackOutERatio"); h->Fill(eTracksOut/eTracks); 
+  h = (TH1D*) d->Get("TracksN");    h->Fill(nTracks);
+  h = (TH1D*) d->Get("TracksNOut"); h->Fill(nTracksOut);
+  h = (TH1D*) d->Get("TracksE");    h->Fill(eTracks);
+  h = (TH1D*) d->Get("TracksEOut"); h->Fill(eTracksOut); 
   
 }
 
