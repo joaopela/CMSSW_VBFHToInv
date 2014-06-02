@@ -22,7 +22,7 @@ process.GlobalTag.globaltag = cms.string('START53_V27::All')
 ################################################################
 # MC Signal
 process.load("VBFHiggsToInvisible.VariableAnalyser.TrackNtuplesWithPv_v2_QCD-Pt-80to120_VBF-MET40_cfi")
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(5000) )
 
 # MC VBF QCD pt 470 to 600 GeV ntupleTracks version 0 (with PV cut)
 #process.load("VBFHiggsToInvisible.VariableAnalyser.VBFQCD_Pt_470to600_ntupleTracksV0_cfi")
