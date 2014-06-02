@@ -57,23 +57,28 @@ TracksAnalyser::~TracksAnalyser(){}
 void TracksAnalyser::doTracksHist(TDirectory* d){
   
   TH1D *h;
-  h = new TH1D("TracksN",   "TracksN",   250,-0.5,249); h->SetDirectory(d); 
-  h = new TH1D("TracksNOut","TracksNOut",250,-0.5,249); h->SetDirectory(d);
-  h = new TH1D("TracksE",   "TracksE",   500,   0,500); h->SetDirectory(d);
-  h = new TH1D("TracksEOut","TracksEOut",500,   0,500); h->SetDirectory(d);
+  h = new TH1D("TracksN",      "TracksN",      250,-0.5,249); h->SetDirectory(d); 
+  h = new TH1D("TracksNOut",   "TracksNOut",   250,-0.5,249); h->SetDirectory(d);
+  h = new TH1D("TracksNRation","TracksNRation",100,   0,  1); h->SetDirectory(d);
+  h = new TH1D("TracksE",      "TracksE",      500,   0,500); h->SetDirectory(d);
+  h = new TH1D("TracksEOut",   "TracksEOut",   500,   0,500); h->SetDirectory(d);
+  h = new TH1D("TracksERation","TracksERation",100,   0,  1); h->SetDirectory(d);
 
   TDirectory* CJVPass = d->mkdir("CJVPass");
-  h = new TH1D("TracksN",   "TracksN",   250,-0.5,249); h->SetDirectory(CJVPass); 
-  h = new TH1D("TracksNOut","TracksNOut",250,-0.5,249); h->SetDirectory(CJVPass);
-  h = new TH1D("TracksE",   "TracksE",   500,   0,500); h->SetDirectory(CJVPass);
-  h = new TH1D("TracksEOut","TracksEOut",500,   0,500); h->SetDirectory(CJVPass);
+  h = new TH1D("TracksN",      "TracksN",      250,-0.5,249); h->SetDirectory(CJVPass); 
+  h = new TH1D("TracksNOut",   "TracksNOut",   250,-0.5,249); h->SetDirectory(CJVPass);
+  h = new TH1D("TracksNRation","TracksNRation",100,   0,  1); h->SetDirectory(CJVPass);
+  h = new TH1D("TracksE",      "TracksE",      500,   0,500); h->SetDirectory(CJVPass);
+  h = new TH1D("TracksEOut",   "TracksEOut",   500,   0,500); h->SetDirectory(CJVPass);
+  h = new TH1D("TracksERation","TracksERation",100,   0,  1); h->SetDirectory(CJVPass);
   
   TDirectory* CJVFail = d->mkdir("CJVFail");
-  h = new TH1D("TracksN",   "TracksN",   250,-0.5,249); h->SetDirectory(CJVFail); 
-  h = new TH1D("TracksNOut","TracksNOut",250,-0.5,249); h->SetDirectory(CJVFail);
-  h = new TH1D("TracksE",   "TracksE",   500,   0,500); h->SetDirectory(CJVFail);
-  h = new TH1D("TracksEOut","TracksEOut",500,   0,500); h->SetDirectory(CJVFail);
-  
+  h = new TH1D("TracksN",      "TracksN",      250,-0.5,249); h->SetDirectory(CJVFail); 
+  h = new TH1D("TracksNOut",   "TracksNOut",   250,-0.5,249); h->SetDirectory(CJVFail);
+  h = new TH1D("TracksNRation","TracksNRation",100,   0,  1); h->SetDirectory(CJVFail);
+  h = new TH1D("TracksE",      "TracksE",      500,   0,500); h->SetDirectory(CJVFail);
+  h = new TH1D("TracksEOut",   "TracksEOut",   500,   0,500); h->SetDirectory(CJVFail);
+  h = new TH1D("TracksERation","TracksERation",100,   0,  1); h->SetDirectory(CJVFail); 
 }
 
 void TracksAnalyser::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup){
@@ -375,10 +380,12 @@ void TracksAnalyser::doTracksAnalysis(TDirectory* d,double minTrackPt){
   }
   
   TH1D *h; 
-  h = (TH1D*) d->Get("TracksN");    h->Fill(nTracks);
-  h = (TH1D*) d->Get("TracksNOut"); h->Fill(nTracksOut);
-  h = (TH1D*) d->Get("TracksE");    h->Fill(eTracks);
-  h = (TH1D*) d->Get("TracksEOut"); h->Fill(eTracksOut); 
+  h = (TH1D*) d->Get("TracksN");       h->Fill(nTracks);
+  h = (TH1D*) d->Get("TracksNOut");    h->Fill(nTracksOut);
+  h = (TH1D*) d->Get("TracksNRation"); h->Fill(double(nTracksOut)/double(nTracks));
+  h = (TH1D*) d->Get("TracksE");       h->Fill(eTracks);
+  h = (TH1D*) d->Get("TracksEOut");    h->Fill(eTracksOut); 
+  h = (TH1D*) d->Get("TracksERation"); h->Fill(double(eTracksOut)/double(eTracks));
   
 }
 
