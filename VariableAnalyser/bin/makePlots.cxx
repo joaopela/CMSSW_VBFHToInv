@@ -8,9 +8,38 @@
 #include <utility>
 
 #include "TFile.h"
+#include "TCanvas.h"
+#include "TLegend.h"
 #include "TH1D.h"
 
 using namespace std;
+
+void doPlot(map<pair<string,string>,TH1D*> hist,map<string,double> wgt,string plotName, string outName,int rebin){
+  
+  TCanvas c;
+  TH1D *hQCD,*hSig;
+  
+  
+  hQCD = (TH1D*) hist[pair<string,string>("QCD-Pt-80to120",plotName)]->Clone(); 
+  hQCD->Scale(wgt["QCD_VBF-Pt-80to120"]);
+  hQCD->Add(hist[pair<string,string>("QCD-Pt-120to170",plotName)],wgt["QCD_VBF-Pt-120to170"]);
+  hQCD->Add(hist[pair<string,string>("QCD-Pt-170to300",plotName)],wgt["QCD_VBF-Pt-170to300"]);
+  hQCD->Add(hist[pair<string,string>("QCD-Pt-300to470",plotName)],wgt["QCD_VBF-Pt-300to470"]);
+  hQCD->Add(hist[pair<string,string>("QCD-Pt-470to600",plotName)],wgt["QCD_VBF-Pt-470to600"]);
+  hQCD->Scale(1/hQCD->Integral(0,hQCD->GetNbinsX()+1));
+  hQCD->SetLineColor(kGreen);
+  if(rebin!=1){hQCD->Rebin(rebin);}
+  hQCD->Draw();
+  
+  hSig = hist[pair<string,string>("Htoinv",plotName)];
+  hSig->Scale(1/hSig->Integral(0,hSig->GetNbinsX()+1));
+  hSig->SetLineColor(kRed);
+  if(rebin!=1){hSig->Rebin(rebin);}
+  hSig->Draw("same");
+  
+  c.SaveAs(outName.c_str());
+  
+}
 
 int main(int argc, char *argv[]){
     
@@ -56,6 +85,35 @@ int main(int argc, char *argv[]){
   plots.push_back("count");
   plots.push_back("Tracks0/TracksNRation");
   plots.push_back("Tracks0/TracksERation");
+  plots.push_back("Tracks1/TracksNRation");
+  plots.push_back("Tracks1/TracksERation");
+  plots.push_back("Tracks2/TracksNRation");
+  plots.push_back("Tracks2/TracksERation");
+  plots.push_back("Tracks0/CJVPass/TracksNRation");
+  plots.push_back("Tracks0/CJVPass/TracksERation");
+  plots.push_back("Tracks1/CJVPass/TracksNRation");
+  plots.push_back("Tracks1/CJVPass/TracksERation");
+  plots.push_back("Tracks2/CJVPass/TracksNRation");
+  plots.push_back("Tracks2/CJVPass/TracksERation");
+  
+  plots.push_back("BB/Tracks0/TracksNRation");
+  plots.push_back("BB/Tracks0/TracksERation");
+  plots.push_back("BB/Tracks1/TracksNRation");
+  plots.push_back("BB/Tracks1/TracksERation");
+  plots.push_back("BB/Tracks2/TracksNRation");
+  plots.push_back("BB/Tracks2/TracksERation"); 
+  plots.push_back("BE/Tracks0/TracksNRation");
+  plots.push_back("BE/Tracks0/TracksERation");
+  plots.push_back("BE/Tracks1/TracksNRation");
+  plots.push_back("BE/Tracks1/TracksERation");
+  plots.push_back("BE/Tracks2/TracksNRation");
+  plots.push_back("BE/Tracks2/TracksERation");  
+  plots.push_back("EE/Tracks0/TracksNRation");
+  plots.push_back("EE/Tracks0/TracksERation");
+  plots.push_back("EE/Tracks1/TracksNRation");
+  plots.push_back("EE/Tracks1/TracksERation");
+  plots.push_back("EE/Tracks2/TracksNRation");
+  plots.push_back("EE/Tracks2/TracksERation");
   
   
   map<pair<string,string>,TH1D*> hist;
@@ -96,8 +154,40 @@ int main(int argc, char *argv[]){
   wgt["QCD_VBF-Pt-470to600"] = (lumi*xsec["QCD-Pt-470to600"])  /(evQCDVBF["QCD-Pt-470to600"]*factor["QCD-Pt-470to600"]);
   for(map<string,double>::iterator i=wgt.begin(); i!=wgt.end(); i++){printf("Sample: %50s Event weight: %8.6f\n",i->first.c_str(),i->second);}
 
+  //_____________________________________________
+
+  doPlot(hist,wgt,"Tracks0/TracksNRation","Tracks0_TracksNRatio.png",4);
+  doPlot(hist,wgt,"Tracks0/TracksERation","Tracks0_TracksERatio.png",4);
+  doPlot(hist,wgt,"Tracks1/TracksNRation","Tracks1_TracksNRatio.png",4);
+  doPlot(hist,wgt,"Tracks1/TracksERation","Tracks1_TracksERatio.png",4); 
+  doPlot(hist,wgt,"Tracks2/TracksNRation","Tracks2_TracksNRatio.png",4);
+  doPlot(hist,wgt,"Tracks2/TracksERation","Tracks2_TracksERatio.png",4);
   
+  doPlot(hist,wgt,"Tracks0/CJVPass/TracksNRation","Tracks0_CJVPass_TracksNRation.png",4);
+  doPlot(hist,wgt,"Tracks0/CJVPass/TracksERation","Tracks0_CJVPass_TracksERation.png",4);
+  doPlot(hist,wgt,"Tracks1/CJVPass/TracksNRation","Tracks1_CJVPass_TracksNRation.png",4);
+  doPlot(hist,wgt,"Tracks1/CJVPass/TracksERation","Tracks1_CJVPass_TracksERation.png",4);
+  doPlot(hist,wgt,"Tracks2/CJVPass/TracksNRation","Tracks2_CJVPass_TracksNRation.png",4);
+  doPlot(hist,wgt,"Tracks2/CJVPass/TracksERation","Tracks2_CJVPass_TracksERation.png",4);
   
+  doPlot(hist,wgt,"BB/Tracks0/TracksNRation","BB_Tracks0_TracksNRatio.png",4);
+  doPlot(hist,wgt,"BB/Tracks0/TracksERation","BB_Tracks0_TracksERatio.png",4);
+  doPlot(hist,wgt,"BB/Tracks1/TracksNRation","BB_Tracks1_TracksNRatio.png",4);
+  doPlot(hist,wgt,"BB/Tracks1/TracksERation","BB_Tracks1_TracksERatio.png",4); 
+  doPlot(hist,wgt,"BB/Tracks2/TracksNRation","BB_Tracks2_TracksNRatio.png",4);
+  doPlot(hist,wgt,"BB/Tracks2/TracksERation","BB_Tracks2_TracksERatio.png",4);
+  doPlot(hist,wgt,"BE/Tracks0/TracksNRation","BE_Tracks0_TracksNRatio.png",4);
+  doPlot(hist,wgt,"BE/Tracks0/TracksERation","BE_Tracks0_TracksERatio.png",4);
+  doPlot(hist,wgt,"BE/Tracks1/TracksNRation","BE_Tracks1_TracksNRatio.png",4);
+  doPlot(hist,wgt,"BE/Tracks1/TracksERation","BE_Tracks1_TracksERatio.png",4); 
+  doPlot(hist,wgt,"BE/Tracks2/TracksNRation","BE_Tracks2_TracksNRatio.png",4);
+  doPlot(hist,wgt,"BE/Tracks2/TracksERation","BE_Tracks2_TracksERatio.png",4);
+  doPlot(hist,wgt,"EE/Tracks0/TracksNRation","EE_Tracks0_TracksNRatio.png",4);
+  doPlot(hist,wgt,"EE/Tracks0/TracksERation","EE_Tracks0_TracksERatio.png",4);
+  doPlot(hist,wgt,"EE/Tracks1/TracksNRation","EE_Tracks1_TracksNRatio.png",4);
+  doPlot(hist,wgt,"EE/Tracks1/TracksERation","EE_Tracks1_TracksERatio.png",4); 
+  doPlot(hist,wgt,"EE/Tracks2/TracksNRation","EE_Tracks2_TracksNRatio.png",4);
+  doPlot(hist,wgt,"EE/Tracks2/TracksERation","EE_Tracks2_TracksERatio.png",4);
   
   return 0;
     
