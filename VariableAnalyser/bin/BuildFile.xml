@@ -1,3 +1,4 @@
 <use name="root"/>
+<use name="rootgraphics"/>
 <flags CXXFLAGS="-g"/>
 <bin name="vbfinvVariableAnalysisTracks_makePlots" file="makePlots.cxx"></bin>
