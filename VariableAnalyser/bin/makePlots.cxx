@@ -21,6 +21,8 @@ void doPlot(map<pair<string,string>,TH1D*> hist,map<string,double> wgt,string pl
   
   
   hQCD = (TH1D*) hist[pair<string,string>("QCD-Pt-80to120",plotName)]->Clone(); 
+  hSig = hist[pair<string,string>("Htoinv",plotName)];
+  
   hQCD->Scale(wgt["QCD_VBF-Pt-80to120"]);
   hQCD->Add(hist[pair<string,string>("QCD-Pt-120to170",plotName)],wgt["QCD_VBF-Pt-120to170"]);
   hQCD->Add(hist[pair<string,string>("QCD-Pt-170to300",plotName)],wgt["QCD_VBF-Pt-170to300"]);
@@ -29,12 +31,19 @@ void doPlot(map<pair<string,string>,TH1D*> hist,map<string,double> wgt,string pl
   hQCD->Scale(1/hQCD->Integral(0,hQCD->GetNbinsX()+1));
   hQCD->SetLineColor(kGreen);
   if(rebin!=1){hQCD->Rebin(rebin);}
-  hQCD->Draw();
   
-  hSig = hist[pair<string,string>("Htoinv",plotName)];
   hSig->Scale(1/hSig->Integral(0,hSig->GetNbinsX()+1));
   hSig->SetLineColor(kRed);
   if(rebin!=1){hSig->Rebin(rebin);}
+    
+  double max0 = hQCD->GetBinContent(hQCD->GetMaximumBin());
+  double max1 = hSig->GetBinContent(hSig->GetMaximumBin()); 
+  double max =0;
+  if(max0>max1){max=max0;}
+  if(max0<max1){max=max1;}  
+  hQCD->GetYaxis()->SetRangeUser(0,max*1.25);
+  
+  hQCD->Draw();
   hSig->Draw("same");
   
   c.SaveAs(outName.c_str());
