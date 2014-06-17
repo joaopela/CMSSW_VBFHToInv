@@ -7,4 +7,7 @@
 <use name="DataFormats/L1GlobalTrigger"/>
 <use name="CondFormats/L1TObjects"/>
 <use name="CondFormats/DataRecord"/>
+<use name="rootgraphics"/>
+<use name="root"/>
+<flags CXXFLAGS="-g"/>
 <flags EDM_PLUGIN="1"/>
