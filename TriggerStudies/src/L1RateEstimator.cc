@@ -1,4 +1,4 @@
-#include "VBFHiggsToInvisible/L1RateEstimator/interface/L1RateEstimator.h"
+#include "VBFHiggsToInvisible/TriggerStudies/interface/L1RateEstimator.h"
 
 #include <stdio.h>
 #include <math.h>
@@ -8,62 +8,51 @@ using namespace edm;
 
 L1RateEstimator::L1RateEstimator(const edm::ParameterSet& pset){
   
-  m_verbose       = pset.getUntrackedParameter<bool>("verbose",false);
-  if(m_doL1TAnalysis){
-    m_InputTag_L1GTReadoutRecord = pset.getParameter<InputTag>("inputTag_L1GTReadoutRecord");
-    m_selL1Trigger               = pset.getParameter<std::vector<string> >("selL1Trigger");
-    
-    // Initialising L1T Trigger fire counters
-    for(unsigned i=0; i<m_selL1Trigger.size(); i++){
-      cL1T[ m_selL1Trigger[i] ] = 0;
-    }
-  }
-    
-  // Initialising event counter 
-  evCount=0;
+  m_verbose                    = pset.getUntrackedParameter<bool>("verbose",false);
+  m_selL1Trigger               = pset.getParameter<vector<string> >("selL1Trigger");
+
+  m_InputTag_L1GTReadoutRecord = pset.getParameter<InputTag>("inputTag_L1GTReadoutRecord");
+  m_InputTag_L1Extra_mets      = pset.getUntrackedParameter ("inputTag_L1Extra_mets"    ,edm::InputTag("l1extraParticles","MET"));
+  m_InputTag_L1Extra_mhts      = pset.getUntrackedParameter ("inputTag_L1Extra_mhts"    ,edm::InputTag("l1extraParticles","MHT"));
+
+  currentRunNumber = 0;
+
+  fOut = new TFile("L1RateEstimatorResults.root","RECREATE");
   
 }
 
-
 L1RateEstimator::~L1RateEstimator(){
   
-  cout << "Total Events: " << evCount << endl;
-      
-  cout << "*====================================*" << endl;
-  cout << "| L1T Study                          |" << endl;
-  cout << "*====================================*" << endl;
-    
-  cout << "Absolute count:" << endl;
-  for(unsigned i=0; i<m_selL1Trigger.size(); i++){
-    
-    string *pName  = &(m_selL1Trigger[i]); 
-    int    *pCount = &(cL1T[ (*pName) ]);
-    double  pError = sqrt(double(*pCount));
-    
-    printf("%-50s : %6d +/- %8.1f\n",pName->c_str(),(*pCount),pError);
+  unsigned nRuns = m_nEvents.size();
+  TH1D* hRuns = new TH1D("Runs","Runs",nRuns,-0.5,nRuns-0.5);
+  hRuns->SetDirectory(fOut);
+  
+  int bin=0;
+  for(map<int,unsigned>::iterator i=m_nEvents.begin(); i!=m_nEvents.end(); i++){
+    hRuns->GetXaxis()->SetBinLabel(bin+1,Form("%d",i->first));
+    hRuns->SetBinContent(bin+1,i->second);
+    bin++;
   }
   
-  cout << "Efficiency:" << endl;
-  for(unsigned i=0; i<m_selL1Trigger.size(); i++){
-    
-    string *pName  = &(m_selL1Trigger[i]); 
-    int    *pCount = &(cL1T[ (*pName) ]);
-    double  pError = sqrt(double(*pCount));
-    
-    double  pFrac    = double(*pCount)/double(evCount);
-    double  pFracErr = pError/double(evCount);
-    
-    printf("%-50s : %6.4f +/- %6.4f\n",pName->c_str(),pFrac,pFracErr);
-  }
+  fOut->Write();
 }
 
 void L1RateEstimator::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup){
   
-  evCount++;
-      
+  currentRunNumber = iEvent.run();
+
+  m_nEvents[currentRunNumber]++;
+  TH1D* h = m_l1Counts[currentRunNumber];
+        
   // Getting Final Decision Logic (FDL) Data from GT
   Handle<L1GlobalTriggerReadoutRecord> gtReadoutRecordData;
   iEvent.getByLabel(m_InputTag_L1GTReadoutRecord, gtReadoutRecordData);
+  
+  edm::Handle<l1extra::L1EtMissParticleCollection> mets;
+  iEvent.getByLabel(m_InputTag_L1Extra_mets,mets);
+  
+  edm::Handle<l1extra::L1EtMissParticleCollection> mhts;
+  iEvent.getByLabel(m_InputTag_L1Extra_mhts,mhts);
   
   if(gtReadoutRecordData.isValid()){
     
@@ -79,29 +68,44 @@ void L1RateEstimator::analyze(const edm::Event& iEvent, const edm::EventSetup& i
         
         // Selecting the FDL that triggered
         if(gtFdlVectorData[a].bxInEvent() == 0){
-          if(gtFdlVectorData[a].gtDecisionWord()[ m_algoBit[pName] ]){cL1T[pName]++;}
+          
+          const L1GtFdlWord* fdl = &(gtFdlVectorData[a]);
+          
+          for(int bit=0; bit<128; bit++){
+            if(fdl->gtDecisionWord()[bit]){h->Fill(bit);}
+          }
         }
       }
     }
-  }
-}
-
-// ------------ method called once each job just before starting event loop  ------------
-void 
-L1RateEstimator::beginJob()
-{
-}
-
-// ------------ method called once each job just after ending the event loop  ------------
-void 
-L1RateEstimator::endJob() 
-{
-}
-
-// ------------ method called when starting to processes a run  ------------
-void 
-L1RateEstimator::beginRun(edm::Run const& iRun, edm::EventSetup const& iSetup){
+  }else{cout << "[L1RateEstimator] ERROR: GT Readout Record Data is not valid." << endl;}
   
+  if(mets.isValid()){
+    if (mets->size()!=0){
+      cout << "L1_ETM = " << mets->begin()->et() << endl;
+    }else{cout << "[L1RateEstimator] ERROR: l1extraParticles MET has size zero." << endl;}
+  }else{cout << "[L1RateEstimator] ERROR: l1extraParticles MET is not valid." << endl;}
+  
+
+  if(mhts.isValid()){
+    if(mhts->size()!=0){
+      cout << "L1_HTT = " << mhts->begin()->etTotal() << endl;    
+    }else{cout << "[L1RateEstimator] ERROR: l1extraParticles MHT has size zero." << endl;}
+  }else{cout << "[L1RateEstimator] ERROR: l1extraParticles MHT is not valid." << endl;}
+}
+
+void L1RateEstimator::beginJob(){}
+
+void L1RateEstimator::endJob(){}
+
+void L1RateEstimator::beginRun(edm::Run const& iRun, edm::EventSetup const& iSetup){
+  
+  currentRunNumber = iRun.run();
+  
+  string hName = Form("L1AlgoCounts_Run%d",currentRunNumber);
+  m_nEvents [currentRunNumber] = 0;
+  m_l1Counts[currentRunNumber] = new TH1D(hName.c_str(),hName.c_str(),128,-0.5,127.5);
+  TH1D* h = m_l1Counts[currentRunNumber];
+  h->SetDirectory(fOut);
     
   ESHandle<L1GtTriggerMenu> menuRcd;
   iSetup.get<L1GtTriggerMenuRcd>().get(menuRcd);
@@ -109,29 +113,15 @@ L1RateEstimator::beginRun(edm::Run const& iRun, edm::EventSetup const& iSetup){
     
   // Filling Alias-Bit Map
   for (CItAlgo algo = menu->gtAlgorithmAliasMap().begin(); algo!=menu->gtAlgorithmAliasMap().end(); ++algo){
-    m_algoBit[(algo->second).algoAlias()] = (algo->second).algoBitNumber();
+    h->GetXaxis()->SetBinLabel((algo->second).algoBitNumber()+1,(algo->second).algoAlias().c_str());
   }
- 
-  
 }
 
-// ------------ method called when ending the processing of a run  ------------
-void 
-L1RateEstimator::endRun(edm::Run const&, edm::EventSetup const&)
-{
-}
+void L1RateEstimator::endRun(edm::Run const&, edm::EventSetup const&){}
 
-// ------------ method called when starting to processes a luminosity block  ------------
-void 
-L1RateEstimator::beginLuminosityBlock(edm::LuminosityBlock const&, edm::EventSetup const&)
-{
-}
+void L1RateEstimator::beginLuminosityBlock(edm::LuminosityBlock const&, edm::EventSetup const&){}
 
-// ------------ method called when ending the processing of a luminosity block  ------------
-void 
-L1RateEstimator::endLuminosityBlock(edm::LuminosityBlock const&, edm::EventSetup const&)
-{
-}
+void L1RateEstimator::endLuminosityBlock(edm::LuminosityBlock const&, edm::EventSetup const&){}
 
 //define this as a plug-in
 DEFINE_FWK_MODULE(L1RateEstimator);

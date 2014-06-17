@@ -32,6 +32,7 @@
 #include "FWCore/Framework/interface/EDAnalyzer.h"
 
 #include "FWCore/Framework/interface/Event.h"
+#include "FWCore/Framework/interface/Run.h"
 #include "FWCore/Framework/interface/MakerMacros.h"
 #include "FWCore/Framework/interface/ESHandle.h"
 
@@ -42,6 +43,8 @@
 #include "FWCore/Common/interface/TriggerNames.h"
 
 //DataFormats
+#include "DataFormats/L1Trigger/interface/L1EtMissParticleFwd.h"
+#include "DataFormats/L1Trigger/interface/L1EtMissParticle.h"
 #include "DataFormats/L1GlobalTrigger/interface/L1GlobalTriggerReadoutRecord.h"
 #include "DataFormats/L1GlobalTrigger/interface/L1GlobalTriggerEvmReadoutRecord.h"
 
@@ -49,6 +52,9 @@
 #include "CondFormats/L1TObjects/interface/L1GtTriggerMenuFwd.h"
 #include "CondFormats/L1TObjects/interface/L1GtTriggerMenu.h"
 #include "CondFormats/DataRecord/interface/L1GtTriggerMenuRcd.h"
+
+#include "TH1D.h"
+#include "TFile.h"
 
 //
 // class declaration
@@ -72,14 +78,18 @@ private:
   
   void analyze(const edm::Event&, const edm::EventSetup&);
   
-  void printFiredHLT(const edm::Event& iEvent, edm::Handle<edm::TriggerResults> iHLT);
-  bool testTrigger  (const edm::Event& iEvent, edm::Handle<edm::TriggerResults> iHLT, std::string iTriggerName);
-  
   // ----------member data ---------------------------
+  
+  TFile* fOut;
+  
+  std::map<int,unsigned> m_nEvents;
+  std::map<int,TH1D*>    m_l1Counts;
   
   bool m_verbose;
   
   int evCount;
+
+  int currentRunNumber;
   
   std::vector<std::string> m_selL1Trigger;  
   
@@ -87,6 +97,8 @@ private:
   std::map<std::string,int> m_algoBit;
   
   edm::InputTag m_InputTag_L1GTReadoutRecord;
+  edm::InputTag m_InputTag_L1Extra_mets;
+  edm::InputTag m_InputTag_L1Extra_mhts;
   
 };
 
