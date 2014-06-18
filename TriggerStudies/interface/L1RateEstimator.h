@@ -78,20 +78,27 @@ private:
   
   void analyze(const edm::Event&, const edm::EventSetup&);
   
+  void printFiredHLT(const edm::Event& iEvent, edm::Handle<edm::TriggerResults> iHLT);
+  bool testTrigger  (const edm::Event& iEvent, edm::Handle<edm::TriggerResults> iHLT, std::string iTriggerName);
+  
   // ----------member data ---------------------------
   
   TFile* fOut;
   
   std::map<int,unsigned> m_nEvents;
   std::map<int,TH1D*>    m_l1Counts;
+  std::map<int,TH1D*>    m_hltCounts;
+  
+  TH1D* hL1ETM;
+  TH1D* hL1HTT;
   
   bool m_verbose;
   
   int evCount;
 
   int currentRunNumber;
-  
-  std::vector<std::string> m_selL1Trigger;  
+   
+  std::vector<std::string> m_selHLTrigger;
   
   std::map<std::string,int> cL1T;  
   std::map<std::string,int> m_algoBit;
@@ -99,6 +106,7 @@ private:
   edm::InputTag m_InputTag_L1GTReadoutRecord;
   edm::InputTag m_InputTag_L1Extra_mets;
   edm::InputTag m_InputTag_L1Extra_mhts;
+  edm::InputTag m_InputTag_HLTResults;
   
 };
 
