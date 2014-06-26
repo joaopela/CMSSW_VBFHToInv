@@ -31,18 +31,18 @@ process.RawToDigi.remove(process.dttfDigis)
 process.RawToDigi.remove(process.gtEvmDigis)                                                                                                                                                                                                                                   
 process.RawToDigi.remove(process.siPixelDigis)                                                                                                                                                                                                                                 
 process.RawToDigi.remove(process.siStripDigis)                                                                                                                                                                                                                                 
-process.RawToDigi.remove(process.ecalDigis)                                                                                                                                                                                                                                    
-process.RawToDigi.remove(process.ecalPreshowerDigis)                                                                                                                                                                                                                           
-process.RawToDigi.remove(process.hcalDigis)                                                                                                                                                                                                                                    
+#process.RawToDigi.remove(process.ecalDigis)                                                                                                                                                                                                                                    
+#process.RawToDigi.remove(process.ecalPreshowerDigis)                                                                                                                                                                                                                           
+#process.RawToDigi.remove(process.hcalDigis)                                                                                                                                                                                                                                    
 process.RawToDigi.remove(process.muonCSCDigis)                                                                                                                                                                                                                                 
 process.RawToDigi.remove(process.muonDTDigis)                                                                                                                                                                                                                                  
 process.RawToDigi.remove(process.muonRPCDigis)                                                                                                                                                                                                                                 
 process.RawToDigi.remove(process.castorDigis)                                                                                                                                                                                                                                  
 process.RawToDigi.remove(process.scalersRawToDigi)  
 
-process.load("VBFHiggsToInvisible.TriggerStudies.samples_L1T_Neutrino_Pt-2to20_gun_Fall13dr-tsg_PU40bx50_POSTLS162_V1-v1_GEN-SIM-RAW_cfi")
+process.load("VBFHiggsToInvisible.TriggerStudies.samples_L1T_Neutrino_Pt-2to20_gun_Fall13dr-tsg_PU40bx25_POSTLS162_V2-v1_GEN-SIM-RAW_cfi")
 
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10) )
 
 process.trgEff = cms.EDAnalyzer('L1RateEstimator',
                               
