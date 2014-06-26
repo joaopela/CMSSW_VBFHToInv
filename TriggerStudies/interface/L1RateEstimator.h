@@ -107,6 +107,9 @@ private:
   edm::InputTag m_InputTag_L1Extra_mets;
   edm::InputTag m_InputTag_L1Extra_mhts;
   edm::InputTag m_InputTag_HLTResults;
+  edm::InputTag m_InputTag_L1CaloRegionCollection;
+  edm::InputTag m_InputTag_EcalTriggerPrimitives; 
+  edm::InputTag m_InputTag_HcalTriggerPrimitives;
   
 };
 

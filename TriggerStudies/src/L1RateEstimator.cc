@@ -1,5 +1,16 @@
 #include "VBFHiggsToInvisible/TriggerStudies/interface/L1RateEstimator.h"
 
+#include "DataFormats/EcalDigi/interface/EcalTriggerPrimitiveDigi.h"
+#include "DataFormats/EcalDigi/interface/EcalDigiCollections.h"
+
+#include "DataFormats/HcalDigi/interface/HcalTriggerPrimitiveDigi.h"
+#include "DataFormats/HcalDigi/interface/HcalDigiCollections.h"
+
+#include "DataFormats/L1CaloTrigger/interface/L1CaloRegion.h"
+#include "DataFormats/L1CaloTrigger/interface/L1CaloCollections.h"
+// #include "DataFormats/L1GlobalCaloTrigger/interface/L1GctCollections.h"
+// #include "DataFormats/L1CaloTrigger/interface/L1CaloRegionDetId.h"
+
 #include <stdio.h>
 #include <math.h>
 
@@ -10,12 +21,16 @@ L1RateEstimator::L1RateEstimator(const edm::ParameterSet& pset){
   
   m_verbose                    = pset.getUntrackedParameter<bool>("verbose",false);
 
-  m_InputTag_L1GTReadoutRecord = pset.getParameter<InputTag>("inputTag_L1GTReadoutRecord");
-  m_InputTag_L1Extra_mets      = pset.getUntrackedParameter ("inputTag_L1Extra_mets"    ,edm::InputTag("l1extraParticles","MET"));
-  m_InputTag_L1Extra_mhts      = pset.getUntrackedParameter ("inputTag_L1Extra_mhts"    ,edm::InputTag("l1extraParticles","MHT"));
-  m_InputTag_HLTResults        = pset.getParameter<InputTag>("inputTag_HLTResults");
+  m_InputTag_L1GTReadoutRecord      = pset.getParameter<InputTag>("inputTag_L1GTReadoutRecord");
+  m_InputTag_L1Extra_mets           = pset.getUntrackedParameter ("inputTag_L1Extra_mets",InputTag("l1extraParticles","MET"));
+  m_InputTag_L1Extra_mhts           = pset.getUntrackedParameter ("inputTag_L1Extra_mhts",InputTag("l1extraParticles","MHT"));
+  m_InputTag_HLTResults             = pset.getParameter<InputTag>("inputTag_HLTResults");
+  m_InputTag_L1CaloRegionCollection = pset.getUntrackedParameter ("inputTag_L1CaloRegionCollection",InputTag("gctDigis"));
+  m_InputTag_EcalTriggerPrimitives  = pset.getUntrackedParameter ("inputTag_EcalTriggerPrimitives", InputTag("ecalDigis","EcalTriggerPrimitives"));
+  m_InputTag_HcalTriggerPrimitives  = pset.getUntrackedParameter ("inputTag_HcalTriggerPrimitives", InputTag("HCALDigis"));
   
   m_selHLTrigger               = pset.getParameter<std::vector<string> >("selHLTrigger");
+  
   for(unsigned i=0; i<m_selHLTrigger.size(); i++){
     cout << "Looking for HLT: " << m_selHLTrigger[i] << endl;
   }  
@@ -63,6 +78,33 @@ void L1RateEstimator::analyze(const edm::Event& iEvent, const edm::EventSetup& i
   
   edm::Handle<l1extra::L1EtMissParticleCollection> mhts;
   iEvent.getByLabel(m_InputTag_L1Extra_mhts,mhts);
+  
+  // RCT regions                                                                                                                            
+  edm::Handle<L1CaloRegionCollection> caloRegions;
+  iEvent.getByLabel(m_InputTag_L1CaloRegionCollection, caloRegions );
+  if(!caloRegions.isValid()){
+        cout << "=> Got RCT Regions!" << endl;    
+//     for(unsigned int iRCT=0;iRCT < caloRegions->size(); ++iRCT ) {
+
+//       double RCTRegionET  = 0.5*caloRegions->at(iRCT).et();
+//       double RCTiEta      = caloRegions->at(iRCT).gctEta();
+//       double RCTiPhi      = caloRegions->at(iRCT).gctPhi();
+//     }
+  }
+  
+  edm::Handle < EcalTrigPrimDigiCollection > lEcalDigiHandle;
+  iEvent.getByLabel(m_InputTag_EcalTriggerPrimitives,lEcalDigiHandle);
+  if(!lEcalDigiHandle.isValid()){
+    cout << "=> Got ECAL TT!" << endl;    
+  }
+  
+  
+  edm::Handle < HcalTrigPrimDigiCollection > lHcalDigiHandle;
+  iEvent.getByLabel( m_InputTag_HcalTriggerPrimitives, lHcalDigiHandle );
+  if(!lHcalDigiHandle.isValid()){
+    cout << "=> Got HCAL TT!" << endl;
+  }
+
   
   if(gtReadoutRecordData.isValid()){
     
