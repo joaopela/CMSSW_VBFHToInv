@@ -61,13 +61,19 @@ int main(){
   vector<string> selL1T;
   selL1T.push_back("L1_ETM30");
   selL1T.push_back("L1_ETM36");
+  selL1T.push_back("L1_ETM40");
   selL1T.push_back("L1_ETM50");
   selL1T.push_back("L1_ETM70");
   selL1T.push_back("L1_ETM100");
+  selL1T.push_back("L1_HTT150");
+  selL1T.push_back("L1_HTT175");
+  selL1T.push_back("L1_HTT200");  
   
   vector<string> selHLT;
   selHLT.push_back("HLT_DiPFJet40_PFMETnoMu65_MJJ800VBF_AllJets_v");
   selHLT.push_back("HLT_DiPFJet40_PFMETnoMu65_MJJ600VBF_LeadingJets_v");
+  selHLT.push_back("HLT_DiPFJet40_PFMETnoMu75_MJJ800VBF_AllJets_v");
+  selHLT.push_back("HLT_DiPFJet40_PFMETnoMu75_MJJ600VBF_LeadingJets_v");
   selHLT.push_back("HLT_DiJet20_MJJ650_AllJets_DEta3p5_HT120_VBF_v");
   selHLT.push_back("HLT_DiJet30_MJJ700_AllJets_DEta3p5_VBF_v");
   selHLT.push_back("HLT_DiJet35_MJJ650_AllJets_DEta3p5_VBF_v");
