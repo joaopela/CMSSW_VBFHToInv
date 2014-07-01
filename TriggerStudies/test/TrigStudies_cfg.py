@@ -4,7 +4,7 @@ process = cms.Process("TrgEff")
 
 ################################################################
 process.load("FWCore.MessageService.MessageLogger_cfi")
-process.MessageLogger.cerr.FwkReport.reportEvery = 1000
+process.MessageLogger.cerr.FwkReport.reportEvery = 100
 
 process.options = cms.untracked.PSet(
     wantSummary = cms.untracked.bool( True )
@@ -23,43 +23,65 @@ process.load("L1Trigger.L1ExtraFromDigis.l1extraParticles_cff")
 
 # standard unpacking sequence
 process.load("Configuration.StandardSequences.RawToDigi_cff")
-#process.RawToDigi.remove(process.csctfDigis)
-#process.RawToDigi.remove(process.dttfDigis)
+process.RawToDigi.remove(process.csctfDigis)
+process.RawToDigi.remove(process.dttfDigis)
 #process.RawToDigi.remove(process.gctDigis)
 #process.RawToDigi.remove(process.gtDigis)
 #process.RawToDigi.remove(process.gtEvmDigis)
-#process.RawToDigi.remove(process.siPixelDigis)
-#process.RawToDigi.remove(process.siStripDigis)
+process.RawToDigi.remove(process.siPixelDigis)
+process.RawToDigi.remove(process.siStripDigis)
 #process.RawToDigi.remove(process.ecalDigis)
 #process.RawToDigi.remove(process.ecalPreshowerDigis)
 #process.RawToDigi.remove(process.hcalDigis)
-#process.RawToDigi.remove(process.muonCSCDigis)
-#process.RawToDigi.remove(process.muonDTDigis)
-#process.RawToDigi.remove(process.muonRPCDigis)
+process.RawToDigi.remove(process.muonCSCDigis)
+process.RawToDigi.remove(process.muonDTDigis)
+process.RawToDigi.remove(process.muonRPCDigis)
 #process.RawToDigi.remove(process.castorDigis)
-#process.RawToDigi.remove(process.scalersRawToDigi)
+process.RawToDigi.remove(process.scalersRawToDigi)
+
+# In MC HCAL need to be re-run as there is no TPG information stored
+process.load("SimCalorimetry.HcalSimProducers.hcalUnsuppressedDigis_cfi")
+process.load("SimCalorimetry.HcalTrigPrimProducers.hcaltpdigi_cff")
+
+from L1Trigger.RegionalCaloTrigger.rctDigis_cfi import rctDigis
+from L1Trigger.GlobalCaloTrigger.gctDigis_cfi import gctDigis
+
+process.hcalReEmulDigis = process.simHcalTriggerPrimitiveDigis.clone()
+process.rctReEmulDigis  = rctDigis.clone()
+process.gctReEmulDigis  = gctDigis.clone()
+
+process.hcalReEmulDigis.inputLabel = cms.VInputTag(cms.InputTag('hcalDigis'), cms.InputTag('hcalDigis'))
+process.HcalTPGCoderULUT.LUTGenerationMode = cms.bool(False)
+
+process.rctReEmulDigis.ecalDigis = cms.VInputTag( cms.InputTag( 'ecalDigis:EcalTriggerPrimitives' ) )
+process.rctReEmulDigis.hcalDigis = cms.VInputTag( cms.InputTag( 'hcalReEmulDigis' ) )
+
+process.gctReEmulDigis.inputLabel  = cms.InputTag("rctReEmulDigis")
+
+
+
+
+
 
 process.source = cms.Source("PoolSource",
   fileNames = cms.untracked.vstring(
     "file:/afs/cern.ch/user/p/pela/go/ws/public/samples/Neutrino_Pt-2to20_gun/GEN-SIM-RAW/00114E14-0877-E311-B33A-003048678F74.root",
   ),
 )
-
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 
 ################################################################
 ### Output files
 ################################################################
-#from PhysicsTools.PatAlgos.patEventContent_cff import patEventContent
-process.out = cms.OutputModule("PoolOutputModule",
-                               fileName = cms.untracked.string('file:test.root'),
-                               SelectEvents   = cms.untracked.PSet( SelectEvents = cms.vstring('p') ),             
-                               outputCommands = cms.untracked.vstring('keep *')
-                               )
+#process.out = cms.OutputModule("PoolOutputModule",
+                               #fileName = cms.untracked.string('file:test.root'),
+                               #SelectEvents   = cms.untracked.PSet( SelectEvents = cms.vstring('p') ),             
+                               #outputCommands = cms.untracked.vstring('keep *')
+                               #)
 
 process.trgEff = cms.EDAnalyzer('TrigStudies',
                               
-  verbose                    = cms.untracked.bool(True),
+  verbose                    = cms.untracked.bool(False),
   inputTag_L1GTReadoutRecord = cms.InputTag("gtDigis"),
   
   inputTag_HLTResults        = cms.InputTag("TriggerResults::HLT"),
@@ -75,8 +97,11 @@ process.trgEff = cms.EDAnalyzer('TrigStudies',
 
 process.p = cms.Path(
   process.RawToDigi*
+  process.hcalReEmulDigis*
+  process.rctReEmulDigis*
+  process.gctReEmulDigis*
   process.l1extraParticles*
   process.trgEff
 )
 
-process.e = cms.EndPath(process.out)
+#process.e = cms.EndPath(process.out)
