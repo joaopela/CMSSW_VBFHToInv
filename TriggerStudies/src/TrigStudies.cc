@@ -26,57 +26,39 @@ using namespace edm;
 
 TrigStudies::TrigStudies(const edm::ParameterSet& pset){
   
-  m_verbose                    = pset.getUntrackedParameter<bool>("verbose",false);
 
+  // Getting InputTag from configuration file
   m_InputTag_L1GTReadoutRecord      = pset.getParameter<InputTag>("inputTag_L1GTReadoutRecord");
   m_InputTag_L1Extra_mets           = pset.getUntrackedParameter ("inputTag_L1Extra_mets",InputTag("l1extraParticles","MET"));
   m_InputTag_L1Extra_mhts           = pset.getUntrackedParameter ("inputTag_L1Extra_mhts",InputTag("l1extraParticles","MHT"));
   m_InputTag_HLTResults             = pset.getParameter<InputTag>("inputTag_HLTResults");
   m_InputTag_L1CaloRegionCollection = pset.getUntrackedParameter ("inputTag_L1CaloRegionCollection",InputTag("gctDigis"));
   m_InputTag_EcalTriggerPrimitives  = pset.getUntrackedParameter ("inputTag_EcalTriggerPrimitives", InputTag("ecalDigis","EcalTriggerPrimitives"));
-  m_InputTag_HcalTriggerPrimitives  = pset.getUntrackedParameter ("inputTag_HcalTriggerPrimitives", InputTag("hcalDigis"));
+  m_InputTag_HcalTriggerPrimitives  = pset.getUntrackedParameter ("inputTag_HcalTriggerPrimitives", InputTag("valHcalTriggerPrimitiveDigis"));
 
-  m_selHLTrigger               = pset.getParameter<std::vector<string> >("selHLTrigger");
+  // Getting other parameters from configuration file
+  m_verbose      = pset.getUntrackedParameter<bool>("verbose",false);
+  m_selHLTrigger = pset.getParameter<std::vector<string> >("selHLTrigger");
   
-  for(unsigned i=0; i<m_selHLTrigger.size(); i++){
-    cout << "Looking for HLT: " << m_selHLTrigger[i] << endl;
-  }  
-
+  // Initialising other variables 
   currentRunNumber = 0;
-
   fOut = new TFile("TrigStudiesResults.root","RECREATE");
-  
-  hL1ETM = new TH1D("L1ETM","L1ETM",500,  0,500); hL1ETM->SetDirectory(fOut);
-  hL1HTT = new TH1D("L1HTT","L1HTT",500,  0,500); hL1HTT->SetDirectory(fOut);
-  
-  hRCTRegion_Et = new TH1D("hRCTRegion_Et","hRCTRegion_Et",1024,  0,1024); hRCTRegion_Et->SetDirectory(fOut);
-  hEcalTT_Et    = new TH1D("hEcalTT_Et","hEcalTT_Et",      1024,  0,1024); hEcalTT_Et   ->SetDirectory(fOut);
-  hHcalTT_Et    = new TH1D("hHcalTT_Et","hHcalTT_Et",      1024,  0,1024); hHcalTT_Et   ->SetDirectory(fOut);  
+
 }
 
 TrigStudies::~TrigStudies(){
-  
-  unsigned nRuns = m_nEvents.size();
-  TH1D* hRuns = new TH1D("Runs","Runs",nRuns,-0.5,nRuns-0.5);
-  hRuns->SetDirectory(fOut);
-  
-  int bin=0;
-  for(map<int,unsigned>::iterator i=m_nEvents.begin(); i!=m_nEvents.end(); i++){
-    hRuns->GetXaxis()->SetBinLabel(bin+1,Form("%d",i->first));
-    hRuns->SetBinContent(bin+1,i->second);
-    bin++;
-  }
-  
   fOut->Write();
 }
 
 void TrigStudies::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup){
-  
-  currentRunNumber = iEvent.run();
 
-  m_nEvents[currentRunNumber]++;
-  TH1D* h = m_l1Counts[currentRunNumber];
-        
+  hEventCount->Fill(1);
+
+  nEcalTT_NSaturated    = 0;
+  nHcalTT_NSaturated    = 0;
+  nRCTRegion_NSaturated = 0;
+  nTotal_NSaturated     = 0;
+  
   // Getting Final Decision Logic (FDL) Data from GT
   Handle<L1GlobalTriggerReadoutRecord> gtReadoutRecordData;
   iEvent.getByLabel(m_InputTag_L1GTReadoutRecord, gtReadoutRecordData);
@@ -100,8 +82,9 @@ void TrigStudies::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetu
   iSetup.get<L1CaloHcalScaleRcd>().get( lHcalScaleHandle );
   
   if(caloRegions.isValid()){
-    cout << "=> Got RCT Regions! They are " << caloRegions->size() << endl;    
-     for(unsigned int iRCT=0;iRCT < caloRegions->size(); ++iRCT ) {
+    if(m_verbose){cout << "=> Got RCT Regions! They are " << caloRegions->size() << endl;}
+     
+      for(unsigned int iRCT=0;iRCT < caloRegions->size(); ++iRCT ) {
 
        double RCTRegionET  = 0.5*caloRegions->at(iRCT).et();
 //        double RCTiEta      = caloRegions->at(iRCT).gctEta();
@@ -109,26 +92,40 @@ void TrigStudies::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetu
        
        //printf("RCT i=%d eta=%8.4f phi=%8.4f et=%8.4f",iRCT,RCTiEta,RCTiPhi,RCTRegionET);
        hRCTRegion_Et->Fill(RCTRegionET);
+       if(RCTRegionET==511){
+         cout << "=> Found saturated RCT";
+         nRCTRegion_NSaturated++;
+         nTotal_NSaturated++;
+       }
      }
   }
   
   if(lEcalDigiHandle.isValid()){
+    if(m_verbose){cout << "=> Got ECAL TT! They are " << lEcalDigiHandle->size() << endl;}
     
-    cout << "=> Got ECAL TT! They are " << lEcalDigiHandle->size() << endl;
-    for ( EcalTrigPrimDigiCollection::const_iterator lEcalTPItr = lEcalDigiHandle->begin(  ); lEcalTPItr != lEcalDigiHandle->end(  ); ++lEcalTPItr ){
+    for ( EcalTrigPrimDigiCollection::const_iterator lEcalTPItr = lEcalDigiHandle->begin(); lEcalTPItr != lEcalDigiHandle->end(); ++lEcalTPItr ){
       int32_t lET = 4 * lEcalScaleHandle->et( lEcalTPItr->compressedEt(), abs( lEcalTPItr->id().ieta() ),  ( lEcalTPItr->id().ieta() > 0 ? +1 : -1 ) );                     
       //cout << "ECAL TT et="<<lET<<endl; 
       hEcalTT_Et->Fill(lET);
+      if(lET==255){
+        cout << "=> Found saturated ECAL TT";
+        nEcalTT_NSaturated++;
+        nTotal_NSaturated++;
+      }
     }
   }
   
   if(lHcalDigiHandle.isValid()){
-    cout << "=> Got HCAL TT! They are " << lHcalDigiHandle->size() << endl;
+    if(m_verbose){cout << "=> Got HCAL TT! They are " << lHcalDigiHandle->size() << endl;}
     
     for ( HcalTrigPrimDigiCollection::const_iterator lHcalTPItr = lHcalDigiHandle->begin(); lHcalTPItr != lHcalDigiHandle->end(); ++lHcalTPItr ){
       int32_t lET = 4 * lHcalScaleHandle->et( lHcalTPItr->SOI_compressedEt(), abs( lHcalTPItr->id().ieta() ),  ( lHcalTPItr->id().ieta() > 0 ? +1 : -1 ) );                 
-      cout << "HCAL TT et="<<lET<<endl;
       hHcalTT_Et->Fill(lET);
+      if(lET==255){
+        cout << "=> Found saturated HCAL TT";
+        nHcalTT_NSaturated++;
+        nTotal_NSaturated++;
+      }
     }
   }
 
@@ -145,7 +142,7 @@ void TrigStudies::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetu
         const L1GtFdlWord* fdl = &(gtFdlVectorData[a]);
           
         for(int bit=0; bit<128; bit++){
-          if(fdl->gtDecisionWord()[bit]){h->Fill(bit);}
+          if(fdl->gtDecisionWord()[bit]){hL1AlgoCounts->Fill(bit);}
         }
       }
     }
@@ -167,15 +164,20 @@ void TrigStudies::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetu
   
   Handle<TriggerResults> hltresults;
   iEvent.getByLabel(m_InputTag_HLTResults, hltresults);
-  
-  TH1D* cHLT = m_hltCounts[currentRunNumber];
-  
+    
   for(unsigned i=0; i<m_selHLTrigger.size(); i++){
     
     string pName = m_selHLTrigger[i];
     
-    if(testTrigger(iEvent,hltresults,pName)){cHLT->Fill(pName.c_str(),1);}
+    if(testTrigger(iEvent,hltresults,pName)){hHLTAlgoCounts->Fill(pName.c_str(),1);}
   }
+  
+  // Filling saturation counts
+  hEcalTT_NSaturated   ->Fill(nEcalTT_NSaturated);
+  hHcalTT_NSaturated   ->Fill(nHcalTT_NSaturated);
+  hRCTRegion_NSaturated->Fill(nRCTRegion_NSaturated);
+  hTotal_NSaturated    ->Fill(nTotal_NSaturated);
+  
 }
 
 void TrigStudies::beginJob(){}
@@ -184,14 +186,46 @@ void TrigStudies::endJob(){}
 
 void TrigStudies::beginRun(edm::Run const& iRun, edm::EventSetup const& iSetup){
   
-  currentRunNumber = iRun.run();
+  currentRunNumber    = iRun.run();
+  double nSelHLTAlgos = m_selHLTrigger.size();
   
-  string hName = Form("L1AlgoCounts_Run%d",currentRunNumber);
-  m_nEvents [currentRunNumber] = 0;
+  TDirectory* runDir = fOut->mkdir(Form("Run_%d",currentRunNumber));
   
-  TH1D* h = new TH1D(hName.c_str(),hName.c_str(),128,-0.5,127.5);
-  h->SetDirectory(fOut);
-  m_l1Counts[currentRunNumber] = h;
+  // General plots
+  hEventCount    = new TH1D("EventCount",   "EventCount"   ,   1, 0.5,  1.5); hEventCount  ->SetDirectory(runDir);
+
+  hEcalTT_NSaturated    = new TH1D("hEcalTT_NSaturated   ","hEcalTT_NSaturated   ",11,-0.5,10.5); hEcalTT_NSaturated   ->SetDirectory(runDir);
+  hHcalTT_NSaturated    = new TH1D("hHcalTT_NSaturated   ","hHcalTT_NSaturated   ",11,-0.5,10.5); hHcalTT_NSaturated   ->SetDirectory(runDir);
+  hRCTRegion_NSaturated = new TH1D("hRCTRegion_NSaturated","hRCTRegion_NSaturated",11,-0.5,10.5); hRCTRegion_NSaturated->SetDirectory(runDir);
+  hTotal_NSaturated     = new TH1D("hTotal_NSaturated    ","hTotal_NSaturated    ",11,-0.5,10.5); hTotal_NSaturated    ->SetDirectory(runDir);
+  
+  // TPG Plots
+  hEcalTT_Et     = new TH1D("hEcalTT_Et",   "hEcalTT_Et",   1024,   0, 1024); hEcalTT_Et   ->SetDirectory(runDir);
+  hHcalTT_Et     = new TH1D("hHcalTT_Et",   "hHcalTT_Et",   1024,   0, 1024); hHcalTT_Et   ->SetDirectory(runDir);     
+
+  // RCT Plots
+  hRCTRegion_Et  = new TH1D("hRCTRegion_Et","hRCTRegion_Et",1024,   0, 1024); hRCTRegion_Et->SetDirectory(runDir);
+  
+  // L1T Plots
+  hL1AlgoCounts  = new TH1D("L1AlgoCounts", "L1AlgoCounts",  128,-0.5,127.5); hL1AlgoCounts->SetDirectory(runDir);
+  hL1ETM         = new TH1D("L1ETM","L1ETM",500,  0,500);                     hL1ETM->SetDirectory(runDir);
+  hL1HTT         = new TH1D("L1HTT","L1HTT",500,  0,500);                     hL1HTT->SetDirectory(runDir);
+  
+  // HLT Plots
+  hHLTAlgoCounts     = new TH1D("HLTAlgoCounts","HLTAlgoCounts",nSelHLTAlgos,-0.5,nSelHLTAlgos-0.5); hHLTAlgoCounts->SetDirectory(runDir);
+  hHLTAlgoCounts_ETM = new TH1D("HLTAlgoCounts_ETM","HLTAlgoCounts_ETM",nSelHLTAlgos,-0.5,nSelHLTAlgos-0.5);
+  hHLTAlgoCounts_HTT = new TH1D("HLTAlgoCounts_HTT","HLTAlgoCounts_HTT",nSelHLTAlgos,-0.5,nSelHLTAlgos-0.5);
+  hHLTAlgoCounts_Mix = new TH1D("HLTAlgoCounts_Mix","HLTAlgoCounts_Mix",nSelHLTAlgos,-0.5,nSelHLTAlgos-0.5);
+  
+  // "HLT_DiPFJet40_PFMETnoMu65_MJJ800VBF_AllJets_v",     L1ETM40
+  // "HLT_DiPFJet40_PFMETnoMu65_MJJ600VBF_LeadingJets_v"  L1ETM40
+  // "HLT_DiPFJet40_PFMETnoMu75_MJJ800VBF_AllJets_v"      L1ETM40
+  // "HLT_DiPFJet40_PFMETnoMu75_MJJ600VBF_LeadingJets_v"  L1ETM40                                      
+  // "HLT_DiJet20_MJJ650_AllJets_DEta3p5_HT120_VBF_v"     L1HTT200 Or L1HTT175 Or ETM40 Or ETM50
+  // "HLT_DiJet30_MJJ700_AllJets_DEta3p5_VBF_v"           L1HTT200 Or L1HTT175 Or ETM40 Or ETM50
+  // "HLT_DiJet35_MJJ650_AllJets_DEta3p5_VBF_v"           L1HTT200 Or L1HTT175 Or L1HTT150 Or ETM40
+  // "HLT_DiJet35_MJJ700_AllJets_DEta3p5_VBF_v"           L1HTT200 Or L1HTT175 Or ETM40
+  // "HLT_DiJet35_MJJ750_AllJets_DEta3p5_VBF_v"           L1HTT200 Or L1HTT175 Or ETM40
   
   ESHandle<L1GtTriggerMenu> menuRcd;
   iSetup.get<L1GtTriggerMenuRcd>().get(menuRcd);
@@ -199,16 +233,11 @@ void TrigStudies::beginRun(edm::Run const& iRun, edm::EventSetup const& iSetup){
     
   // Filling Alias-Bit Map
   for (CItAlgo algo = menu->gtAlgorithmAliasMap().begin(); algo!=menu->gtAlgorithmAliasMap().end(); ++algo){
-    h->GetXaxis()->SetBinLabel((algo->second).algoBitNumber()+1,(algo->second).algoAlias().c_str());
+    hL1AlgoCounts->GetXaxis()->SetBinLabel((algo->second).algoBitNumber()+1,(algo->second).algoAlias().c_str());
   }
-  
-  hName = Form("HLTAlgoCounts_Run%d",currentRunNumber);
-  h     = new TH1D(hName.c_str(),hName.c_str(),m_selHLTrigger.size(),-0.5,m_selHLTrigger.size()-0.5);
-  h->SetDirectory(fOut);
-  m_hltCounts[currentRunNumber] = h;
-  
+    
   for(unsigned i=0; i<m_selHLTrigger.size(); i++){
-    h->GetXaxis()->SetBinLabel(i+1,m_selHLTrigger[i].c_str());
+    hHLTAlgoCounts->GetXaxis()->SetBinLabel(i+1,m_selHLTrigger[i].c_str());
     cout << "Looking for HLT: " << m_selHLTrigger[i] << endl;
   }    
 }
@@ -219,6 +248,7 @@ void TrigStudies::beginLuminosityBlock(edm::LuminosityBlock const&, edm::EventSe
 
 void TrigStudies::endLuminosityBlock(edm::LuminosityBlock const&, edm::EventSetup const&){}
 
+// TODO: This function can be optimised by caching the trigger names once per run (not once per event)
 bool TrigStudies::testTrigger(const edm::Event& iEvent, edm::Handle<edm::TriggerResults> iHLT, string iTriggerName){
   
   bool Triggered = false;
