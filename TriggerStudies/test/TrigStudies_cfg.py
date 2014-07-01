@@ -4,47 +4,60 @@ process = cms.Process("TrgEff")
 
 ################################################################
 process.load("FWCore.MessageService.MessageLogger_cfi")
-process.MessageLogger.cerr.FwkReport.reportEvery = 100000
+process.MessageLogger.cerr.FwkReport.reportEvery = 1000
 
 process.options = cms.untracked.PSet(
     wantSummary = cms.untracked.bool( True )
 )
 ################################################################
 
-process.load("Configuration.StandardSequences.Geometry_cff")
+process.load("Configuration.Geometry.GeometryExtended2015Reco_cff")
+process.load("Configuration.StandardSequences.MagneticField_38T_PostLS1_cff")
+
 process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
-
-from Configuration.AlCa.autoCond import autoCond
-process.GlobalTag.globaltag = cms.string( 'POSTLS162_V2::All' )
-process.load("Configuration.StandardSequences.MagneticField_cff")
-
-# standard unpacking sequence
-process.load("Configuration.StandardSequences.RawToDigi_cff")                                                                                                                                                                                                                  
+process.GlobalTag.globaltag = cms.string( 'POSTLS162_V6::All' )
+#process.GlobalTag.globaltag = cms.string( 'POSTLS162_V2::All' )
 
 # For producing L1 Extra objects 
 process.load("L1Trigger.L1ExtraFromDigis.l1extraParticles_cff")
 
-process.RawToDigi.remove(process.csctfDigis)                                                                                                                                                                                                                                   
-process.RawToDigi.remove(process.dttfDigis)                                                                                                                                                                                                                                    
-#process.RawToDigi.remove(process.gctDigis)                                                                                                                                                                                                                                     
-#process.RawToDigi.remove(process.gtDigis)                                                                                                                                                                                                                                     
-process.RawToDigi.remove(process.gtEvmDigis)                                                                                                                                                                                                                                   
-process.RawToDigi.remove(process.siPixelDigis)                                                                                                                                                                                                                                 
-process.RawToDigi.remove(process.siStripDigis)                                                                                                                                                                                                                                 
-#process.RawToDigi.remove(process.ecalDigis)                                                                                                                                                                                                                                    
-#process.RawToDigi.remove(process.ecalPreshowerDigis)                                                                                                                                                                                                                           
-#process.RawToDigi.remove(process.hcalDigis)                                                                                                                                                                                                                                    
-process.RawToDigi.remove(process.muonCSCDigis)                                                                                                                                                                                                                                 
-process.RawToDigi.remove(process.muonDTDigis)                                                                                                                                                                                                                                  
-process.RawToDigi.remove(process.muonRPCDigis)                                                                                                                                                                                                                                 
-process.RawToDigi.remove(process.castorDigis)                                                                                                                                                                                                                                  
-process.RawToDigi.remove(process.scalersRawToDigi)  
+# standard unpacking sequence
+process.load("Configuration.StandardSequences.RawToDigi_cff")
+#process.RawToDigi.remove(process.csctfDigis)
+#process.RawToDigi.remove(process.dttfDigis)
+#process.RawToDigi.remove(process.gctDigis)
+#process.RawToDigi.remove(process.gtDigis)
+#process.RawToDigi.remove(process.gtEvmDigis)
+#process.RawToDigi.remove(process.siPixelDigis)
+#process.RawToDigi.remove(process.siStripDigis)
+#process.RawToDigi.remove(process.ecalDigis)
+#process.RawToDigi.remove(process.ecalPreshowerDigis)
+#process.RawToDigi.remove(process.hcalDigis)
+#process.RawToDigi.remove(process.muonCSCDigis)
+#process.RawToDigi.remove(process.muonDTDigis)
+#process.RawToDigi.remove(process.muonRPCDigis)
+#process.RawToDigi.remove(process.castorDigis)
+#process.RawToDigi.remove(process.scalersRawToDigi)
 
-process.load("VBFHiggsToInvisible.TriggerStudies.samples_L1T_Neutrino_Pt-2to20_gun_Fall13dr-tsg_PU40bx25_POSTLS162_V2-v1_GEN-SIM-RAW_cfi")
+process.source = cms.Source("PoolSource",
+  fileNames = cms.untracked.vstring(
+    "file:/afs/cern.ch/user/p/pela/go/ws/public/samples/Neutrino_Pt-2to20_gun/GEN-SIM-RAW/00114E14-0877-E311-B33A-003048678F74.root",
+  ),
+)
 
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10) )
 
-process.trgEff = cms.EDAnalyzer('L1RateEstimator',
+################################################################
+### Output files
+################################################################
+#from PhysicsTools.PatAlgos.patEventContent_cff import patEventContent
+process.out = cms.OutputModule("PoolOutputModule",
+                               fileName = cms.untracked.string('file:test.root'),
+                               SelectEvents   = cms.untracked.PSet( SelectEvents = cms.vstring('p') ),             
+                               outputCommands = cms.untracked.vstring('keep *')
+                               )
+
+process.trgEff = cms.EDAnalyzer('TrigStudies',
                               
   verbose                    = cms.untracked.bool(True),
   inputTag_L1GTReadoutRecord = cms.InputTag("gtDigis"),
@@ -60,5 +73,10 @@ process.trgEff = cms.EDAnalyzer('L1RateEstimator',
   
 )
 
-process.p = cms.Path(process.RawToDigi+process.l1extraParticles+process.trgEff)
+process.p = cms.Path(
+  process.RawToDigi*
+  process.l1extraParticles*
+  process.trgEff
+)
 
+process.e = cms.EndPath(process.out)
