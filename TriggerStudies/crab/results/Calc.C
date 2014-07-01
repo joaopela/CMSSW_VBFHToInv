@@ -74,7 +74,7 @@ int main(){
   selHLT.push_back("HLT_DiJet35_MJJ700_AllJets_DEta3p5_VBF_v");  
   selHLT.push_back("HLT_DiJet35_MJJ750_AllJets_DEta3p5_VBF_v");  
     
-  printf("|%20s| %8s | %8s | %8s |\n","L1T","PU20bx25","PU40bx50","PU40bx25");
+  printf("%20s & %8s & %8s & %8s &\n","L1T","PU20bx25","PU40bx50","PU40bx25");
   for(unsigned i=0; i<selL1T.size(); i++){
     printf("|%20s| %8.6f | %8.6f | %8.6f |\n",selL1T[i].c_str(),
            l1tPU20bx25[selL1T[i]],
@@ -83,7 +83,7 @@ int main(){
   }
   
   printf("\n\n");
-  printf("|%50s| %8s | %8s | %8s |\n","HLT","PU20bx25","PU40bx50","PU40bx25");
+  printf("%50s & %8s & %8s & %8s \\\\\n","HLT","PU20bx25","PU40bx50","PU40bx25");
   for(unsigned i=0; i<selHLT.size(); i++){
     printf("|%50s| %8.6f | %8.6f | %8.6f |\n",selHLT[i].c_str(),
            hltPU20bx25[selHLT[i]],
@@ -93,40 +93,40 @@ int main(){
   
   //____________________________________________________________
   printf("\n\n");
-  printf("|%20s| %8s | %8s | %8s |\n","L1T","PU20bx25","PU40bx50","PU40bx25");
+  printf("%20s & %8s & %8s & %8s \\\\\n","L1T","PU20bx25","PU40bx50","PU40bx25");
   for(unsigned i=0; i<selL1T.size(); i++){
     printf("|%20s| %8.6f | %8.6f | %8.6f |\n",selL1T[i].c_str(),
-           l1tPU20bx25[selL1T[i]]*ratePerBunch,
-           l1tPU40bx50[selL1T[i]]*ratePerBunch,
-           l1tPU40bx25[selL1T[i]]*ratePerBunch);    
+           l1tPU20bx25[selL1T[i]]*double(ratePerBunch),
+           l1tPU40bx50[selL1T[i]]*double(ratePerBunch),
+           l1tPU40bx25[selL1T[i]]*double(ratePerBunch));    
   }
   
   printf("\n\n");
-  printf("|%50s| %8s | %8s | %8s |\n","HLT","PU20bx25","PU40bx50","PU40bx25");
+  printf("%50s & %8s & %8s & %8s \\\\\n","HLT","PU20bx25","PU40bx50","PU40bx25");
   for(unsigned i=0; i<selHLT.size(); i++){
     printf("|%50s| %8.6f | %8.6f | %8.6f |\n",selHLT[i].c_str(),
-           hltPU20bx25[selHLT[i]]*ratePerBunch,
-           hltPU40bx50[selHLT[i]]*ratePerBunch,
-           hltPU40bx25[selHLT[i]]*ratePerBunch); 
+           hltPU20bx25[selHLT[i]]*double(ratePerBunch),
+           hltPU40bx50[selHLT[i]]*double(ratePerBunch),
+           hltPU40bx25[selHLT[i]]*double(ratePerBunch)); 
   }
   
   //____________________________________________________________
   printf("\n\n");
-  printf("|%20s| %10s | %10s | %10s |\n","L1T","PU20bx25","PU40bx50","PU40bx25");
+  printf("%20s & %10s & %10s & %10s \\\\\n","L1T","PU20bx25","PU40bx50","PU40bx25");
   for(unsigned i=0; i<selL1T.size(); i++){
     printf("|%20s| %10.2f | %10.2f | %10.2f |\n",selL1T[i].c_str(),
-           l1tPU20bx25[selL1T[i]]*ratePerBunch*nMaxBunch25ns,
-           l1tPU40bx50[selL1T[i]]*ratePerBunch*nMaxBunch50ns,
-           l1tPU40bx25[selL1T[i]]*ratePerBunch*nMaxBunch25ns);    
+           l1tPU20bx25[selL1T[i]]*double(ratePerBunch)*double(nMaxBunch25ns),
+           l1tPU40bx50[selL1T[i]]*double(ratePerBunch)*double(nMaxBunch50ns),
+           l1tPU40bx25[selL1T[i]]*double(ratePerBunch)*double(nMaxBunch25ns));    
   }
   
   printf("\n\n");
-  printf("|%50s| %8s | %8s | %8s |\n","HLT","PU20bx25","PU40bx50","PU40bx25");
+  printf("%50s & %8s & %8s & %8s \\\\\n","HLT","PU20bx25","PU40bx50","PU40bx25");
   for(unsigned i=0; i<selHLT.size(); i++){
     printf("|%50s| %8.2f | %8.2f | %8.2f |\n",selHLT[i].c_str(),
-           hltPU20bx25[selHLT[i]]*ratePerBunch*nMaxBunch25ns,
-           hltPU40bx50[selHLT[i]]*ratePerBunch*nMaxBunch50ns,
-           hltPU40bx25[selHLT[i]]*ratePerBunch*nMaxBunch25ns); 
+           hltPU20bx25[selHLT[i]]*double(ratePerBunch)*double(nMaxBunch25ns),
+           hltPU40bx50[selHLT[i]]*double(ratePerBunch)*double(nMaxBunch50ns),
+           hltPU40bx25[selHLT[i]]*double(ratePerBunch)*double(nMaxBunch25ns)); 
   }
   
   
