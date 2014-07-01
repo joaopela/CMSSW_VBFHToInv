@@ -40,32 +40,36 @@ process.RawToDigi.remove(process.muonRPCDigis)
 process.RawToDigi.remove(process.scalersRawToDigi)
 
 # In MC HCAL need to be re-run as there is no TPG information stored
-process.load("SimCalorimetry.HcalSimProducers.hcalUnsuppressedDigis_cfi")
-process.load("SimCalorimetry.HcalTrigPrimProducers.hcaltpdigi_cff")
+#process.load("SimCalorimetry.HcalSimProducers.hcalUnsuppressedDigis_cfi")
+#process.load("SimCalorimetry.HcalTrigPrimProducers.hcaltpdigi_cff")
 
-from L1Trigger.RegionalCaloTrigger.rctDigis_cfi import rctDigis
-from L1Trigger.GlobalCaloTrigger.gctDigis_cfi import gctDigis
+#from L1Trigger.RegionalCaloTrigger.rctDigis_cfi import rctDigis
+#from L1Trigger.GlobalCaloTrigger.gctDigis_cfi import gctDigis
 
-process.hcalReEmulDigis = process.simHcalTriggerPrimitiveDigis.clone()
-process.rctReEmulDigis  = rctDigis.clone()
-process.gctReEmulDigis  = gctDigis.clone()
+#process.hcalReEmulDigis = process.simHcalTriggerPrimitiveDigis.clone()
+#process.rctReEmulDigis  = rctDigis.clone()
+#process.gctReEmulDigis  = gctDigis.clone()
 
-process.hcalReEmulDigis.inputLabel = cms.VInputTag(cms.InputTag('hcalDigis'), cms.InputTag('hcalDigis'))
-process.HcalTPGCoderULUT.LUTGenerationMode = cms.bool(False)
+#process.hcalReEmulDigis.inputLabel = cms.VInputTag(cms.InputTag('hcalDigis'), cms.InputTag('hcalDigis'))
+#process.HcalTPGCoderULUT.LUTGenerationMode = cms.bool(False)
 
-process.rctReEmulDigis.ecalDigis = cms.VInputTag( cms.InputTag( 'ecalDigis:EcalTriggerPrimitives' ) )
-process.rctReEmulDigis.hcalDigis = cms.VInputTag( cms.InputTag( 'hcalReEmulDigis' ) )
+#process.rctReEmulDigis.ecalDigis = cms.VInputTag( cms.InputTag( 'ecalDigis:EcalTriggerPrimitives' ) )
+#process.rctReEmulDigis.hcalDigis = cms.VInputTag( cms.InputTag( 'hcalReEmulDigis' ) )
 
-process.gctReEmulDigis.inputLabel  = cms.InputTag("rctReEmulDigis")
-
-
+#process.gctReEmulDigis.inputLabel  = cms.InputTag("rctReEmulDigis")
 
 
+process.load("Configuration.StandardSequences.L1HwVal_cff")
+#process.load("SLHCUpgradeSimulations.L1CaloTrigger.SLHCCaloTrigger_cff")
 
+#process.load('L1TriggerConfig.GctConfigProducers.L1GctConfig_cff')
+#process.L1GctConfigProducers.CalibrationStyle = cms.string('None')
 
 process.source = cms.Source("PoolSource",
   fileNames = cms.untracked.vstring(
-    "file:/afs/cern.ch/user/p/pela/go/ws/public/samples/Neutrino_Pt-2to20_gun/GEN-SIM-RAW/00114E14-0877-E311-B33A-003048678F74.root",
+    '/store/mc/Fall13dr/VBF_HToBB_M-125_13TeV-powheg-pythia6/GEN-SIM-RAW/tsg_PU40bx25_POSTLS162_V2-v1/00000/004EE9D6-EF6C-E311-968E-848F69FD29D6.root',
+    #'/store/mc/Fall13dr/VBF_HToInv_M-125_13TeV_powheg-pythia6/GEN-SIM-RAW/tsg_PU20bx25_POSTLS162_V2-v1/00000/001A6D13-E16C-E311-BE56-00266CFAE7C4.root',
+    #"file:/afs/cern.ch/user/p/pela/go/ws/public/samples/Neutrino_Pt-2to20_gun/GEN-SIM-RAW/00114E14-0877-E311-B33A-003048678F74.root",
   ),
 )
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
@@ -87,6 +91,8 @@ process.trgEff = cms.EDAnalyzer('TrigStudies',
   inputTag_HLTResults        = cms.InputTag("TriggerResults::HLT"),
   selHLTrigger               = cms.vstring("HLT_DiPFJet40_PFMETnoMu65_MJJ800VBF_AllJets_v",
                                            "HLT_DiPFJet40_PFMETnoMu65_MJJ600VBF_LeadingJets_v",
+                                           "HLT_DiPFJet40_PFMETnoMu75_MJJ800VBF_AllJets_v",
+                                           "HLT_DiPFJet40_PFMETnoMu75_MJJ600VBF_LeadingJets_v",                                          
                                            "HLT_DiJet20_MJJ650_AllJets_DEta3p5_HT120_VBF_v",
                                            "HLT_DiJet30_MJJ700_AllJets_DEta3p5_VBF_v",
                                            "HLT_DiJet35_MJJ650_AllJets_DEta3p5_VBF_v",
@@ -97,11 +103,20 @@ process.trgEff = cms.EDAnalyzer('TrigStudies',
 
 process.p = cms.Path(
   process.RawToDigi*
-  process.hcalReEmulDigis*
-  process.rctReEmulDigis*
-  process.gctReEmulDigis*
+  #process.hcalReEmulDigis*
+  #process.rctReEmulDigis*
+  #process.gctReEmulDigis*
+  process.valRctDigis*
+  process.valGctDigis*
   process.l1extraParticles*
   process.trgEff
 )
+
+process.p.insert(1, process.valHcalTriggerPrimitiveDigis)
+from SimCalorimetry.HcalTrigPrimProducers.hcaltpdigi_cff import HcalTPGCoderULUT
+HcalTPGCoderULUT.LUTGenerationMode = cms.bool(True)
+process.valRctDigis.hcalDigis = cms.VInputTag(cms.InputTag('valHcalTriggerPrimitiveDigis'))
+#process.L1CaloTowerProducer.HCALDigis =  cms.InputTag("valHcalTriggerPrimitiveDigis")
+
 
 #process.e = cms.EndPath(process.out)
