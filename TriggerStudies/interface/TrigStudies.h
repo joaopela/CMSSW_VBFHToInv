@@ -89,15 +89,32 @@ private:
   std::map<int,TH1D*>    m_l1Counts;
   std::map<int,TH1D*>    m_hltCounts;
   
+  TH1D* hEventCount;
+  
+  TH1D* hL1AlgoCounts;
   TH1D* hL1ETM;
   TH1D* hL1HTT;
+  
+  TH1D* hHLTAlgoCounts;
+  TH1D* hHLTAlgoCounts_ETM;
+  TH1D* hHLTAlgoCounts_HTT;
+  TH1D* hHLTAlgoCounts_Mix;
+  
   TH1D* hRCTRegion_Et;
   TH1D* hEcalTT_Et;
   TH1D* hHcalTT_Et;
   
+  TH1D* hEcalTT_NSaturated;
+  TH1D* hHcalTT_NSaturated;
+  TH1D* hRCTRegion_NSaturated;
+  TH1D* hTotal_NSaturated;
+  
   bool m_verbose;
   
-  int evCount;
+  int nEcalTT_NSaturated;
+  int nHcalTT_NSaturated;
+  int nRCTRegion_NSaturated;
+  int nTotal_NSaturated;
 
   int currentRunNumber;
    
