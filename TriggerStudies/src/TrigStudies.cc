@@ -1,4 +1,4 @@
-#include "VBFHiggsToInvisible/TriggerStudies/interface/L1RateEstimator.h"
+#include "VBFHiggsToInvisible/TriggerStudies/interface/TrigStudies.h"
 
 #include "DataFormats/EcalDigi/interface/EcalTriggerPrimitiveDigi.h"
 #include "DataFormats/EcalDigi/interface/EcalDigiCollections.h"
@@ -8,6 +8,13 @@
 
 #include "DataFormats/L1CaloTrigger/interface/L1CaloRegion.h"
 #include "DataFormats/L1CaloTrigger/interface/L1CaloCollections.h"
+
+#include "CondFormats/DataRecord/interface/L1CaloEcalScaleRcd.h"
+#include "CondFormats/DataRecord/interface/L1CaloHcalScaleRcd.h"
+
+#include "CondFormats/L1TObjects/interface/L1CaloEcalScale.h"
+#include "CondFormats/L1TObjects/interface/L1CaloHcalScale.h"
+
 // #include "DataFormats/L1GlobalCaloTrigger/interface/L1GctCollections.h"
 // #include "DataFormats/L1CaloTrigger/interface/L1CaloRegionDetId.h"
 
@@ -17,7 +24,7 @@
 using namespace std;
 using namespace edm;
 
-L1RateEstimator::L1RateEstimator(const edm::ParameterSet& pset){
+TrigStudies::TrigStudies(const edm::ParameterSet& pset){
   
   m_verbose                    = pset.getUntrackedParameter<bool>("verbose",false);
 
@@ -27,8 +34,8 @@ L1RateEstimator::L1RateEstimator(const edm::ParameterSet& pset){
   m_InputTag_HLTResults             = pset.getParameter<InputTag>("inputTag_HLTResults");
   m_InputTag_L1CaloRegionCollection = pset.getUntrackedParameter ("inputTag_L1CaloRegionCollection",InputTag("gctDigis"));
   m_InputTag_EcalTriggerPrimitives  = pset.getUntrackedParameter ("inputTag_EcalTriggerPrimitives", InputTag("ecalDigis","EcalTriggerPrimitives"));
-  m_InputTag_HcalTriggerPrimitives  = pset.getUntrackedParameter ("inputTag_HcalTriggerPrimitives", InputTag("HCALDigis"));
-  
+  m_InputTag_HcalTriggerPrimitives  = pset.getUntrackedParameter ("inputTag_HcalTriggerPrimitives", InputTag("hcalDigis"));
+
   m_selHLTrigger               = pset.getParameter<std::vector<string> >("selHLTrigger");
   
   for(unsigned i=0; i<m_selHLTrigger.size(); i++){
@@ -37,16 +44,17 @@ L1RateEstimator::L1RateEstimator(const edm::ParameterSet& pset){
 
   currentRunNumber = 0;
 
-  fOut = new TFile("L1RateEstimatorResults.root","RECREATE");
+  fOut = new TFile("TrigStudiesResults.root","RECREATE");
   
   hL1ETM = new TH1D("L1ETM","L1ETM",500,  0,500); hL1ETM->SetDirectory(fOut);
   hL1HTT = new TH1D("L1HTT","L1HTT",500,  0,500); hL1HTT->SetDirectory(fOut);
   
-  
-  
+  hRCTRegion_Et = new TH1D("hRCTRegion_Et","hRCTRegion_Et",1024,  0,1024); hRCTRegion_Et->SetDirectory(fOut);
+  hEcalTT_Et    = new TH1D("hEcalTT_Et","hEcalTT_Et",      1024,  0,1024); hEcalTT_Et   ->SetDirectory(fOut);
+  hHcalTT_Et    = new TH1D("hHcalTT_Et","hHcalTT_Et",      1024,  0,1024); hHcalTT_Et   ->SetDirectory(fOut);  
 }
 
-L1RateEstimator::~L1RateEstimator(){
+TrigStudies::~TrigStudies(){
   
   unsigned nRuns = m_nEvents.size();
   TH1D* hRuns = new TH1D("Runs","Runs",nRuns,-0.5,nRuns-0.5);
@@ -62,7 +70,7 @@ L1RateEstimator::~L1RateEstimator(){
   fOut->Write();
 }
 
-void L1RateEstimator::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup){
+void TrigStudies::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup){
   
   currentRunNumber = iEvent.run();
 
@@ -78,34 +86,52 @@ void L1RateEstimator::analyze(const edm::Event& iEvent, const edm::EventSetup& i
   
   edm::Handle<l1extra::L1EtMissParticleCollection> mhts;
   iEvent.getByLabel(m_InputTag_L1Extra_mhts,mhts);
-  
-  // RCT regions                                                                                                                            
-  edm::Handle<L1CaloRegionCollection> caloRegions;
+                                                                                    
+  edm::Handle<L1CaloRegionCollection>     caloRegions;
+  edm::Handle<EcalTrigPrimDigiCollection> lEcalDigiHandle;
+  edm::Handle<HcalTrigPrimDigiCollection> lHcalDigiHandle;
   iEvent.getByLabel(m_InputTag_L1CaloRegionCollection, caloRegions );
-  if(!caloRegions.isValid()){
-        cout << "=> Got RCT Regions!" << endl;    
-//     for(unsigned int iRCT=0;iRCT < caloRegions->size(); ++iRCT ) {
+  iEvent.getByLabel(m_InputTag_EcalTriggerPrimitives,  lEcalDigiHandle);
+  iEvent.getByLabel(m_InputTag_HcalTriggerPrimitives,  lHcalDigiHandle);
+ 
+  edm::ESHandle<L1CaloEcalScale>          lEcalScaleHandle;
+  edm::ESHandle<L1CaloHcalScale>          lHcalScaleHandle;
+  iSetup.get<L1CaloEcalScaleRcd>().get( lEcalScaleHandle );
+  iSetup.get<L1CaloHcalScaleRcd>().get( lHcalScaleHandle );
+  
+  if(caloRegions.isValid()){
+    cout << "=> Got RCT Regions! They are " << caloRegions->size() << endl;    
+     for(unsigned int iRCT=0;iRCT < caloRegions->size(); ++iRCT ) {
 
-//       double RCTRegionET  = 0.5*caloRegions->at(iRCT).et();
-//       double RCTiEta      = caloRegions->at(iRCT).gctEta();
-//       double RCTiPhi      = caloRegions->at(iRCT).gctPhi();
-//     }
+       double RCTRegionET  = 0.5*caloRegions->at(iRCT).et();
+//        double RCTiEta      = caloRegions->at(iRCT).gctEta();
+//        double RCTiPhi      = caloRegions->at(iRCT).gctPhi();
+       
+       //printf("RCT i=%d eta=%8.4f phi=%8.4f et=%8.4f",iRCT,RCTiEta,RCTiPhi,RCTRegionET);
+       hRCTRegion_Et->Fill(RCTRegionET);
+     }
   }
   
-  edm::Handle < EcalTrigPrimDigiCollection > lEcalDigiHandle;
-  iEvent.getByLabel(m_InputTag_EcalTriggerPrimitives,lEcalDigiHandle);
-  if(!lEcalDigiHandle.isValid()){
-    cout << "=> Got ECAL TT!" << endl;    
+  if(lEcalDigiHandle.isValid()){
+    
+    cout << "=> Got ECAL TT! They are " << lEcalDigiHandle->size() << endl;
+    for ( EcalTrigPrimDigiCollection::const_iterator lEcalTPItr = lEcalDigiHandle->begin(  ); lEcalTPItr != lEcalDigiHandle->end(  ); ++lEcalTPItr ){
+      int32_t lET = 4 * lEcalScaleHandle->et( lEcalTPItr->compressedEt(), abs( lEcalTPItr->id().ieta() ),  ( lEcalTPItr->id().ieta() > 0 ? +1 : -1 ) );                     
+      //cout << "ECAL TT et="<<lET<<endl; 
+      hEcalTT_Et->Fill(lET);
+    }
   }
   
-  
-  edm::Handle < HcalTrigPrimDigiCollection > lHcalDigiHandle;
-  iEvent.getByLabel( m_InputTag_HcalTriggerPrimitives, lHcalDigiHandle );
-  if(!lHcalDigiHandle.isValid()){
-    cout << "=> Got HCAL TT!" << endl;
+  if(lHcalDigiHandle.isValid()){
+    cout << "=> Got HCAL TT! They are " << lHcalDigiHandle->size() << endl;
+    
+    for ( HcalTrigPrimDigiCollection::const_iterator lHcalTPItr = lHcalDigiHandle->begin(); lHcalTPItr != lHcalDigiHandle->end(); ++lHcalTPItr ){
+      int32_t lET = 4 * lHcalScaleHandle->et( lHcalTPItr->SOI_compressedEt(), abs( lHcalTPItr->id().ieta() ),  ( lHcalTPItr->id().ieta() > 0 ? +1 : -1 ) );                 
+      cout << "HCAL TT et="<<lET<<endl;
+      hHcalTT_Et->Fill(lET);
+    }
   }
 
-  
   if(gtReadoutRecordData.isValid()){
     
     const vector<L1GtFdlWord>& gtFdlVectorData = gtReadoutRecordData->gtFdlVector();
@@ -123,20 +149,20 @@ void L1RateEstimator::analyze(const edm::Event& iEvent, const edm::EventSetup& i
         }
       }
     }
-  }else{cout << "[L1RateEstimator] ERROR: GT Readout Record Data is not valid." << endl;}
+  }else{cout << "[TrigStudies] ERROR: GT Readout Record Data is not valid." << endl;}
   
   if(mets.isValid()){
     if (mets->size()!=0){
       hL1ETM->Fill(mets->begin()->et());
-    }else{cout << "[L1RateEstimator] ERROR: l1extraParticles MET has size zero." << endl;}
-  }else{cout << "[L1RateEstimator] ERROR: l1extraParticles MET is not valid." << endl;}
+    }else{cout << "[TrigStudies] ERROR: l1extraParticles MET has size zero." << endl;}
+  }else{cout << "[TrigStudies] ERROR: l1extraParticles MET is not valid." << endl;}
   
 
   if(mhts.isValid()){
     if(mhts->size()!=0){
       hL1HTT->Fill(mhts->begin()->etTotal());
-    }else{cout << "[L1RateEstimator] ERROR: l1extraParticles MHT has size zero." << endl;}
-  }else{cout << "[L1RateEstimator] ERROR: l1extraParticles MHT is not valid." << endl;}
+    }else{cout << "[TrigStudies] ERROR: l1extraParticles MHT has size zero." << endl;}
+  }else{cout << "[TrigStudies] ERROR: l1extraParticles MHT is not valid." << endl;}
 
   
   Handle<TriggerResults> hltresults;
@@ -152,11 +178,11 @@ void L1RateEstimator::analyze(const edm::Event& iEvent, const edm::EventSetup& i
   }
 }
 
-void L1RateEstimator::beginJob(){}
+void TrigStudies::beginJob(){}
 
-void L1RateEstimator::endJob(){}
+void TrigStudies::endJob(){}
 
-void L1RateEstimator::beginRun(edm::Run const& iRun, edm::EventSetup const& iSetup){
+void TrigStudies::beginRun(edm::Run const& iRun, edm::EventSetup const& iSetup){
   
   currentRunNumber = iRun.run();
   
@@ -187,13 +213,13 @@ void L1RateEstimator::beginRun(edm::Run const& iRun, edm::EventSetup const& iSet
   }    
 }
 
-void L1RateEstimator::endRun(edm::Run const&, edm::EventSetup const&){}
+void TrigStudies::endRun(edm::Run const&, edm::EventSetup const&){}
 
-void L1RateEstimator::beginLuminosityBlock(edm::LuminosityBlock const&, edm::EventSetup const&){}
+void TrigStudies::beginLuminosityBlock(edm::LuminosityBlock const&, edm::EventSetup const&){}
 
-void L1RateEstimator::endLuminosityBlock(edm::LuminosityBlock const&, edm::EventSetup const&){}
+void TrigStudies::endLuminosityBlock(edm::LuminosityBlock const&, edm::EventSetup const&){}
 
-bool L1RateEstimator::testTrigger(const edm::Event& iEvent, edm::Handle<edm::TriggerResults> iHLT, string iTriggerName){
+bool TrigStudies::testTrigger(const edm::Event& iEvent, edm::Handle<edm::TriggerResults> iHLT, string iTriggerName){
   
   bool Triggered = false;
   
@@ -219,7 +245,7 @@ bool L1RateEstimator::testTrigger(const edm::Event& iEvent, edm::Handle<edm::Tri
   
 }
 
-void L1RateEstimator::printFiredHLT(const edm::Event& iEvent, edm::Handle<edm::TriggerResults> iHLT){
+void TrigStudies::printFiredHLT(const edm::Event& iEvent, edm::Handle<edm::TriggerResults> iHLT){
   
   int ntrigs = iHLT->size();
   
@@ -241,4 +267,4 @@ void L1RateEstimator::printFiredHLT(const edm::Event& iEvent, edm::Handle<edm::T
 }
 
 //define this as a plug-in
-DEFINE_FWK_MODULE(L1RateEstimator);
+DEFINE_FWK_MODULE(TrigStudies);

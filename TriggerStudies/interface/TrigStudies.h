@@ -1,13 +1,13 @@
 // -*- C++ -*-
-#ifndef VBFHiggsToInvisible_L1RateEstimator_H
-#define VBFHiggsToInvisible_L1RateEstimator_H
+#ifndef VBFHiggsToInvisible_TrigStudies_H
+#define VBFHiggsToInvisible_TrigStudies_H
 
 // -*- C++ -*-
 //
-// Package:    L1RateEstimator
-// Class:      L1RateEstimator
+// Package:    TrigStudies
+// Class:      TrigStudies
 // 
-/**\class L1RateEstimator L1RateEstimator.cc VBFHiggsToInvisible/L1RateEstimator/src/L1RateEstimator.cc
+/**\class TrigStudies TrigStudies.cc VBFHiggsToInvisible/TrigStudies/src/TrigStudies.cc
  * 
  * Description: [one line class summary]
  * 
@@ -60,11 +60,11 @@
 // class declaration
 //
 
-class L1RateEstimator : public edm::EDAnalyzer {
+class TrigStudies : public edm::EDAnalyzer {
 public:
   
-  L1RateEstimator(const edm::ParameterSet&);
-  ~L1RateEstimator();
+  TrigStudies(const edm::ParameterSet&);
+  ~TrigStudies();
   
 private:
   void beginJob() ;
@@ -91,6 +91,9 @@ private:
   
   TH1D* hL1ETM;
   TH1D* hL1HTT;
+  TH1D* hRCTRegion_Et;
+  TH1D* hEcalTT_Et;
+  TH1D* hHcalTT_Et;
   
   bool m_verbose;
   
