@@ -129,6 +129,9 @@ void TrigStudies::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetu
     }
   }
 
+  // Need this in this scope for HLT seeds later
+  DecisionWord l1Word;
+  
   if(gtReadoutRecordData.isValid()){
     
     const vector<L1GtFdlWord>& gtFdlVectorData = gtReadoutRecordData->gtFdlVector();
@@ -139,10 +142,11 @@ void TrigStudies::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetu
       // Selecting the FDL that triggered
       if(gtFdlVectorData[a].bxInEvent() == 0){
           
-        const L1GtFdlWord* fdl = &(gtFdlVectorData[a]);
-          
+        const L1GtFdlWord* fdl = &(gtFdlVectorData[a]);  
+        l1Word = fdl->gtDecisionWord();
+        
         for(int bit=0; bit<128; bit++){
-          if(fdl->gtDecisionWord()[bit]){hL1AlgoCounts->Fill(bit);}
+          if(l1Word[bit]){hL1AlgoCounts->Fill(bit);}
         }
       }
     }
@@ -150,6 +154,7 @@ void TrigStudies::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetu
   
   if(mets.isValid()){
     if (mets->size()!=0){
+      if(m_verbose){cout << "=> Event ETM " << mets->begin()->et() << endl;}
       hL1ETM->Fill(mets->begin()->et());
     }else{cout << "[TrigStudies] ERROR: l1extraParticles MET has size zero." << endl;}
   }else{cout << "[TrigStudies] ERROR: l1extraParticles MET is not valid." << endl;}
@@ -157,6 +162,7 @@ void TrigStudies::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetu
 
   if(mhts.isValid()){
     if(mhts->size()!=0){
+      if(m_verbose){cout << "=> Event HTT " << mhts->begin()->etTotal() << endl;}
       hL1HTT->Fill(mhts->begin()->etTotal());
     }else{cout << "[TrigStudies] ERROR: l1extraParticles MHT has size zero." << endl;}
   }else{cout << "[TrigStudies] ERROR: l1extraParticles MHT is not valid." << endl;}
@@ -166,10 +172,94 @@ void TrigStudies::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetu
   iEvent.getByLabel(m_InputTag_HLTResults, hltresults);
     
   for(unsigned i=0; i<m_selHLTrigger.size(); i++){
-    
+ 
     string pName = m_selHLTrigger[i];
+    vector<string> l1SeedsETM;
+    vector<string> l1SeedsHTT;   
     
-    if(testTrigger(iEvent,hltresults,pName)){hHLTAlgoCounts->Fill(pName.c_str(),1);}
+    if     (pName=="HLT_DiPFJet40_PFMETnoMu65_MJJ800VBF_AllJets_v"   ) {l1SeedsETM.push_back("L1_ETM40");}
+    else if(pName=="HLT_DiPFJet40_PFMETnoMu65_MJJ600VBF_LeadingJets_v"){l1SeedsETM.push_back("L1_ETM40");}
+    
+    else if(pName=="HLT_DiPFJet40_PFMETnoMu75_MJJ800VBF_AllJets_v")    {l1SeedsETM.push_back("L1_ETM40");}
+    else if(pName=="HLT_DiPFJet40_PFMETnoMu75_MJJ600VBF_LeadingJets_v"){l1SeedsETM.push_back("L1_ETM40");}     
+    
+    else if(pName=="HLT_DiJet20_MJJ650_AllJets_DEta3p5_HT120_VBF_v"){
+      l1SeedsHTT.push_back("L1_HTT200");
+      l1SeedsHTT.push_back("L1_HTT175");
+      l1SeedsETM.push_back("L1_ETM40");
+      l1SeedsETM.push_back("L1_ETM50");
+    }
+    else if(pName=="HLT_DiJet30_MJJ700_AllJets_DEta3p5_VBF_v"){
+      l1SeedsHTT.push_back("L1_HTT200");
+      l1SeedsHTT.push_back("L1_HTT175");
+      l1SeedsETM.push_back("L1_ETM40");
+      l1SeedsETM.push_back("L1_ETM50");
+    }
+    else if(pName=="HLT_DiJet35_MJJ650_AllJets_DEta3p5_VBF_v"){
+      l1SeedsHTT.push_back("L1_HTT200");
+      l1SeedsHTT.push_back("L1_HTT175");
+      l1SeedsHTT.push_back("L1_HTT150");
+      l1SeedsETM.push_back("L1_ETM40");
+    }
+    else if(pName=="HLT_DiJet35_MJJ700_AllJets_DEta3p5_VBF_v"){
+      l1SeedsHTT.push_back("L1_HTT200");
+      l1SeedsHTT.push_back("L1_HTT175");
+      l1SeedsETM.push_back("L1_ETM40");
+    }
+    else if(pName=="HLT_DiJet35_MJJ750_AllJets_DEta3p5_VBF_v"){
+      l1SeedsHTT.push_back("L1_HTT200");
+      l1SeedsHTT.push_back("L1_HTT175");
+      l1SeedsETM.push_back("L1_ETM40");
+    }
+    
+    if(testTrigger(iEvent,hltresults,pName)){
+      hHLTAlgoCounts->Fill(pName.c_str(),1);
+      
+      if(m_verbose){cout << "=> Fired HLT: " << pName.c_str() << endl;}
+      
+      bool firedETM = false;
+      bool firedHTT = false;
+      
+      // TODO: This can be optimized with seed bit caching or bit mask and straight AND compare.
+      for(unsigned iSeed=0; iSeed<l1SeedsETM.size(); iSeed++){
+
+        int thisBit = m_l1Alias[ l1SeedsETM[iSeed] ];
+
+        if(m_verbose){cout << "=> Testing if bit=" << thisBit<< " alias=" << l1SeedsETM[iSeed] << " fired... ";}
+           
+        if(l1Word[thisBit]){
+          if(m_verbose){cout << "Yes!" << endl;}
+          firedETM = true;
+          break;
+        }else{
+          if(m_verbose){cout << "No!"<< endl;}
+        }
+      }
+
+      // TODO: This can be optimized with seed bit caching or bit mask and straight AND compare.
+      for(unsigned iSeed=0; iSeed<l1SeedsHTT.size(); iSeed++){
+
+        int thisBit = m_l1Alias[ l1SeedsHTT[iSeed] ];
+        if(m_verbose){cout << "=> Testing if bit=" << thisBit<< " alias=" << l1SeedsHTT[iSeed] << " fired... ";}        
+        
+        if(l1Word[thisBit]){
+          if(m_verbose){cout << "Yes!" << endl;}
+          firedHTT = true;
+          break;
+        }else{
+          if(m_verbose){cout << "No!"<< endl;}
+        }
+      }
+  
+      if(m_verbose){cout << "=> Fired Seeds ETM: " << firedETM << " HTT: " << firedHTT << endl;}
+      
+      if( firedETM && !firedHTT){hHLTAlgoCounts_ETM ->Fill(pName.c_str(),1);}
+      if(!firedETM &&  firedHTT){hHLTAlgoCounts_HTT ->Fill(pName.c_str(),1);}
+      if( firedETM &&  firedHTT){hHLTAlgoCounts_Both->Fill(pName.c_str(),1);}
+      if(!firedETM && !firedHTT){hHLTAlgoCounts_None->Fill(pName.c_str(),1);}      
+    }
+      
+      
   }
   
   // Filling saturation counts
@@ -212,28 +302,28 @@ void TrigStudies::beginRun(edm::Run const& iRun, edm::EventSetup const& iSetup){
   hL1HTT         = new TH1D("L1HTT","L1HTT",500,  0,500);                     hL1HTT->SetDirectory(runDir);
   
   // HLT Plots
-  hHLTAlgoCounts     = new TH1D("HLTAlgoCounts","HLTAlgoCounts",nSelHLTAlgos,-0.5,nSelHLTAlgos-0.5); hHLTAlgoCounts->SetDirectory(runDir);
-  hHLTAlgoCounts_ETM = new TH1D("HLTAlgoCounts_ETM","HLTAlgoCounts_ETM",nSelHLTAlgos,-0.5,nSelHLTAlgos-0.5);
-  hHLTAlgoCounts_HTT = new TH1D("HLTAlgoCounts_HTT","HLTAlgoCounts_HTT",nSelHLTAlgos,-0.5,nSelHLTAlgos-0.5);
-  hHLTAlgoCounts_Mix = new TH1D("HLTAlgoCounts_Mix","HLTAlgoCounts_Mix",nSelHLTAlgos,-0.5,nSelHLTAlgos-0.5);
+  hHLTAlgoCounts      = new TH1D("HLTAlgoCounts",     "HLTAlgoCounts",     nSelHLTAlgos,-0.5,nSelHLTAlgos-0.5); hHLTAlgoCounts     ->SetDirectory(runDir);
+  hHLTAlgoCounts_ETM  = new TH1D("HLTAlgoCounts_ETM", "HLTAlgoCounts_ETM", nSelHLTAlgos,-0.5,nSelHLTAlgos-0.5); hHLTAlgoCounts_ETM ->SetDirectory(runDir);
+  hHLTAlgoCounts_HTT  = new TH1D("HLTAlgoCounts_HTT", "HLTAlgoCounts_HTT", nSelHLTAlgos,-0.5,nSelHLTAlgos-0.5); hHLTAlgoCounts_HTT ->SetDirectory(runDir);
+  hHLTAlgoCounts_Both = new TH1D("HLTAlgoCounts_Both","HLTAlgoCounts_Both",nSelHLTAlgos,-0.5,nSelHLTAlgos-0.5); hHLTAlgoCounts_Both->SetDirectory(runDir);
+  hHLTAlgoCounts_None = new TH1D("HLTAlgoCounts_None","HLTAlgoCounts_None",nSelHLTAlgos,-0.5,nSelHLTAlgos-0.5); hHLTAlgoCounts_None->SetDirectory(runDir);
   
-  // "HLT_DiPFJet40_PFMETnoMu65_MJJ800VBF_AllJets_v",     L1ETM40
-  // "HLT_DiPFJet40_PFMETnoMu65_MJJ600VBF_LeadingJets_v"  L1ETM40
-  // "HLT_DiPFJet40_PFMETnoMu75_MJJ800VBF_AllJets_v"      L1ETM40
-  // "HLT_DiPFJet40_PFMETnoMu75_MJJ600VBF_LeadingJets_v"  L1ETM40                                      
-  // "HLT_DiJet20_MJJ650_AllJets_DEta3p5_HT120_VBF_v"     L1HTT200 Or L1HTT175 Or ETM40 Or ETM50
-  // "HLT_DiJet30_MJJ700_AllJets_DEta3p5_VBF_v"           L1HTT200 Or L1HTT175 Or ETM40 Or ETM50
-  // "HLT_DiJet35_MJJ650_AllJets_DEta3p5_VBF_v"           L1HTT200 Or L1HTT175 Or L1HTT150 Or ETM40
-  // "HLT_DiJet35_MJJ700_AllJets_DEta3p5_VBF_v"           L1HTT200 Or L1HTT175 Or ETM40
-  // "HLT_DiJet35_MJJ750_AllJets_DEta3p5_VBF_v"           L1HTT200 Or L1HTT175 Or ETM40
   
   ESHandle<L1GtTriggerMenu> menuRcd;
   iSetup.get<L1GtTriggerMenuRcd>().get(menuRcd);
   const L1GtTriggerMenu* menu = menuRcd.product();
     
+  m_l1Alias.clear();
+  
+  if(m_verbose){cout << "=====> The L1 Menu: " << endl;}
+  
   // Filling Alias-Bit Map
   for (CItAlgo algo = menu->gtAlgorithmAliasMap().begin(); algo!=menu->gtAlgorithmAliasMap().end(); ++algo){
+    
+    if(m_verbose){cout << " => key=" << algo->first << " bit=" << (algo->second).algoBitNumber() << " alias=" << (algo->second).algoAlias() << endl;}
+    
     hL1AlgoCounts->GetXaxis()->SetBinLabel((algo->second).algoBitNumber()+1,(algo->second).algoAlias().c_str());
+    m_l1Alias[(algo->second).algoAlias()] = (algo->second).algoBitNumber();
   }
     
   for(unsigned i=0; i<m_selHLTrigger.size(); i++){
