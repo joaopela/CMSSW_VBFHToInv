@@ -98,7 +98,8 @@ private:
   TH1D* hHLTAlgoCounts;
   TH1D* hHLTAlgoCounts_ETM;
   TH1D* hHLTAlgoCounts_HTT;
-  TH1D* hHLTAlgoCounts_Mix;
+  TH1D* hHLTAlgoCounts_Both;
+  TH1D* hHLTAlgoCounts_None;
   
   TH1D* hRCTRegion_Et;
   TH1D* hEcalTT_Et;
@@ -121,7 +122,7 @@ private:
   std::vector<std::string> m_selHLTrigger;
   
   std::map<std::string,int> cL1T;  
-  std::map<std::string,int> m_algoBit;
+  std::map<std::string,int> m_l1Alias;
   
   edm::InputTag m_InputTag_L1GTReadoutRecord;
   edm::InputTag m_InputTag_L1Extra_mets;
