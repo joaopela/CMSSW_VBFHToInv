@@ -1,0 +1,1 @@
+../test/TrigStudies_cfg.py
