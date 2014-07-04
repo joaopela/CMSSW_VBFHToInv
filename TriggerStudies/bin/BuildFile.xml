@@ -1,0 +1,5 @@
+<use name="root"/>
+<use name="rootgraphics"/>
+<use name="boost"/>
+<flags CXXFLAGS="-g"/>
+<bin name="vbfinv_getResultsTriggerStudy" file="getResultsTriggerStudy.cxx"></bin>
