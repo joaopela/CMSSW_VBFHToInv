@@ -10,10 +10,12 @@
 #include <stdio.h>
 #include <boost/algorithm/string.hpp>
 
+#include "Plots/Style/interface/Style.h"
 #include "Latex/Table/interface/LatexTabular.h"
 
 using namespace std;
 
+//####################################################################
 map<string,double> getEff(TFile* f,int run,string histname,double multiplier=1){
   
   TH1D* hTotal = (TH1D*) f->Get(Form("Run_%d/EventCount",run));
@@ -35,6 +37,7 @@ std::string parseToLaTeX(std::string s) {
   return s;
 }
 
+//####################################################################
 void doTableL1T(vector<string> &selL1T,map<string,double> &pu20bx25, map<string,double> &pu40bx50, map<string,double> &pu40bx25, string filename){
   
   rat::LatexTabular tabular0(selL1T.size()+1,4);
@@ -65,6 +68,7 @@ void doTableL1T(vector<string> &selL1T,map<string,double> &pu20bx25, map<string,
   
 }
 
+//####################################################################
 void doTableHLT(vector<string> &selHLT,map<string,double> &pu20bx25, map<string,double> &pu40bx50, map<string,double> &pu40bx25, string filename){
   
   rat::LatexTabular tabular0(selHLT.size()+1,4);
@@ -95,8 +99,12 @@ void doTableHLT(vector<string> &selHLT,map<string,double> &pu20bx25, map<string,
   
 }
 
+//####################################################################
 int main(){
 
+  rat::Style myStyle;
+  myStyle.setTDRStyle();
+  
   const int nMaxBunch50ns = 1380;
   const int nMaxBunch25ns = 2808;
   const int ratePerBunch  = 11246;
