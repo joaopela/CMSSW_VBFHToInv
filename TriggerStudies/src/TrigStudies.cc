@@ -25,7 +25,6 @@ using namespace std;
 using namespace edm;
 
 TrigStudies::TrigStudies(const edm::ParameterSet& pset){
-  
 
   // Getting InputTag from configuration file
   m_InputTag_L1GTReadoutRecord      = pset.getParameter<InputTag>("inputTag_L1GTReadoutRecord");
@@ -81,22 +80,45 @@ void TrigStudies::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetu
   iSetup.get<L1CaloEcalScaleRcd>().get( lEcalScaleHandle );
   iSetup.get<L1CaloHcalScaleRcd>().get( lHcalScaleHandle );
   
+  if(mets.isValid()){
+    if (mets->size()!=0){
+      
+      if(m_verbose){cout << "=> Event ETM " << mets->begin()->et() << endl;}
+      hL1ETM->Fill(mets->begin()->et());
+      
+    }else{cout << "[TrigStudies] ERROR: l1extraParticles MET has size zero." << endl;}
+  }else{cout << "[TrigStudies] ERROR: l1extraParticles MET is not valid." << endl;}
+  
+  
+  if(mhts.isValid()){
+    if(mhts->size()!=0){
+      
+      if(m_verbose){cout << "=> Event HTT " << mhts->begin()->etTotal() << endl;}
+      hL1HTT->Fill(mhts->begin()->etTotal());
+      
+    }else{cout << "[TrigStudies] ERROR: l1extraParticles MHT has size zero." << endl;}
+  }else{cout << "[TrigStudies] ERROR: l1extraParticles MHT is not valid." << endl;}
+  
   if(caloRegions.isValid()){
     if(m_verbose){cout << "=> Got RCT Regions! They are " << caloRegions->size() << endl;}
      
       for(unsigned int iRCT=0;iRCT < caloRegions->size(); ++iRCT ) {
-
-       double RCTRegionET  = 0.5*caloRegions->at(iRCT).et();
-//        double RCTiEta      = caloRegions->at(iRCT).gctEta();
-//        double RCTiPhi      = caloRegions->at(iRCT).gctPhi();
+        
+        double rctRegionVal = caloRegions->at(iRCT).et();
+        double rctRegionET  = 0.5*rctRegionVal;
+        
+        hRCTRegion_Val->Fill(rctRegionVal);
+        hRCTRegion_Et ->Fill(rctRegionET);
+        
+        //double RCTiEta = caloRegions->at(iRCT).gctEta();
+        //double RCTiPhi = caloRegions->at(iRCT).gctPhi();
        
        //printf("RCT i=%d eta=%8.4f phi=%8.4f et=%8.4f",iRCT,RCTiEta,RCTiPhi,RCTRegionET);
-       hRCTRegion_Et->Fill(RCTRegionET);
-       if(RCTRegionET==511){
-         cout << "=> Found saturated RCT";
-         nRCTRegion_NSaturated++;
-         nTotal_NSaturated++;
-       }
+        if(rctRegionVal==1023){
+          if(m_verbose){cout << "=> Found saturated RCT" << endl;}
+          nRCTRegion_NSaturated++;
+          nTotal_NSaturated++;
+        }
      }
   }
   
@@ -104,11 +126,15 @@ void TrigStudies::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetu
     if(m_verbose){cout << "=> Got ECAL TT! They are " << lEcalDigiHandle->size() << endl;}
     
     for ( EcalTrigPrimDigiCollection::const_iterator lEcalTPItr = lEcalDigiHandle->begin(); lEcalTPItr != lEcalDigiHandle->end(); ++lEcalTPItr ){
+      
+      int     ecalVal = lEcalTPItr->compressedEt();
       int32_t lET = 4 * lEcalScaleHandle->et( lEcalTPItr->compressedEt(), abs( lEcalTPItr->id().ieta() ),  ( lEcalTPItr->id().ieta() > 0 ? +1 : -1 ) );                     
+      
       //cout << "ECAL TT et="<<lET<<endl; 
-      hEcalTT_Et->Fill(lET);
-      if(lET==255){
-        cout << "=> Found saturated ECAL TT";
+      hEcalTT_Val->Fill(ecalVal);
+      hEcalTT_Et ->Fill(lET);
+      if(ecalVal==255){
+        if(m_verbose){cout << "=> Found saturated ECAL TT" << endl;}
         nEcalTT_NSaturated++;
         nTotal_NSaturated++;
       }
@@ -119,10 +145,14 @@ void TrigStudies::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetu
     if(m_verbose){cout << "=> Got HCAL TT! They are " << lHcalDigiHandle->size() << endl;}
     
     for ( HcalTrigPrimDigiCollection::const_iterator lHcalTPItr = lHcalDigiHandle->begin(); lHcalTPItr != lHcalDigiHandle->end(); ++lHcalTPItr ){
-      int32_t lET = 4 * lHcalScaleHandle->et( lHcalTPItr->SOI_compressedEt(), abs( lHcalTPItr->id().ieta() ),  ( lHcalTPItr->id().ieta() > 0 ? +1 : -1 ) );                 
-      hHcalTT_Et->Fill(lET);
-      if(lET==255){
-        cout << "=> Found saturated HCAL TT";
+      
+      int     hcalVal = lHcalTPItr->SOI_compressedEt();
+      int32_t lET = 4 * lHcalScaleHandle->et( lHcalTPItr->SOI_compressedEt(), abs( lHcalTPItr->id().ieta() ),  ( lHcalTPItr->id().ieta() > 0 ? +1 : -1 ) );
+      hHcalTT_Val->Fill(hcalVal);
+      hHcalTT_Et ->Fill(lET);
+      
+      if(hcalVal==255){
+        if(m_verbose){cout << "=> Found saturated HCAL TT" << endl;}
         nHcalTT_NSaturated++;
         nTotal_NSaturated++;
       }
@@ -151,23 +181,7 @@ void TrigStudies::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetu
       }
     }
   }else{cout << "[TrigStudies] ERROR: GT Readout Record Data is not valid." << endl;}
-  
-  if(mets.isValid()){
-    if (mets->size()!=0){
-      if(m_verbose){cout << "=> Event ETM " << mets->begin()->et() << endl;}
-      hL1ETM->Fill(mets->begin()->et());
-    }else{cout << "[TrigStudies] ERROR: l1extraParticles MET has size zero." << endl;}
-  }else{cout << "[TrigStudies] ERROR: l1extraParticles MET is not valid." << endl;}
-  
-
-  if(mhts.isValid()){
-    if(mhts->size()!=0){
-      if(m_verbose){cout << "=> Event HTT " << mhts->begin()->etTotal() << endl;}
-      hL1HTT->Fill(mhts->begin()->etTotal());
-    }else{cout << "[TrigStudies] ERROR: l1extraParticles MHT has size zero." << endl;}
-  }else{cout << "[TrigStudies] ERROR: l1extraParticles MHT is not valid." << endl;}
-
-  
+    
   Handle<TriggerResults> hltresults;
   iEvent.getByLabel(m_InputTag_HLTResults, hltresults);
     
@@ -267,6 +281,11 @@ void TrigStudies::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetu
   hHcalTT_NSaturated   ->Fill(nHcalTT_NSaturated);
   hRCTRegion_NSaturated->Fill(nRCTRegion_NSaturated);
   hTotal_NSaturated    ->Fill(nTotal_NSaturated);
+
+  if(nTotal_NSaturated>0){
+    hL1ETM_Saturated->Fill(mets->begin()->et());
+    hL1HTT_Saturated->Fill(mhts->begin()->etTotal());
+  }
   
 }
 
@@ -290,16 +309,21 @@ void TrigStudies::beginRun(edm::Run const& iRun, edm::EventSetup const& iSetup){
   hTotal_NSaturated     = new TH1D("hTotal_NSaturated    ","hTotal_NSaturated    ",11,-0.5,10.5); hTotal_NSaturated    ->SetDirectory(runDir);
   
   // TPG Plots
-  hEcalTT_Et     = new TH1D("hEcalTT_Et",   "hEcalTT_Et",   1024,   0, 1024); hEcalTT_Et   ->SetDirectory(runDir);
-  hHcalTT_Et     = new TH1D("hHcalTT_Et",   "hHcalTT_Et",   1024,   0, 1024); hHcalTT_Et   ->SetDirectory(runDir);     
+  hEcalTT_Val    = new TH1D("hEcalTT_Val","hEcalTT_Val", 512,-0.5,511.5); hEcalTT_Val->SetDirectory(runDir);
+  hHcalTT_Val    = new TH1D("hHcalTT_Val","hHcalTT_Val", 512,-0.5,511.5); hHcalTT_Val->SetDirectory(runDir);
+  hEcalTT_Et     = new TH1D("hEcalTT_Et", "hEcalTT_Et", 1024,   0,1024);  hEcalTT_Et ->SetDirectory(runDir);
+  hHcalTT_Et     = new TH1D("hHcalTT_Et", "hHcalTT_Et", 1024,   0,1024);  hHcalTT_Et ->SetDirectory(runDir);     
 
   // RCT Plots
-  hRCTRegion_Et  = new TH1D("hRCTRegion_Et","hRCTRegion_Et",1024,   0, 1024); hRCTRegion_Et->SetDirectory(runDir);
+  hRCTRegion_Val = new TH1D("hRCTRegion_Val","hRCTRegion_Val",1024,-0.5,1023.5); hRCTRegion_Val->SetDirectory(runDir);
+  hRCTRegion_Et  = new TH1D("hRCTRegion_Et", "hRCTRegion_Et", 1024,   0,1024);   hRCTRegion_Et->SetDirectory(runDir);
   
   // L1T Plots
-  hL1AlgoCounts  = new TH1D("L1AlgoCounts", "L1AlgoCounts",  128,-0.5,127.5); hL1AlgoCounts->SetDirectory(runDir);
-  hL1ETM         = new TH1D("L1ETM","L1ETM",500,  0,500);                     hL1ETM->SetDirectory(runDir);
-  hL1HTT         = new TH1D("L1HTT","L1HTT",500,  0,500);                     hL1HTT->SetDirectory(runDir);
+  hL1AlgoCounts    = new TH1D("L1AlgoCounts",    "L1AlgoCounts",    128,-0.5,127.5); hL1AlgoCounts->SetDirectory(runDir);
+  hL1ETM           = new TH1D("L1ETM",           "L1ETM",           125,  0, 250);   hL1ETM->SetDirectory(runDir);
+  hL1HTT           = new TH1D("L1HTT",           "L1HTT",           500,  0,1000);   hL1HTT->SetDirectory(runDir); 
+  hL1ETM_Saturated = new TH1D("hL1ETM_Saturated","hL1ETM_Saturated",125,  0, 250);   hL1ETM_Saturated->SetDirectory(runDir);
+  hL1HTT_Saturated = new TH1D("hL1HTT_Saturated","hL1HTT_Saturated",500,  0,1000);   hL1HTT_Saturated->SetDirectory(runDir);
   
   // HLT Plots
   hHLTAlgoCounts      = new TH1D("HLTAlgoCounts",     "HLTAlgoCounts",     nSelHLTAlgos,-0.5,nSelHLTAlgos-0.5); hHLTAlgoCounts     ->SetDirectory(runDir);
