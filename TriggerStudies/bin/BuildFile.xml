@@ -3,6 +3,6 @@
 <use name="boost"/>
 
 <flags CXXFLAGS="-g -I$(ICTOOLSSYS)/src/"/>
-<flags LDFLAGS="$(ICTOOLSSYS)/lib/libICFWCore.so $(ICTOOLSSYS)/lib/libICLatex.so -L$(ICTOOLSSYS)/lib/"/>
+<flags LDFLAGS="$(ICTOOLSSYS)/lib/libICFWCore.so $(ICTOOLSSYS)/lib/libICPlots.so $(ICTOOLSSYS)/lib/libICLatex.so -L$(ICTOOLSSYS)/lib/"/>
 
 <bin name="vbfinv_getResultsTriggerStudy" file="getResultsTriggerStudy.cxx"></bin>
