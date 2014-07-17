@@ -95,11 +95,18 @@ private:
   TH1D* hL1ETM;
   TH1D* hL1HTT;
   
+  TH1D* hL1ETM_Saturated;
+  TH1D* hL1HTT_Saturated;
+  
   TH1D* hHLTAlgoCounts;
   TH1D* hHLTAlgoCounts_ETM;
   TH1D* hHLTAlgoCounts_HTT;
   TH1D* hHLTAlgoCounts_Both;
   TH1D* hHLTAlgoCounts_None;
+  
+  TH1D* hRCTRegion_Val;
+  TH1D* hEcalTT_Val;
+  TH1D* hHcalTT_Val;
   
   TH1D* hRCTRegion_Et;
   TH1D* hEcalTT_Et;
