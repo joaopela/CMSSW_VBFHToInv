@@ -9,10 +9,10 @@
 // 
 /**\class TrigStudies TrigStudies.cc VBFHiggsToInvisible/TrigStudies/src/TrigStudies.cc
  * 
- * Description: [one line class summary]
+ * Description: TODO
  * 
  * Implementation:
- *     [Notes on implementation]
+ *     TODO
  */
 //
 // Original Author:  Joao Arnauth Pela,510 1-002,+41227679913,
@@ -54,6 +54,7 @@
 #include "CondFormats/DataRecord/interface/L1GtTriggerMenuRcd.h"
 
 #include "TH1D.h"
+#include "TH2D.h"
 #include "TFile.h"
 
 //
@@ -89,7 +90,12 @@ private:
   std::map<int,TH1D*>    m_l1Counts;
   std::map<int,TH1D*>    m_hltCounts;
   
+  std::map<std::string,TH1D*> h1D_ECALTT;  
+  std::map<std::string,TH2D*> h2D_ECALTT;
+  std::map<std::string,TH1D*> hHCALTT;
+  
   TH1D* hEventCount;
+  
   
   TH1D* hL1AlgoCounts;
   TH1D* hL1ETM;
@@ -106,6 +112,7 @@ private:
   
   TH1D* hRCTRegion_Val;
   TH1D* hEcalTT_Val;
+  TH1D* hECALTTSamples_Val;
   TH1D* hHcalTT_Val;
   
   TH1D* hRCTRegion_Et;
