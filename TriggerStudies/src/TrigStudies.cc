@@ -110,9 +110,14 @@ void TrigStudies::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetu
         hRCTRegion_Val->Fill(rctRegionVal);
         hRCTRegion_Et ->Fill(rctRegionET);
         
+        
+        
         //double RCTiEta = caloRegions->at(iRCT).gctEta();
         //double RCTiPhi = caloRegions->at(iRCT).gctPhi();
        
+  
+        
+        
        //printf("RCT i=%d eta=%8.4f phi=%8.4f et=%8.4f",iRCT,RCTiEta,RCTiPhi,RCTRegionET);
         if(rctRegionVal==1023){
           if(m_verbose){cout << "=> Found saturated RCT" << endl;}
@@ -125,6 +130,10 @@ void TrigStudies::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetu
   if(lEcalDigiHandle.isValid()){
     if(m_verbose){cout << "=> Got ECAL TT! They are " << lEcalDigiHandle->size() << endl;}
     
+    TH1D* hECALTT_Barrel_CompressedEt         = h1D_ECALTT["ECALTT_Barrel_CompressedEt"];
+    TH1D* hECALTT_Endcap_CompressedEt         = h1D_ECALTT["ECALTT_Endcap_CompressedEt"];
+    TH2D* hECALTT_CompressedEt127_EtaPhiTotal = h2D_ECALTT["ECALTT_CompressedEt127_EtaPhiTotal"];
+    
     for ( EcalTrigPrimDigiCollection::const_iterator lEcalTPItr = lEcalDigiHandle->begin(); lEcalTPItr != lEcalDigiHandle->end(); ++lEcalTPItr ){
       
       int     ecalVal = lEcalTPItr->compressedEt();
@@ -133,6 +142,34 @@ void TrigStudies::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetu
       //cout << "ECAL TT et="<<lET<<endl; 
       hEcalTT_Val->Fill(ecalVal);
       hEcalTT_Et ->Fill(lET);
+      
+      for(int i=0; i<lEcalTPItr->size(); i++){
+        hECALTTSamples_Val->Fill(lEcalTPItr->sample(i).compressedEt());
+      }
+      
+      // Barrel-Endcap overlap are TT 16 and 17
+      if(abs(lEcalTPItr->id().ieta()<17)){
+        hECALTT_Barrel_CompressedEt->Fill(lEcalTPItr->compressedEt());
+      }
+      else{
+        hECALTT_Endcap_CompressedEt->Fill(lEcalTPItr->compressedEt());
+      }
+      
+      // For the investigation of the 127 saturation point 
+      if(ecalVal==127){
+        hECALTT_CompressedEt127_EtaPhiTotal->Fill(Form("%d",lEcalTPItr->id().ieta()),Form("%d",lEcalTPItr->id().iphi()),1);
+      }
+      
+      
+      
+//       if(ecalVal==127){
+//         cout << "ECAL id.eta=" <<  
+//                             << " id.phi=" <<  
+//                             << " ttFlag=" << lEcalTPItr->ttFlag()
+//                             << "sampleOfInterest=" << lEcalTPItr->sampleOfInterest()
+//                             << " fineGrain="  << lEcalTPItr->fineGrain() << " sFGVB="  << lEcalTPItr->sFGVB() << endl;
+//       }
+      
       if(ecalVal==255){
         if(m_verbose){cout << "=> Found saturated ECAL TT" << endl;}
         nEcalTT_NSaturated++;
@@ -298,7 +335,8 @@ void TrigStudies::beginRun(edm::Run const& iRun, edm::EventSetup const& iSetup){
   currentRunNumber    = iRun.run();
   double nSelHLTAlgos = m_selHLTrigger.size();
   
-  TDirectory* runDir = fOut->mkdir(Form("Run_%d",currentRunNumber));
+  TDirectory* runDir  = fOut  ->mkdir(Form("Run_%d",currentRunNumber));
+  TDirectory* ecalDir = runDir->mkdir("EcalTT");
   
   // General plots
   hEventCount    = new TH1D("EventCount",   "EventCount"   ,   1, 0.5,  1.5); hEventCount  ->SetDirectory(runDir);
@@ -308,22 +346,42 @@ void TrigStudies::beginRun(edm::Run const& iRun, edm::EventSetup const& iSetup){
   hRCTRegion_NSaturated = new TH1D("hRCTRegion_NSaturated","hRCTRegion_NSaturated",11,-0.5,10.5); hRCTRegion_NSaturated->SetDirectory(runDir);
   hTotal_NSaturated     = new TH1D("hTotal_NSaturated    ","hTotal_NSaturated    ",11,-0.5,10.5); hTotal_NSaturated    ->SetDirectory(runDir);
   
+  h1D_ECALTT["ECALTT_Barrel_CompressedEt"]         = new TH1D("ECALTT_Barrel_CompressedEt",        "ECALTT Barrel CompressedEt",         512,-0.5,511.5); 
+  h1D_ECALTT["ECALTT_Endcap_CompressedEt"]         = new TH1D("ECALTT_Endcap_CompressedEt",        "ECALTT Endcap CompressedEt",         512,-0.5,511.5); 
+  h2D_ECALTT["ECALTT_CompressedEt127_EtaPhiTotal"] = new TH2D("ECALTT_CompressedEt127_EtaPhiTotal","ECALTT CompressedEt=127 EtaPhiTotal",56,0.5,56.5,72,0.5,72.5);
+  for(int i=0; i<28; i++){
+    h2D_ECALTT["ECALTT_CompressedEt127_EtaPhiTotal"]->GetXaxis()->SetBinLabel(i+1, Form("%d",-28+i));
+    h2D_ECALTT["ECALTT_CompressedEt127_EtaPhiTotal"]->GetXaxis()->SetBinLabel(56-i,Form("%d", 28-i));    
+  }
+  for(int i=1; i<=72; i++){
+    h2D_ECALTT["ECALTT_CompressedEt127_EtaPhiTotal"]->GetYaxis()->SetBinLabel(i,Form("%d",i));
+  }
+ 
+  
+  for(auto it=h1D_ECALTT.begin(); it!=h1D_ECALTT.end(); it++){it->second->SetDirectory(ecalDir);}
+  for(auto it=h2D_ECALTT.begin(); it!=h2D_ECALTT.end(); it++){it->second->SetDirectory(ecalDir);}
+  
+  //hECALTT
+  
   // TPG Plots
-  hEcalTT_Val    = new TH1D("hEcalTT_Val","hEcalTT_Val", 512,-0.5,511.5); hEcalTT_Val->SetDirectory(runDir);
+  hEcalTT_Val        = new TH1D("hEcalTT_Val",       "hEcalTT_Val",        512,-0.5,511.5); hEcalTT_Val->SetDirectory(runDir);
+  hECALTTSamples_Val = new TH1D("hECALTTSamples_Val","hECALTTSamples_Val", 512,-0.5,511.5); hECALTTSamples_Val->SetDirectory(runDir);
+  hEcalTT_Et         = new TH1D("hEcalTT_Et",        "hEcalTT_Et",        1024,   0,1024);  hEcalTT_Et ->SetDirectory(runDir);
+  
   hHcalTT_Val    = new TH1D("hHcalTT_Val","hHcalTT_Val", 512,-0.5,511.5); hHcalTT_Val->SetDirectory(runDir);
-  hEcalTT_Et     = new TH1D("hEcalTT_Et", "hEcalTT_Et", 1024,   0,1024);  hEcalTT_Et ->SetDirectory(runDir);
   hHcalTT_Et     = new TH1D("hHcalTT_Et", "hHcalTT_Et", 1024,   0,1024);  hHcalTT_Et ->SetDirectory(runDir);     
 
   // RCT Plots
-  hRCTRegion_Val = new TH1D("hRCTRegion_Val","hRCTRegion_Val",1024,-0.5,1023.5); hRCTRegion_Val->SetDirectory(runDir);
-  hRCTRegion_Et  = new TH1D("hRCTRegion_Et", "hRCTRegion_Et", 1024,   0,1024);   hRCTRegion_Et->SetDirectory(runDir);
+  hRCTRegion_Val        = new TH1D("hRCTRegion_Val","hRCTRegion_Val",1024,-0.5,1023.5);               hRCTRegion_Val->SetDirectory(runDir);
+  hRCTRegion_Et         = new TH1D("hRCTRegion_Et", "hRCTRegion_Et", 1024,   0,1024);                 hRCTRegion_Et->SetDirectory(runDir);
+  
   
   // L1T Plots
-  hL1AlgoCounts    = new TH1D("L1AlgoCounts",    "L1AlgoCounts",    128,-0.5,127.5); hL1AlgoCounts->SetDirectory(runDir);
-  hL1ETM           = new TH1D("L1ETM",           "L1ETM",           125,  0, 250);   hL1ETM->SetDirectory(runDir);
-  hL1HTT           = new TH1D("L1HTT",           "L1HTT",           500,  0,1000);   hL1HTT->SetDirectory(runDir); 
-  hL1ETM_Saturated = new TH1D("hL1ETM_Saturated","hL1ETM_Saturated",125,  0, 250);   hL1ETM_Saturated->SetDirectory(runDir);
-  hL1HTT_Saturated = new TH1D("hL1HTT_Saturated","hL1HTT_Saturated",500,  0,1000);   hL1HTT_Saturated->SetDirectory(runDir);
+  hL1AlgoCounts    = new TH1D("L1AlgoCounts",    "L1AlgoCounts",     128,-0.5,127.5); hL1AlgoCounts->SetDirectory(runDir);
+  hL1ETM           = new TH1D("L1ETM",           "L1ETM",            500,   0, 1000);   hL1ETM->SetDirectory(runDir);
+  hL1HTT           = new TH1D("L1HTT",           "L1HTT",           1000,   0, 2000);   hL1HTT->SetDirectory(runDir); 
+  hL1ETM_Saturated = new TH1D("hL1ETM_Saturated","hL1ETM_Saturated", 500,   0, 1000);   hL1ETM_Saturated->SetDirectory(runDir);
+  hL1HTT_Saturated = new TH1D("hL1HTT_Saturated","hL1HTT_Saturated",1000,   0, 2000);   hL1HTT_Saturated->SetDirectory(runDir);
   
   // HLT Plots
   hHLTAlgoCounts      = new TH1D("HLTAlgoCounts",     "HLTAlgoCounts",     nSelHLTAlgos,-0.5,nSelHLTAlgos-0.5); hHLTAlgoCounts     ->SetDirectory(runDir);
