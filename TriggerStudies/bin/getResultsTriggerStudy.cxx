@@ -1,5 +1,7 @@
 #include "TFile.h"
+#include "TH1I.h"
 #include "TH1D.h"
+#include "TH2D.h"
 #include "TCanvas.h"
 #include "TLegend.h"
 
@@ -12,16 +14,18 @@
 
 #include "Plots/Style/interface/Style.h"
 #include "Latex/Table/interface/LatexTabular.h"
+#include "Histograms/Analysis/interface/HistogramCollection.h"
+
 
 using namespace std;
 
 //####################################################################
 map<string,double> getEff(TFile* f,int run,string histname,double multiplier=1){
   
-  TH1D* hTotal = (TH1D*) f->Get(Form("Run_%d/EventCount",run));
+  TH1I* hTotal = (TH1I*) f->Get(Form("Run_%d/EventCount",run));
   double nEvents = hTotal->GetBinContent(1);
 
-  TH1D* hL1T = (TH1D*) f->Get(Form("Run_%d/%s",run,histname.c_str()));
+  TH1I* hL1T = (TH1I*) f->Get(Form("Run_%d/%s",run,histname.c_str()));
   map<string,double> out;
   
   for(int i=1; i<hL1T->GetXaxis()->GetNbins()+1; i++){
@@ -104,28 +108,21 @@ int main(){
 
   rat::Style myStyle;
   myStyle.setTDRStyle();
-  
+
+  // Constants for rate calculations  
   const int nMaxBunch50ns = 1380;
   const int nMaxBunch25ns = 2808;
   const int ratePerBunch  = 11246;
-  
-  map<string,TFile*> files;
-  files["PU20bx25_Neutrino_gun"]           = new TFile("PU20bx25_Neutrino_Pt-2to20_gun.root");
-  files["PU40bx50_Neutrino_gun"]           = new TFile("PU40bx50_Neutrino_Pt-2to20_gun.root");
-  files["PU40bx25_Neutrino_gun"]           = new TFile("PU40bx25_Neutrino_Pt-2to20_gun.root");
-  
-  files["PU20bx25_VBF_HToInv_M-125_13TeV"] = new TFile("PU20bx25_VBF_HToInv_M-125_13TeV_powheg-pythia6.root");
-  files["PU40bx50_VBF_HToInv_M-125_13TeV"] = new TFile("PU40bx50_VBF_HToInv_M-125_13TeV_powheg-pythia6.root");
-  files["PU40bx25_VBF_HToInv_M-125_13TeV"] = new TFile("PU40bx25_VBF_HToInv_M-125_13TeV_powheg-pythia6.root");
- 
-  // For eff
-  map<string,double> l1tPU20bx25v = getEff(files["PU20bx25_VBF_HToInv_M-125_13TeV"],1,"L1AlgoCounts");
-  map<string,double> l1tPU40bx50v = getEff(files["PU40bx50_VBF_HToInv_M-125_13TeV"],1,"L1AlgoCounts");
-  map<string,double> l1tPU40bx25v = getEff(files["PU40bx25_VBF_HToInv_M-125_13TeV"],1,"L1AlgoCounts");
-  
-  map<string,double> hltPU20bx25v = getEff(files["PU20bx25_VBF_HToInv_M-125_13TeV"],1,"HLTAlgoCounts");
-  map<string,double> hltPU40bx50v = getEff(files["PU40bx50_VBF_HToInv_M-125_13TeV"],1,"HLTAlgoCounts");
-  map<string,double> hltPU40bx25v = getEff(files["PU40bx25_VBF_HToInv_M-125_13TeV"],1,"HLTAlgoCounts");
+
+  // Getting files
+  map<string,TFile*> fNG,fSig;
+  fNG["PU20bx25_Neutrino_gun"]            = new TFile("PU20bx25_Neutrino_Pt-2to20_gun.root");
+  fNG["PU40bx50_Neutrino_gun"]            = new TFile("PU40bx50_Neutrino_Pt-2to20_gun.root");
+  fNG["PU40bx25_Neutrino_gun"]            = new TFile("PU40bx25_Neutrino_Pt-2to20_gun.root");
+
+  fSig["PU20bx25_VBF_HToInv_M-125_13TeV"] = new TFile("PU20bx25_VBF_HToInv_M-125_13TeV_powheg-pythia6.root");
+  fSig["PU40bx50_VBF_HToInv_M-125_13TeV"] = new TFile("PU40bx50_VBF_HToInv_M-125_13TeV_powheg-pythia6.root");
+  fSig["PU40bx25_VBF_HToInv_M-125_13TeV"] = new TFile("PU40bx25_VBF_HToInv_M-125_13TeV_powheg-pythia6.root");
   
   // Selected trigger
   vector<string> selL1T;
@@ -150,102 +147,389 @@ int main(){
   selHLT.push_back("HLT_DiJet35_MJJ700_AllJets_DEta3p5_VBF_v");  
   selHLT.push_back("HLT_DiJet35_MJJ750_AllJets_DEta3p5_VBF_v");  
 
+  // For eff
+  map<string,double> l1tPU20bx25v = getEff(fSig["PU20bx25_VBF_HToInv_M-125_13TeV"],1,"L1AlgoCounts");
+  map<string,double> l1tPU40bx50v = getEff(fSig["PU40bx50_VBF_HToInv_M-125_13TeV"],1,"L1AlgoCounts");
+  map<string,double> l1tPU40bx25v = getEff(fSig["PU40bx25_VBF_HToInv_M-125_13TeV"],1,"L1AlgoCounts");
   doTableL1T(selL1T,l1tPU20bx25v,l1tPU40bx50v,l1tPU40bx25v,"VBFInv_L1TSignalEffiency.tex");
+
+  map<string,double> hltPU20bx25v = getEff(fSig["PU20bx25_VBF_HToInv_M-125_13TeV"],1,"HLTAlgoCounts");
+  map<string,double> hltPU40bx50v = getEff(fSig["PU40bx50_VBF_HToInv_M-125_13TeV"],1,"HLTAlgoCounts");
+  map<string,double> hltPU40bx25v = getEff(fSig["PU40bx25_VBF_HToInv_M-125_13TeV"],1,"HLTAlgoCounts");
   doTableHLT(selHLT,hltPU20bx25v,hltPU40bx50v,hltPU40bx25v,"VBFInv_HLTSignalEffiency.tex");
 
-  map<string,double> l1tPU20bx25n = getEff(files["PU20bx25_Neutrino_gun"],1,"L1AlgoCounts" );
-  map<string,double> l1tPU40bx50n = getEff(files["PU40bx50_Neutrino_gun"],1,"L1AlgoCounts" );
-  map<string,double> l1tPU40bx25n = getEff(files["PU40bx25_Neutrino_gun"],1,"L1AlgoCounts" );
+  map<string,double> l1tPU20bx25n = getEff(fNG["PU20bx25_Neutrino_gun"],1,"L1AlgoCounts" );
+  map<string,double> l1tPU40bx50n = getEff(fNG["PU40bx50_Neutrino_gun"],1,"L1AlgoCounts" );
+  map<string,double> l1tPU40bx25n = getEff(fNG["PU40bx25_Neutrino_gun"],1,"L1AlgoCounts" );
   doTableL1T(selL1T,l1tPU20bx25n,l1tPU40bx50n,l1tPU40bx25n,"NeutrinoGun_L1TBunchEff.tex");
   
-  map<string,double> hltPU20bx25n = getEff(files["PU20bx25_Neutrino_gun"],1,"HLTAlgoCounts");
-  map<string,double> hltPU40bx50n = getEff(files["PU40bx50_Neutrino_gun"],1,"HLTAlgoCounts");
-  map<string,double> hltPU40bx25n = getEff(files["PU40bx25_Neutrino_gun"],1,"HLTAlgoCounts");
+  map<string,double> hltPU20bx25n = getEff(fNG["PU20bx25_Neutrino_gun"],1,"HLTAlgoCounts");
+  map<string,double> hltPU40bx50n = getEff(fNG["PU40bx50_Neutrino_gun"],1,"HLTAlgoCounts");
+  map<string,double> hltPU40bx25n = getEff(fNG["PU40bx25_Neutrino_gun"],1,"HLTAlgoCounts");
   doTableHLT(selHLT,hltPU20bx25n,hltPU40bx50n,hltPU40bx25n,"NeutrinoGun_HLTBunchEff.tex");
   
-  hltPU20bx25n = getEff(files["PU20bx25_Neutrino_gun"],1,"HLTAlgoCounts_ETM");
-  hltPU40bx50n = getEff(files["PU40bx50_Neutrino_gun"],1,"HLTAlgoCounts_ETM");
-  hltPU40bx25n = getEff(files["PU40bx25_Neutrino_gun"],1,"HLTAlgoCounts_ETM");
+  hltPU20bx25n = getEff(fNG["PU20bx25_Neutrino_gun"],1,"HLTAlgoCounts_ETM");
+  hltPU40bx50n = getEff(fNG["PU40bx50_Neutrino_gun"],1,"HLTAlgoCounts_ETM");
+  hltPU40bx25n = getEff(fNG["PU40bx25_Neutrino_gun"],1,"HLTAlgoCounts_ETM");
   doTableHLT(selHLT,hltPU20bx25n,hltPU40bx50n,hltPU40bx25n,"NeutrinoGun_HLTBunchEff_ETM.tex");
   
-  hltPU20bx25n = getEff(files["PU20bx25_Neutrino_gun"],1,"HLTAlgoCounts_HTT");
-  hltPU40bx50n = getEff(files["PU40bx50_Neutrino_gun"],1,"HLTAlgoCounts_HTT");
-  hltPU40bx25n = getEff(files["PU40bx25_Neutrino_gun"],1,"HLTAlgoCounts_HTT");
+  hltPU20bx25n = getEff(fNG["PU20bx25_Neutrino_gun"],1,"HLTAlgoCounts_HTT");
+  hltPU40bx50n = getEff(fNG["PU40bx50_Neutrino_gun"],1,"HLTAlgoCounts_HTT");
+  hltPU40bx25n = getEff(fNG["PU40bx25_Neutrino_gun"],1,"HLTAlgoCounts_HTT");
   doTableHLT(selHLT,hltPU20bx25n,hltPU40bx50n,hltPU40bx25n,"NeutrinoGun_HLTBunchEff_HTT.tex");
   
-  hltPU20bx25n = getEff(files["PU20bx25_Neutrino_gun"],1,"HLTAlgoCounts_Both");
-  hltPU40bx50n = getEff(files["PU40bx50_Neutrino_gun"],1,"HLTAlgoCounts_Both");
-  hltPU40bx25n = getEff(files["PU40bx25_Neutrino_gun"],1,"HLTAlgoCounts_Both");
+  // Making tables for eff per bunch
+  hltPU20bx25n = getEff(fNG["PU20bx25_Neutrino_gun"],1,"HLTAlgoCounts_Both");
+  hltPU40bx50n = getEff(fNG["PU40bx50_Neutrino_gun"],1,"HLTAlgoCounts_Both");
+  hltPU40bx25n = getEff(fNG["PU40bx25_Neutrino_gun"],1,"HLTAlgoCounts_Both");
   doTableHLT(selHLT,hltPU20bx25n,hltPU40bx50n,hltPU40bx25n,"NeutrinoGun_HLTBunchEff_Both.tex");
   
-  hltPU20bx25n = getEff(files["PU20bx25_Neutrino_gun"],1,"HLTAlgoCounts_None");
-  hltPU40bx50n = getEff(files["PU40bx50_Neutrino_gun"],1,"HLTAlgoCounts_None");
-  hltPU40bx25n = getEff(files["PU40bx25_Neutrino_gun"],1,"HLTAlgoCounts_None");
+  hltPU20bx25n = getEff(fNG["PU20bx25_Neutrino_gun"],1,"HLTAlgoCounts_None");
+  hltPU40bx50n = getEff(fNG["PU40bx50_Neutrino_gun"],1,"HLTAlgoCounts_None");
+  hltPU40bx25n = getEff(fNG["PU40bx25_Neutrino_gun"],1,"HLTAlgoCounts_None");
   doTableHLT(selHLT,hltPU20bx25n,hltPU40bx50n,hltPU40bx25n,"NeutrinoGun_HLTBunchEff_None.tex");
   
-  
-  l1tPU20bx25n = getEff(files["PU20bx25_Neutrino_gun"],1,"L1AlgoCounts", double(ratePerBunch));
-  l1tPU40bx50n = getEff(files["PU40bx50_Neutrino_gun"],1,"L1AlgoCounts", double(ratePerBunch));
-  l1tPU40bx25n = getEff(files["PU40bx25_Neutrino_gun"],1,"L1AlgoCounts", double(ratePerBunch));
-  hltPU20bx25n = getEff(files["PU20bx25_Neutrino_gun"],1,"HLTAlgoCounts",double(ratePerBunch));
-  hltPU40bx50n = getEff(files["PU40bx50_Neutrino_gun"],1,"HLTAlgoCounts",double(ratePerBunch));
-  hltPU40bx25n = getEff(files["PU40bx25_Neutrino_gun"],1,"HLTAlgoCounts",double(ratePerBunch));
+  // Making tables for rate per bunch  
+  l1tPU20bx25n = getEff(fNG["PU20bx25_Neutrino_gun"],1,"L1AlgoCounts", double(ratePerBunch));
+  l1tPU40bx50n = getEff(fNG["PU40bx50_Neutrino_gun"],1,"L1AlgoCounts", double(ratePerBunch));
+  l1tPU40bx25n = getEff(fNG["PU40bx25_Neutrino_gun"],1,"L1AlgoCounts", double(ratePerBunch));
   doTableL1T(selL1T,l1tPU20bx25n,l1tPU40bx50n,l1tPU40bx25n,"NeutrinoGun_L1TBunchRate.tex");
+
+  hltPU20bx25n = getEff(fNG["PU20bx25_Neutrino_gun"],1,"HLTAlgoCounts",double(ratePerBunch));
+  hltPU40bx50n = getEff(fNG["PU40bx50_Neutrino_gun"],1,"HLTAlgoCounts",double(ratePerBunch));
+  hltPU40bx25n = getEff(fNG["PU40bx25_Neutrino_gun"],1,"HLTAlgoCounts",double(ratePerBunch));
   doTableHLT(selHLT,hltPU20bx25n,hltPU40bx50n,hltPU40bx25n,"NeutrinoGun_HLTBunchRate.tex");
 
-  l1tPU20bx25n = getEff(files["PU20bx25_Neutrino_gun"],1,"L1AlgoCounts", double(ratePerBunch)*double(nMaxBunch25ns));
-  l1tPU40bx50n = getEff(files["PU40bx50_Neutrino_gun"],1,"L1AlgoCounts", double(ratePerBunch)*double(nMaxBunch50ns));
-  l1tPU40bx25n = getEff(files["PU40bx25_Neutrino_gun"],1,"L1AlgoCounts", double(ratePerBunch)*double(nMaxBunch25ns));
-  hltPU20bx25n = getEff(files["PU20bx25_Neutrino_gun"],1,"HLTAlgoCounts",double(ratePerBunch)*double(nMaxBunch25ns));
-  hltPU40bx50n = getEff(files["PU40bx50_Neutrino_gun"],1,"HLTAlgoCounts",double(ratePerBunch)*double(nMaxBunch50ns));
-  hltPU40bx25n = getEff(files["PU40bx25_Neutrino_gun"],1,"HLTAlgoCounts",double(ratePerBunch)*double(nMaxBunch25ns));
+  // Making tables for maximum rate
+  l1tPU20bx25n = getEff(fNG["PU20bx25_Neutrino_gun"],1,"L1AlgoCounts", double(ratePerBunch)*double(nMaxBunch25ns));
+  l1tPU40bx50n = getEff(fNG["PU40bx50_Neutrino_gun"],1,"L1AlgoCounts", double(ratePerBunch)*double(nMaxBunch50ns));
+  l1tPU40bx25n = getEff(fNG["PU40bx25_Neutrino_gun"],1,"L1AlgoCounts", double(ratePerBunch)*double(nMaxBunch25ns));
+
   doTableL1T(selL1T,l1tPU20bx25n,l1tPU40bx50n,l1tPU40bx25n,"NeutrinoGun_L1TMaxRate.tex");
+  hltPU20bx25n = getEff(fNG["PU20bx25_Neutrino_gun"],1,"HLTAlgoCounts",double(ratePerBunch)*double(nMaxBunch25ns));
+  hltPU40bx50n = getEff(fNG["PU40bx50_Neutrino_gun"],1,"HLTAlgoCounts",double(ratePerBunch)*double(nMaxBunch50ns));
+  hltPU40bx25n = getEff(fNG["PU40bx25_Neutrino_gun"],1,"HLTAlgoCounts",double(ratePerBunch)*double(nMaxBunch25ns));
   doTableHLT(selHLT,hltPU20bx25n,hltPU40bx50n,hltPU40bx25n,"NeutrinoGun_HLTMaxRate.tex");
+
+  //____________________________________________________________  
+  // Calculations
+  //____________________________________________________________
   
-  map<string,TH1D*> hL1ETM,hL1HTT;
-  hL1ETM["PU20bx25_Neutrino_gun"] = (TH1D*) files["PU20bx25_Neutrino_gun"]->Get(Form("Run_%d/L1ETM",1));
-  hL1ETM["PU40bx50_Neutrino_gun"] = (TH1D*) files["PU40bx50_Neutrino_gun"]->Get(Form("Run_%d/L1ETM",1));
-  hL1ETM["PU40bx25_Neutrino_gun"] = (TH1D*) files["PU40bx25_Neutrino_gun"]->Get(Form("Run_%d/L1ETM",1));
-  hL1HTT["PU20bx25_Neutrino_gun"] = (TH1D*) files["PU20bx25_Neutrino_gun"]->Get(Form("Run_%d/L1HTT",1));
-  hL1HTT["PU40bx50_Neutrino_gun"] = (TH1D*) files["PU40bx50_Neutrino_gun"]->Get(Form("Run_%d/L1HTT",1));
-  hL1HTT["PU40bx25_Neutrino_gun"] = (TH1D*) files["PU40bx25_Neutrino_gun"]->Get(Form("Run_%d/L1HTT",1));
+  cout << "Saturation Probability ECAL TT:" << endl;
+  rat::HistogramCollection<string,TH1I> hEcalTT_NSaturated_NG (fNG, Form("Run_%d/hEcalTT_NSaturated",1));
+  cout << "Neutrino Gun (PU20bx25) num=" << hEcalTT_NSaturated_NG["PU20bx25_Neutrino_gun"]->GetBinContent(1) 
+       << " den="  << hEcalTT_NSaturated_NG["PU20bx25_Neutrino_gun"]->GetEntries() 
+       << " prob=" << hEcalTT_NSaturated_NG["PU20bx25_Neutrino_gun"]->GetBinContent(1)/hEcalTT_NSaturated_NG["PU20bx25_Neutrino_gun"]->GetEntries() 
+       << endl;
+  cout << "Neutrino Gun (PU40bx50) num=" << hEcalTT_NSaturated_NG["PU40bx50_Neutrino_gun"]->GetBinContent(1) 
+       << " den="  << hEcalTT_NSaturated_NG["PU40bx50_Neutrino_gun"]->GetEntries() 
+       << " prob=" << hEcalTT_NSaturated_NG["PU40bx50_Neutrino_gun"]->GetBinContent(1)/hEcalTT_NSaturated_NG["PU40bx50_Neutrino_gun"]->GetEntries() 
+       << endl;
+  cout << "Neutrino Gun (PU40bx25) num=" << hEcalTT_NSaturated_NG["PU40bx25_Neutrino_gun"]->GetBinContent(1) 
+       << " den="  << hEcalTT_NSaturated_NG["PU40bx25_Neutrino_gun"]->GetEntries() 
+       << " prob=" << hEcalTT_NSaturated_NG["PU40bx25_Neutrino_gun"]->GetBinContent(1)/hEcalTT_NSaturated_NG["PU40bx25_Neutrino_gun"]->GetEntries() 
+       << endl;
   
-  TCanvas cL1ETM;
-  cL1ETM.SetLogy();
-  hL1ETM["PU20bx25_Neutrino_gun"]->SetLineColor(kRed);
-  hL1ETM["PU40bx50_Neutrino_gun"]->SetLineColor(kGreen);
-  hL1ETM["PU40bx25_Neutrino_gun"]->SetLineColor(kBlue);
+  rat::HistogramCollection<string,TH1I> hEcalTT_NSaturated_Sig(fSig,Form("Run_%d/hEcalTT_NSaturated",1));
+  cout << "VBF H(Inv) (PU20bx25): " << hEcalTT_NSaturated_Sig["PU20bx25_VBF_HToInv_M-125_13TeV"]->GetBinContent(1)/hEcalTT_NSaturated_Sig["PU20bx25_VBF_HToInv_M-125_13TeV"]->GetEntries() << endl;
+  cout << "VBF H(Inv) (PU40bx50): " << hEcalTT_NSaturated_Sig["PU40bx50_VBF_HToInv_M-125_13TeV"]->GetBinContent(1)/hEcalTT_NSaturated_Sig["PU40bx50_VBF_HToInv_M-125_13TeV"]->GetEntries() << endl;
+  cout << "VBF H(Inv) (PU40bx25): " << hEcalTT_NSaturated_Sig["PU40bx25_VBF_HToInv_M-125_13TeV"]->GetBinContent(1)/hEcalTT_NSaturated_Sig["PU40bx25_VBF_HToInv_M-125_13TeV"]->GetEntries() << endl;
   
-  hL1ETM["PU20bx25_Neutrino_gun"]->Draw();
-  hL1ETM["PU40bx50_Neutrino_gun"]->Draw("same");
-  hL1ETM["PU40bx25_Neutrino_gun"]->Draw("same");
+  cout << "Saturation Probability HCAL TT:" << endl;
+  rat::HistogramCollection<string,TH1I> hHcalTT_NSaturated_NG (fNG, Form("Run_%d/hHcalTT_NSaturated",1));
+  cout << "Neutrino Gun (PU20bx25) num=" << hHcalTT_NSaturated_NG["PU20bx25_Neutrino_gun"]->GetBinContent(1)
+       << " den="  << hHcalTT_NSaturated_NG["PU20bx25_Neutrino_gun"]->GetEntries()
+       << " prob=" << hHcalTT_NSaturated_NG["PU20bx25_Neutrino_gun"]->GetBinContent(1)/hHcalTT_NSaturated_NG["PU20bx25_Neutrino_gun"]->GetEntries() 
+       << endl;
+  cout << "Neutrino Gun (PU40bx50) num=" << hHcalTT_NSaturated_NG["PU40bx50_Neutrino_gun"]->GetBinContent(1)
+       << " den="  << hHcalTT_NSaturated_NG["PU40bx50_Neutrino_gun"]->GetEntries()
+       << " prob=" << hHcalTT_NSaturated_NG["PU40bx50_Neutrino_gun"]->GetBinContent(1)/hHcalTT_NSaturated_NG["PU40bx50_Neutrino_gun"]->GetEntries() 
+       << endl;
+  cout << "Neutrino Gun (PU40bx25)  num=" << hHcalTT_NSaturated_NG["PU40bx25_Neutrino_gun"]->GetBinContent(1)
+       << " den="  << hHcalTT_NSaturated_NG["PU40bx25_Neutrino_gun"]->GetEntries()
+       << " prob=" << hHcalTT_NSaturated_NG["PU40bx25_Neutrino_gun"]->GetBinContent(1)/hHcalTT_NSaturated_NG["PU40bx25_Neutrino_gun"]->GetEntries() 
+       << endl;
   
-  TLegend lL1ETM(0.55,0.85,0.85,0.95); ;
-  lL1ETM.AddEntry(hL1ETM["PU20bx25_Neutrino_gun"],"PU20bx25","l");
-  lL1ETM.AddEntry(hL1ETM["PU40bx50_Neutrino_gun"],"PU40bx50","l");
-  lL1ETM.AddEntry(hL1ETM["PU40bx25_Neutrino_gun"],"PU40bx25","l");
-  lL1ETM.Draw();
+  rat::HistogramCollection<string,TH1I> hHcalTT_NSaturated_Sig(fSig,Form("Run_%d/hHcalTT_NSaturated",1));
+  cout << "VBF H(Inv) (PU20bx25): " << hHcalTT_NSaturated_Sig["PU20bx25_VBF_HToInv_M-125_13TeV"]->GetBinContent(1)/hHcalTT_NSaturated_Sig["PU20bx25_VBF_HToInv_M-125_13TeV"]->GetEntries() << endl;
+  cout << "VBF H(Inv) (PU40bx50): " << hHcalTT_NSaturated_Sig["PU40bx50_VBF_HToInv_M-125_13TeV"]->GetBinContent(1)/hHcalTT_NSaturated_Sig["PU40bx50_VBF_HToInv_M-125_13TeV"]->GetEntries() << endl;
+  cout << "VBF H(Inv) (PU40bx25): " << hHcalTT_NSaturated_Sig["PU40bx25_VBF_HToInv_M-125_13TeV"]->GetBinContent(1)/hHcalTT_NSaturated_Sig["PU40bx25_VBF_HToInv_M-125_13TeV"]->GetEntries() << endl;
   
-  cL1ETM.SaveAs("cL1ETM.pdf");
+  cout << "Saturation Probability RCT Region:" << endl;
+  rat::HistogramCollection<string,TH1I> hRCTRegion_NSaturated_NG (fNG, Form("Run_%d/hRCTRegion_NSaturated",1));
+  cout << "Neutrino Gun (PU20bx25): " << hRCTRegion_NSaturated_NG["PU20bx25_Neutrino_gun"]->GetBinContent(1)/hRCTRegion_NSaturated_NG["PU20bx25_Neutrino_gun"]->GetEntries() << endl;
+  cout << "Neutrino Gun (PU40bx50): " << hRCTRegion_NSaturated_NG["PU40bx50_Neutrino_gun"]->GetBinContent(1)/hRCTRegion_NSaturated_NG["PU40bx50_Neutrino_gun"]->GetEntries() << endl;
+  cout << "Neutrino Gun (PU40bx25): " << hRCTRegion_NSaturated_NG["PU40bx25_Neutrino_gun"]->GetBinContent(1)/hRCTRegion_NSaturated_NG["PU40bx25_Neutrino_gun"]->GetEntries() << endl;
   
-  TCanvas cL1HTT;
-  cL1HTT.SetLogy();
-  hL1HTT["PU20bx25_Neutrino_gun"]->SetLineColor(kRed);
-  hL1HTT["PU40bx50_Neutrino_gun"]->SetLineColor(kGreen);
-  hL1HTT["PU40bx25_Neutrino_gun"]->SetLineColor(kBlue);
+  rat::HistogramCollection<string,TH1I> hRCTRegion_NSaturated_Sig(fSig,Form("Run_%d/hRCTRegion_NSaturated",1));
+  cout << "VBF H(Inv) (PU20bx25): " << hRCTRegion_NSaturated_Sig["PU20bx25_VBF_HToInv_M-125_13TeV"]->GetBinContent(1)/hRCTRegion_NSaturated_Sig["PU20bx25_VBF_HToInv_M-125_13TeV"]->GetEntries() << endl;
+  cout << "VBF H(Inv) (PU40bx50): " << hRCTRegion_NSaturated_Sig["PU40bx50_VBF_HToInv_M-125_13TeV"]->GetBinContent(1)/hRCTRegion_NSaturated_Sig["PU40bx50_VBF_HToInv_M-125_13TeV"]->GetEntries() << endl;
+  cout << "VBF H(Inv) (PU40bx25): " << hRCTRegion_NSaturated_Sig["PU40bx25_VBF_HToInv_M-125_13TeV"]->GetBinContent(1)/hRCTRegion_NSaturated_Sig["PU40bx25_VBF_HToInv_M-125_13TeV"]->GetEntries() << endl;  
   
-  hL1HTT["PU20bx25_Neutrino_gun"]->Draw();
-  hL1HTT["PU40bx50_Neutrino_gun"]->Draw("same");
-  hL1HTT["PU40bx25_Neutrino_gun"]->Draw("same");
+  //____________________________________________________________  
+  // Doing plots
+  //____________________________________________________________
   
-  TLegend lL1HTT(0.55,0.85,0.85,0.95); ;
-  lL1HTT.AddEntry(hL1ETM["PU20bx25_Neutrino_gun"],"PU20bx25","l");
-  lL1HTT.AddEntry(hL1ETM["PU40bx50_Neutrino_gun"],"PU40bx50","l");
-  lL1HTT.AddEntry(hL1ETM["PU40bx25_Neutrino_gun"],"PU40bx25","l");
-  lL1HTT.Draw();
+  map<string,int> attLineColor;
+  attLineColor["PU20bx25_Neutrino_gun"]           = kRed;
+  attLineColor["PU40bx50_Neutrino_gun"]           = kGreen;
+  attLineColor["PU40bx25_Neutrino_gun"]           = kBlue;
+  attLineColor["PU20bx25_VBF_HToInv_M-125_13TeV"] = kRed;
+  attLineColor["PU40bx50_VBF_HToInv_M-125_13TeV"] = kGreen;
+  attLineColor["PU40bx25_VBF_HToInv_M-125_13TeV"] = kBlue;
   
-  cL1HTT.SaveAs("cL1HTT.pdf");
+  map<string,string> attLegendText;
+  attLegendText["PU20bx25_Neutrino_gun"]           = "#nu_{gun} PU20bx25";
+  attLegendText["PU40bx50_Neutrino_gun"]           = "#nu_{gun} PU40bx50";        
+  attLegendText["PU40bx25_Neutrino_gun"]           = "#nu_{gun} PU40bx25";
+  attLegendText["PU20bx25_VBF_HToInv_M-125_13TeV"] = "VBF H(Inv) PU20bx25";
+  attLegendText["PU40bx50_VBF_HToInv_M-125_13TeV"] = "VBF H(Inv) PU40bx50";
+  attLegendText["PU40bx25_VBF_HToInv_M-125_13TeV"] = "VBF H(Inv) PU40bx25";
   
+  map<string,string> attLegendAttribute;
+  attLegendAttribute["PU20bx25_Neutrino_gun"]           = "l";
+  attLegendAttribute["PU40bx50_Neutrino_gun"]           = "l";
+  attLegendAttribute["PU40bx25_Neutrino_gun"]           = "l";
+  attLegendAttribute["PU20bx25_VBF_HToInv_M-125_13TeV"] = "l";
+  attLegendAttribute["PU40bx50_VBF_HToInv_M-125_13TeV"] = "l";
+  attLegendAttribute["PU40bx25_VBF_HToInv_M-125_13TeV"] = "l"; 
+    
+  vector< pair<string,Option_t*> > attDrawAttributesNG;
+  attDrawAttributesNG.push_back(pair<string,Option_t*>("PU20bx25_Neutrino_gun",""));
+  attDrawAttributesNG.push_back(pair<string,Option_t*>("PU40bx50_Neutrino_gun","same"));
+  attDrawAttributesNG.push_back(pair<string,Option_t*>("PU40bx25_Neutrino_gun","same"));
+  
+  vector< pair<string,Option_t*> > attDrawAttributesSig;  
+  attDrawAttributesSig.push_back(pair<string,Option_t*>("PU20bx25_VBF_HToInv_M-125_13TeV",""));
+  attDrawAttributesSig.push_back(pair<string,Option_t*>("PU40bx50_VBF_HToInv_M-125_13TeV","same"));
+  attDrawAttributesSig.push_back(pair<string,Option_t*>("PU40bx25_VBF_HToInv_M-125_13TeV","same"));
+
+  TCanvas* c = new TCanvas();
+
+  // L1 Quantities
+  //_______________________________________________________________________________
+  rat::HistogramCollection<string,TH1D> hcL1ETM_NG(fNG,Form("Run_%d/L1ETM",1));
+  hcL1ETM_NG.scaleTo1();
+  hcL1ETM_NG.setLineColor(attLineColor);
+  hcL1ETM_NG.setLegend(attLegendText,attLegendAttribute);
+  hcL1ETM_NG["PU20bx25_Neutrino_gun"]->GetXaxis()->SetRangeUser(0,200);
+  hcL1ETM_NG["PU20bx25_Neutrino_gun"]->GetXaxis()->SetTitle("L1ETM [GeV]");
+  hcL1ETM_NG["PU20bx25_Neutrino_gun"]->GetYaxis()->SetRangeUser(0.1,-10e7);
+  hcL1ETM_NG["PU20bx25_Neutrino_gun"]->GetYaxis()->SetTitle("Entries");
+  hcL1ETM_NG.draw(c,attDrawAttributesNG);
+  c->SetLogy();
+  c->SaveAs("L1ETM_NG.pdf");
+  
+  c->SetLogy(false);
+  rat::HistogramCollection<string,TH1D> hcL1HTT_NG(fNG,Form("Run_%d/L1HTT",1));
+  hcL1ETM_NG.scaleTo1();
+  hcL1HTT_NG.setLineColor(attLineColor);
+  hcL1HTT_NG.setLegend(attLegendText,attLegendAttribute);  
+  hcL1HTT_NG["PU20bx25_Neutrino_gun"]->GetXaxis()->SetRangeUser(0,1200);
+  hcL1HTT_NG["PU20bx25_Neutrino_gun"]->GetYaxis()->SetTitle("L1HTT [GeV]");
+  hcL1HTT_NG["PU20bx25_Neutrino_gun"]->GetYaxis()->SetRangeUser(0.1,10e7);
+  hcL1HTT_NG["PU20bx25_Neutrino_gun"]->GetYaxis()->SetTitle("Entries");
+  hcL1HTT_NG.draw(c,attDrawAttributesNG);
+  c->SetLogy();
+  c->SaveAs("L1HTT_NG.pdf");
+
+  rat::HistogramCollection<string,TH1D> hcL1ETM_Sig(fSig,Form("Run_%d/L1ETM",1));
+  hcL1ETM_Sig.scaleTo1();
+  hcL1ETM_Sig.setLineColor(attLineColor);
+  hcL1ETM_Sig.setLegend(attLegendText,attLegendAttribute);
+  hcL1ETM_Sig["PU20bx25_VBF_HToInv_M-125_13TeV"]->GetXaxis()->SetRangeUser(0,1000);
+  hcL1ETM_Sig["PU20bx25_VBF_HToInv_M-125_13TeV"]->GetXaxis()->SetTitle("L1ETM [GeV]");
+  hcL1ETM_Sig["PU20bx25_VBF_HToInv_M-125_13TeV"]->GetYaxis()->SetRangeUser(0.1,10e7);
+  hcL1ETM_Sig["PU20bx25_VBF_HToInv_M-125_13TeV"]->GetYaxis()->SetTitle("Entries");
+  hcL1ETM_Sig.draw(c,attDrawAttributesSig);
+  c->SetLogy();
+  c->SaveAs("L1ETM_Sig.pdf");
+  
+  c->SetLogy(false);
+  rat::HistogramCollection<string,TH1D> hcL1HTT_Sig(fSig,Form("Run_%d/L1HTT",1));
+  hcL1HTT_Sig.scaleTo1();
+  hcL1HTT_Sig.setLineColor(attLineColor);
+  hcL1HTT_Sig.setLegend(attLegendText,attLegendAttribute);  
+  hcL1HTT_Sig["PU20bx25_VBF_HToInv_M-125_13TeV"]->GetXaxis()->SetRangeUser(0,1200);
+  hcL1HTT_Sig["PU20bx25_VBF_HToInv_M-125_13TeV"]->GetYaxis()->SetTitle("L1HTT [GeV]");
+  hcL1HTT_Sig["PU20bx25_VBF_HToInv_M-125_13TeV"]->GetYaxis()->SetRangeUser(0.1,10e7);
+  hcL1HTT_Sig["PU20bx25_VBF_HToInv_M-125_13TeV"]->GetYaxis()->SetTitle("Entries");
+  hcL1HTT_Sig.draw(c,attDrawAttributesSig);
+  c->SetLogy();
+  c->SaveAs("L1HTT_Sig.pdf");
+  
+  // L1 Quantities Saturated
+  //_______________________________________________________________________________  
+  rat::HistogramCollection<string,TH1D> hcL1ETM_Saturated_NG(fNG,Form("Run_%d/hL1ETM_Saturated",1));
+  hcL1ETM_Saturated_NG.scaleTo1();
+  hcL1ETM_Saturated_NG.setLineColor(attLineColor);
+  hcL1ETM_Saturated_NG.setLegend(attLegendText,attLegendAttribute);
+  //hcL1ETM_Saturated_NG["PU20bx25_Neutrino_gun"]->GetXaxis()->SetRangeUser(0,200);
+  hcL1ETM_Saturated_NG["PU20bx25_Neutrino_gun"]->GetXaxis()->SetTitle("L1ETM [GeV]");
+  //hcL1ETM_Saturated_NG["PU20bx25_Neutrino_gun"]->GetYaxis()->SetRangeUser(0.1,10e7);
+  hcL1ETM_Saturated_NG["PU20bx25_Neutrino_gun"]->GetYaxis()->SetTitle("Entries");
+  hcL1ETM_Saturated_NG.draw(c,attDrawAttributesNG);
+  c->SetLogy();
+  c->SaveAs("L1ETM_Saturated_NG.pdf");
+  
+  c->SetLogy(false);
+  rat::HistogramCollection<string,TH1D> hcL1HTT_Saturated_NG(fNG,Form("Run_%d/hL1HTT_Saturated",1));  
+  hcL1HTT_Saturated_NG.scaleTo1();
+  hcL1HTT_Saturated_NG.setLineColor(attLineColor);
+  hcL1HTT_Saturated_NG.setLegend(attLegendText,attLegendAttribute);  
+  //hcL1HTT_Saturated_NG["PU20bx25_Neutrino_gun"]->GetXaxis()->SetRangeUser(0,1200);
+  hcL1HTT_Saturated_NG["PU20bx25_Neutrino_gun"]->GetXaxis()->SetTitle("L1HTT [GeV]");
+  //hcL1HTT_Saturated_NG["PU20bx25_Neutrino_gun"]->GetYaxis()->SetRangeUser(0.1,10e7);
+  hcL1HTT_Saturated_NG["PU20bx25_Neutrino_gun"]->GetYaxis()->SetTitle("Entries");
+  hcL1HTT_Saturated_NG.draw(c,attDrawAttributesNG);
+  c->SetLogy();
+  c->SaveAs("L1HTT_Saturated_NG.pdf");
+
+  rat::HistogramCollection<string,TH1D> hcL1ETM_Saturated_Sig(fSig,Form("Run_%d/hL1ETM_Saturated",1));
+  hcL1ETM_Saturated_Sig.scaleTo1();
+  hcL1ETM_Saturated_Sig.rebin(5);
+  hcL1ETM_Saturated_Sig.setLineColor(attLineColor);
+  hcL1ETM_Saturated_Sig.setLegend(attLegendText,attLegendAttribute);
+  //hcL1ETM_Saturated_Sig["PU20bx25_VBF_HToInv_M-125_13TeV"]->GetXaxis()->SetRangeUser(0,200);
+  hcL1ETM_Saturated_Sig["PU20bx25_VBF_HToInv_M-125_13TeV"]->GetXaxis()->SetTitle("L1ETM [GeV]");
+  //hcL1ETM_Saturated_Sig["PU20bx25_VBF_HToInv_M-125_13TeV"]->GetYaxis()->SetRangeUser(0.1,10e7);
+  hcL1ETM_Saturated_Sig["PU20bx25_VBF_HToInv_M-125_13TeV"]->GetYaxis()->SetTitle("Entries");
+  hcL1ETM_Saturated_Sig.draw(c,attDrawAttributesSig);
+  c->SetLogy();
+  c->SaveAs("L1ETM_Saturated_Sig.pdf");
+  
+  c->SetLogy(false);
+  rat::HistogramCollection<string,TH1D> hcL1HTT_Saturated_Sig(fSig,Form("Run_%d/hL1HTT_Saturated",1));
+  hcL1HTT_Saturated_Sig.scaleTo1();
+  hcL1HTT_Saturated_Sig.rebin(5);
+  hcL1HTT_Saturated_Sig.setLineColor(attLineColor);
+  hcL1HTT_Saturated_Sig.setLegend(attLegendText,attLegendAttribute);  
+  hcL1HTT_Saturated_Sig["PU20bx25_VBF_HToInv_M-125_13TeV"]->GetXaxis()->SetRangeUser(0,1200);
+  //hcL1HTT_Saturated_Sig["PU20bx25_VBF_HToInv_M-125_13TeV"]->GetXaxis()->SetTitle("L1HTT [GeV]");
+  hcL1HTT_Saturated_Sig["PU20bx25_VBF_HToInv_M-125_13TeV"]->GetYaxis()->SetRangeUser(0.1,10e7);
+  //hcL1HTT_Saturated_Sig["PU20bx25_VBF_HToInv_M-125_13TeV"]->GetYaxis()->SetTitle("Entries");
+  hcL1HTT_Saturated_Sig.draw(c,attDrawAttributesSig);
+  c->SetLogy();
+  c->SaveAs("L1HTT_Saturated_Sig.pdf");
+  
+  // ECAL TT HCAL TT and RCT Regions
+  //_______________________________________________________________________________ 
+  c->SetLogy(false);
+  rat::HistogramCollection<string,TH1D> hcECALTT_Val_NG(fNG,Form("Run_%d/hEcalTT_Val",1));
+  hcECALTT_Val_NG.scaleTo1();
+  hcECALTT_Val_NG.rebin(2);
+  hcECALTT_Val_NG.setLineColor(attLineColor);
+  hcECALTT_Val_NG.setLegend(attLegendText,attLegendAttribute);  
+  hcECALTT_Val_NG["PU20bx25_Neutrino_gun"]->GetXaxis()->SetRangeUser(0,300);
+  hcECALTT_Val_NG["PU20bx25_Neutrino_gun"]->GetXaxis()->SetTitle("Compressed E_{T} [GeV]");
+  hcECALTT_Val_NG["PU20bx25_Neutrino_gun"]->GetYaxis()->SetRangeUser(0.1,10e11);
+  hcECALTT_Val_NG["PU20bx25_Neutrino_gun"]->GetYaxis()->SetTitle("Entries");
+  hcECALTT_Val_NG.draw(c,attDrawAttributesNG);
+  c->SetLogy();
+  c->SaveAs("EcalTT_Val_NG.pdf"); 
+  
+  c->SetLogy(false);
+  rat::HistogramCollection<string,TH1D> hcHCALTT_Val_NG(fNG,Form("Run_%d/hHcalTT_Val",1));  
+  hcHCALTT_Val_NG.scaleTo1();
+  hcHCALTT_Val_NG.rebin(2);
+  hcHCALTT_Val_NG.setLineColor(attLineColor);
+  hcHCALTT_Val_NG.setLegend(attLegendText,attLegendAttribute);  
+  hcHCALTT_Val_NG["PU20bx25_Neutrino_gun"]->GetXaxis()->SetRangeUser(0,300);
+  hcHCALTT_Val_NG["PU20bx25_Neutrino_gun"]->GetXaxis()->SetTitle("Compressed E_{T} [GeV]");
+  hcHCALTT_Val_NG["PU20bx25_Neutrino_gun"]->GetYaxis()->SetRangeUser(0.1,10e11);
+  hcHCALTT_Val_NG["PU20bx25_Neutrino_gun"]->GetYaxis()->SetTitle("Entries");
+  hcHCALTT_Val_NG.draw(c,attDrawAttributesNG);
+  c->SetLogy();
+  c->SaveAs("HcalTT_Val_NG.pdf"); 
+
+  c->SetLogy(false);
+  rat::HistogramCollection<string,TH1D> hcRCTRegion_Val_NG(fNG,Form("Run_%d/hRCTRegion_Val",1));  
+  hcRCTRegion_Val_NG.scaleTo1();
+  hcRCTRegion_Val_NG.rebin(2);
+  hcRCTRegion_Val_NG.setLineColor(attLineColor);
+  hcRCTRegion_Val_NG.setLegend(attLegendText,attLegendAttribute);  
+  hcRCTRegion_Val_NG["PU20bx25_Neutrino_gun"]->GetXaxis()->SetRangeUser(0,1100);
+  hcRCTRegion_Val_NG["PU20bx25_Neutrino_gun"]->GetXaxis()->SetTitle("Compressed E_{T} [GeV]");
+  hcRCTRegion_Val_NG["PU20bx25_Neutrino_gun"]->GetYaxis()->SetRangeUser(0.1,10e10);
+  hcRCTRegion_Val_NG["PU20bx25_Neutrino_gun"]->GetYaxis()->SetTitle("Entries");
+  hcRCTRegion_Val_NG.draw(c,attDrawAttributesNG);
+  c->SetLogy();
+  c->SaveAs("RCTRegion_Val_NG.pdf");
+  
+  c->SetLogy(false);
+  rat::HistogramCollection<string,TH1D> hcECALTT_Val_Sig(fSig,Form("Run_%d/hEcalTT_Val",1));
+  hcECALTT_Val_Sig.scaleTo1();
+  hcECALTT_Val_Sig.rebin(2);
+  hcECALTT_Val_Sig.setLineColor(attLineColor);
+  hcECALTT_Val_Sig.setLegend(attLegendText,attLegendAttribute);
+  hcECALTT_Val_Sig["PU20bx25_VBF_HToInv_M-125_13TeV"]->GetXaxis()->SetRangeUser(0,300);
+  hcECALTT_Val_Sig["PU20bx25_VBF_HToInv_M-125_13TeV"]->GetXaxis()->SetTitle("Compressed E_{T} [GeV]");
+  hcECALTT_Val_Sig["PU20bx25_VBF_HToInv_M-125_13TeV"]->GetYaxis()->SetRangeUser(0.1,10e11);
+  hcECALTT_Val_Sig["PU20bx25_VBF_HToInv_M-125_13TeV"]->GetYaxis()->SetTitle("Entries");
+  hcECALTT_Val_Sig.draw(c,attDrawAttributesSig);
+  c->SetLogy();
+  c->SaveAs("EcalTT_Val_Sig.pdf"); 
+  
+  c->SetLogy(false);
+  rat::HistogramCollection<string,TH1D> hcHCALTT_Val_Sig(fSig,Form("Run_%d/hHcalTT_Val",1));  
+  hcHCALTT_Val_Sig.scaleTo1();
+  hcHCALTT_Val_Sig.rebin(2);
+  hcHCALTT_Val_Sig.setLineColor(attLineColor);
+  hcHCALTT_Val_Sig.setLegend(attLegendText,attLegendAttribute);  
+  hcHCALTT_Val_Sig["PU20bx25_VBF_HToInv_M-125_13TeV"]->GetXaxis()->SetRangeUser(0,300);
+  hcHCALTT_Val_Sig["PU20bx25_VBF_HToInv_M-125_13TeV"]->GetXaxis()->SetTitle("Compressed E_{T} [GeV]");
+  hcHCALTT_Val_Sig["PU20bx25_VBF_HToInv_M-125_13TeV"]->GetYaxis()->SetRangeUser(0.1,10e11);
+  hcHCALTT_Val_Sig["PU20bx25_VBF_HToInv_M-125_13TeV"]->GetYaxis()->SetTitle("Entries");
+  hcHCALTT_Val_Sig.draw(c,attDrawAttributesSig);
+  c->SetLogy();
+  c->SaveAs("HcalTT_Val_Sig.pdf"); 
+  
+  c->SetLogy(false);
+  rat::HistogramCollection<string,TH1D> hcRCTRegion_Val_Sig(fSig,Form("Run_%d/hRCTRegion_Val",1));  
+  hcRCTRegion_Val_Sig.scaleTo1();
+  hcRCTRegion_Val_Sig.rebin(2);
+  hcRCTRegion_Val_Sig.setLineColor(attLineColor);
+  hcRCTRegion_Val_Sig.setLegend(attLegendText,attLegendAttribute);  
+  hcRCTRegion_Val_Sig["PU20bx25_VBF_HToInv_M-125_13TeV"]->GetXaxis()->SetRangeUser(0,1100);
+  hcRCTRegion_Val_Sig["PU20bx25_VBF_HToInv_M-125_13TeV"]->GetXaxis()->SetTitle("Compressed E_{T} [GeV]");
+  hcRCTRegion_Val_Sig["PU20bx25_VBF_HToInv_M-125_13TeV"]->GetYaxis()->SetRangeUser(0.1,10e10);
+  hcRCTRegion_Val_Sig["PU20bx25_VBF_HToInv_M-125_13TeV"]->GetYaxis()->SetTitle("Entries");
+  hcRCTRegion_Val_Sig.draw(c,attDrawAttributesSig);
+  c->SetLogy();
+  c->SaveAs("RCTRegion_Val_Sig.pdf");
+  
+  // 127 Saturation
+  //_______________________________________________________________________________
+  TH1D *hECALTT_Barrel_CompressedEt = (TH1D*) fSig["PU40bx25_VBF_HToInv_M-125_13TeV"]->Get(Form("Run_%d/EcalTT/ECALTT_Barrel_CompressedEt",1));
+  hECALTT_Barrel_CompressedEt->SetLineColor(kBlue);
+  hECALTT_Barrel_CompressedEt->GetXaxis()->SetTitle("Compressed E_{T} [GeV]");
+  hECALTT_Barrel_CompressedEt->GetYaxis()->SetTitle("Entries");
+  hECALTT_Barrel_CompressedEt->Draw();
+  c->SetLogy();
+  c->SaveAs("ECALTT_Barrel_CompressedEt.pdf");
+  
+  TH1D *hECALTT_Endcap_CompressedEt = (TH1D*) fSig["PU40bx25_VBF_HToInv_M-125_13TeV"]->Get(Form("Run_%d/EcalTT/ECALTT_Endcap_CompressedEt",1));
+  hECALTT_Endcap_CompressedEt->SetLineColor(kBlue);
+  hECALTT_Endcap_CompressedEt->GetXaxis()->SetTitle("Compressed E_{T} [GeV]");
+  hECALTT_Endcap_CompressedEt->GetYaxis()->SetTitle("Entries");
+  hECALTT_Endcap_CompressedEt->Draw();
+  c->SetLogy();
+  c->SaveAs("ECALTT_Endcap_CompressedEt.pdf");
+  
+  c->SetLogy(false);
+  TH2D *hECALTT_CompressedEt127_EtaPhiTotal = (TH2D*) fSig["PU40bx25_VBF_HToInv_M-125_13TeV"]->Get(Form("Run_%d/EcalTT/ECALTT_CompressedEt127_EtaPhiTotal",1));
+  hECALTT_CompressedEt127_EtaPhiTotal->SetLineColor(kBlue);
+  hECALTT_CompressedEt127_EtaPhiTotal->GetXaxis()->SetTitle("Compressed E_{T} [GeV]");
+  hECALTT_CompressedEt127_EtaPhiTotal->GetXaxis()->SetLabelSize(0.015);
+  hECALTT_CompressedEt127_EtaPhiTotal->GetYaxis()->SetTitle("Entries");
+  hECALTT_CompressedEt127_EtaPhiTotal->GetYaxis()->SetLabelSize(0.015);
+  hECALTT_CompressedEt127_EtaPhiTotal->Draw("colz");
+  c->SaveAs("ECALTT_CompressedEt127_EtaPhiTotal.pdf");  
+  
+
+  
+  
+  delete c;
   
   return 0;  
   
