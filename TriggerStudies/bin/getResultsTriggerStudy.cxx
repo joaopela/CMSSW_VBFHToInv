@@ -306,6 +306,7 @@ int main(){
 
   TCanvas* c = new TCanvas();
 
+  //_______________________________________________________________________________
   // L1 Quantities
   //_______________________________________________________________________________
   rat::HistogramCollection<string,TH1D> hcL1ETM_NG(fNG,Form("Run_%d/L1ETM",1));
@@ -314,20 +315,19 @@ int main(){
   hcL1ETM_NG.setLegend(attLegendText,attLegendAttribute);
   hcL1ETM_NG["PU20bx25_Neutrino_gun"]->GetXaxis()->SetRangeUser(0,200);
   hcL1ETM_NG["PU20bx25_Neutrino_gun"]->GetXaxis()->SetTitle("L1ETM [GeV]");
-  hcL1ETM_NG["PU20bx25_Neutrino_gun"]->GetYaxis()->SetRangeUser(0.1,-10e7);
-  hcL1ETM_NG["PU20bx25_Neutrino_gun"]->GetYaxis()->SetTitle("Entries");
+  hcL1ETM_NG["PU20bx25_Neutrino_gun"]->GetYaxis()->SetRangeUser(10e-7,0.1);
   hcL1ETM_NG.draw(c,attDrawAttributesNG);
   c->SetLogy();
   c->SaveAs("L1ETM_NG.pdf");
   
   c->SetLogy(false);
   rat::HistogramCollection<string,TH1D> hcL1HTT_NG(fNG,Form("Run_%d/L1HTT",1));
-  hcL1ETM_NG.scaleTo1();
+  hcL1HTT_NG.scaleTo1();
   hcL1HTT_NG.setLineColor(attLineColor);
   hcL1HTT_NG.setLegend(attLegendText,attLegendAttribute);  
   hcL1HTT_NG["PU20bx25_Neutrino_gun"]->GetXaxis()->SetRangeUser(0,1200);
   hcL1HTT_NG["PU20bx25_Neutrino_gun"]->GetYaxis()->SetTitle("L1HTT [GeV]");
-  hcL1HTT_NG["PU20bx25_Neutrino_gun"]->GetYaxis()->SetRangeUser(0.1,10e7);
+  hcL1HTT_NG["PU20bx25_Neutrino_gun"]->GetYaxis()->SetRangeUser(10e-7,0.1);
   hcL1HTT_NG["PU20bx25_Neutrino_gun"]->GetYaxis()->SetTitle("Entries");
   hcL1HTT_NG.draw(c,attDrawAttributesNG);
   c->SetLogy();
@@ -339,8 +339,7 @@ int main(){
   hcL1ETM_Sig.setLegend(attLegendText,attLegendAttribute);
   hcL1ETM_Sig["PU20bx25_VBF_HToInv_M-125_13TeV"]->GetXaxis()->SetRangeUser(0,1000);
   hcL1ETM_Sig["PU20bx25_VBF_HToInv_M-125_13TeV"]->GetXaxis()->SetTitle("L1ETM [GeV]");
-  hcL1ETM_Sig["PU20bx25_VBF_HToInv_M-125_13TeV"]->GetYaxis()->SetRangeUser(0.1,10e7);
-  hcL1ETM_Sig["PU20bx25_VBF_HToInv_M-125_13TeV"]->GetYaxis()->SetTitle("Entries");
+  hcL1ETM_Sig["PU20bx25_VBF_HToInv_M-125_13TeV"]->GetYaxis()->SetRangeUser(10e-7,0.1);
   hcL1ETM_Sig.draw(c,attDrawAttributesSig);
   c->SetLogy();
   c->SaveAs("L1ETM_Sig.pdf");
@@ -352,8 +351,7 @@ int main(){
   hcL1HTT_Sig.setLegend(attLegendText,attLegendAttribute);  
   hcL1HTT_Sig["PU20bx25_VBF_HToInv_M-125_13TeV"]->GetXaxis()->SetRangeUser(0,1200);
   hcL1HTT_Sig["PU20bx25_VBF_HToInv_M-125_13TeV"]->GetYaxis()->SetTitle("L1HTT [GeV]");
-  hcL1HTT_Sig["PU20bx25_VBF_HToInv_M-125_13TeV"]->GetYaxis()->SetRangeUser(0.1,10e7);
-  hcL1HTT_Sig["PU20bx25_VBF_HToInv_M-125_13TeV"]->GetYaxis()->SetTitle("Entries");
+  hcL1HTT_Sig["PU20bx25_VBF_HToInv_M-125_13TeV"]->GetYaxis()->SetRangeUser(10e-7,0.1);
   hcL1HTT_Sig.draw(c,attDrawAttributesSig);
   c->SetLogy();
   c->SaveAs("L1HTT_Sig.pdf");
@@ -366,8 +364,7 @@ int main(){
   hcL1ETM_Saturated_NG.setLegend(attLegendText,attLegendAttribute);
   //hcL1ETM_Saturated_NG["PU20bx25_Neutrino_gun"]->GetXaxis()->SetRangeUser(0,200);
   hcL1ETM_Saturated_NG["PU20bx25_Neutrino_gun"]->GetXaxis()->SetTitle("L1ETM [GeV]");
-  //hcL1ETM_Saturated_NG["PU20bx25_Neutrino_gun"]->GetYaxis()->SetRangeUser(0.1,10e7);
-  hcL1ETM_Saturated_NG["PU20bx25_Neutrino_gun"]->GetYaxis()->SetTitle("Entries");
+  //hcL1ETM_Saturated_NG["PU20bx25_Neutrino_gun"]->GetYaxis()->SetRangeUser(10e-7,0.1);
   hcL1ETM_Saturated_NG.draw(c,attDrawAttributesNG);
   c->SetLogy();
   c->SaveAs("L1ETM_Saturated_NG.pdf");
@@ -379,8 +376,7 @@ int main(){
   hcL1HTT_Saturated_NG.setLegend(attLegendText,attLegendAttribute);  
   //hcL1HTT_Saturated_NG["PU20bx25_Neutrino_gun"]->GetXaxis()->SetRangeUser(0,1200);
   hcL1HTT_Saturated_NG["PU20bx25_Neutrino_gun"]->GetXaxis()->SetTitle("L1HTT [GeV]");
-  //hcL1HTT_Saturated_NG["PU20bx25_Neutrino_gun"]->GetYaxis()->SetRangeUser(0.1,10e7);
-  hcL1HTT_Saturated_NG["PU20bx25_Neutrino_gun"]->GetYaxis()->SetTitle("Entries");
+  //hcL1HTT_Saturated_NG["PU20bx25_Neutrino_gun"]->GetYaxis()->SetRangeUser(10e-7,0.1);
   hcL1HTT_Saturated_NG.draw(c,attDrawAttributesNG);
   c->SetLogy();
   c->SaveAs("L1HTT_Saturated_NG.pdf");
@@ -392,8 +388,7 @@ int main(){
   hcL1ETM_Saturated_Sig.setLegend(attLegendText,attLegendAttribute);
   //hcL1ETM_Saturated_Sig["PU20bx25_VBF_HToInv_M-125_13TeV"]->GetXaxis()->SetRangeUser(0,200);
   hcL1ETM_Saturated_Sig["PU20bx25_VBF_HToInv_M-125_13TeV"]->GetXaxis()->SetTitle("L1ETM [GeV]");
-  //hcL1ETM_Saturated_Sig["PU20bx25_VBF_HToInv_M-125_13TeV"]->GetYaxis()->SetRangeUser(0.1,10e7);
-  hcL1ETM_Saturated_Sig["PU20bx25_VBF_HToInv_M-125_13TeV"]->GetYaxis()->SetTitle("Entries");
+  //hcL1ETM_Saturated_Sig["PU20bx25_VBF_HToInv_M-125_13TeV"]->GetYaxis()->SetRangeUser(10e-7,0.1);
   hcL1ETM_Saturated_Sig.draw(c,attDrawAttributesSig);
   c->SetLogy();
   c->SaveAs("L1ETM_Saturated_Sig.pdf");
@@ -406,12 +401,12 @@ int main(){
   hcL1HTT_Saturated_Sig.setLegend(attLegendText,attLegendAttribute);  
   hcL1HTT_Saturated_Sig["PU20bx25_VBF_HToInv_M-125_13TeV"]->GetXaxis()->SetRangeUser(0,1200);
   //hcL1HTT_Saturated_Sig["PU20bx25_VBF_HToInv_M-125_13TeV"]->GetXaxis()->SetTitle("L1HTT [GeV]");
-  hcL1HTT_Saturated_Sig["PU20bx25_VBF_HToInv_M-125_13TeV"]->GetYaxis()->SetRangeUser(0.1,10e7);
-  //hcL1HTT_Saturated_Sig["PU20bx25_VBF_HToInv_M-125_13TeV"]->GetYaxis()->SetTitle("Entries");
+  hcL1HTT_Saturated_Sig["PU20bx25_VBF_HToInv_M-125_13TeV"]->GetYaxis()->SetRangeUser(10e-7,0.1);
   hcL1HTT_Saturated_Sig.draw(c,attDrawAttributesSig);
   c->SetLogy();
   c->SaveAs("L1HTT_Saturated_Sig.pdf");
   
+  //_______________________________________________________________________________
   // ECAL TT HCAL TT and RCT Regions
   //_______________________________________________________________________________ 
   c->SetLogy(false);
@@ -422,8 +417,7 @@ int main(){
   hcECALTT_Val_NG.setLegend(attLegendText,attLegendAttribute);  
   hcECALTT_Val_NG["PU20bx25_Neutrino_gun"]->GetXaxis()->SetRangeUser(0,300);
   hcECALTT_Val_NG["PU20bx25_Neutrino_gun"]->GetXaxis()->SetTitle("Compressed E_{T} [GeV]");
-  hcECALTT_Val_NG["PU20bx25_Neutrino_gun"]->GetYaxis()->SetRangeUser(0.1,10e11);
-  hcECALTT_Val_NG["PU20bx25_Neutrino_gun"]->GetYaxis()->SetTitle("Entries");
+  hcECALTT_Val_NG["PU20bx25_Neutrino_gun"]->GetYaxis()->SetRangeUser(10e-7,0.1);
   hcECALTT_Val_NG.draw(c,attDrawAttributesNG);
   c->SetLogy();
   c->SaveAs("EcalTT_Val_NG.pdf"); 
@@ -436,7 +430,7 @@ int main(){
   hcHCALTT_Val_NG.setLegend(attLegendText,attLegendAttribute);  
   hcHCALTT_Val_NG["PU20bx25_Neutrino_gun"]->GetXaxis()->SetRangeUser(0,300);
   hcHCALTT_Val_NG["PU20bx25_Neutrino_gun"]->GetXaxis()->SetTitle("Compressed E_{T} [GeV]");
-  hcHCALTT_Val_NG["PU20bx25_Neutrino_gun"]->GetYaxis()->SetRangeUser(0.1,10e11);
+  hcHCALTT_Val_NG["PU20bx25_Neutrino_gun"]->GetYaxis()->SetRangeUser(10e-7,0.1);
   hcHCALTT_Val_NG["PU20bx25_Neutrino_gun"]->GetYaxis()->SetTitle("Entries");
   hcHCALTT_Val_NG.draw(c,attDrawAttributesNG);
   c->SetLogy();
@@ -450,8 +444,7 @@ int main(){
   hcRCTRegion_Val_NG.setLegend(attLegendText,attLegendAttribute);  
   hcRCTRegion_Val_NG["PU20bx25_Neutrino_gun"]->GetXaxis()->SetRangeUser(0,1100);
   hcRCTRegion_Val_NG["PU20bx25_Neutrino_gun"]->GetXaxis()->SetTitle("Compressed E_{T} [GeV]");
-  hcRCTRegion_Val_NG["PU20bx25_Neutrino_gun"]->GetYaxis()->SetRangeUser(0.1,10e10);
-  hcRCTRegion_Val_NG["PU20bx25_Neutrino_gun"]->GetYaxis()->SetTitle("Entries");
+  hcRCTRegion_Val_NG["PU20bx25_Neutrino_gun"]->GetYaxis()->SetRangeUser(10e-7,0.1);
   hcRCTRegion_Val_NG.draw(c,attDrawAttributesNG);
   c->SetLogy();
   c->SaveAs("RCTRegion_Val_NG.pdf");
@@ -464,8 +457,7 @@ int main(){
   hcECALTT_Val_Sig.setLegend(attLegendText,attLegendAttribute);
   hcECALTT_Val_Sig["PU20bx25_VBF_HToInv_M-125_13TeV"]->GetXaxis()->SetRangeUser(0,300);
   hcECALTT_Val_Sig["PU20bx25_VBF_HToInv_M-125_13TeV"]->GetXaxis()->SetTitle("Compressed E_{T} [GeV]");
-  hcECALTT_Val_Sig["PU20bx25_VBF_HToInv_M-125_13TeV"]->GetYaxis()->SetRangeUser(0.1,10e11);
-  hcECALTT_Val_Sig["PU20bx25_VBF_HToInv_M-125_13TeV"]->GetYaxis()->SetTitle("Entries");
+  hcECALTT_Val_Sig["PU20bx25_VBF_HToInv_M-125_13TeV"]->GetYaxis()->SetRangeUser(10e-7,0.1);
   hcECALTT_Val_Sig.draw(c,attDrawAttributesSig);
   c->SetLogy();
   c->SaveAs("EcalTT_Val_Sig.pdf"); 
@@ -478,8 +470,7 @@ int main(){
   hcHCALTT_Val_Sig.setLegend(attLegendText,attLegendAttribute);  
   hcHCALTT_Val_Sig["PU20bx25_VBF_HToInv_M-125_13TeV"]->GetXaxis()->SetRangeUser(0,300);
   hcHCALTT_Val_Sig["PU20bx25_VBF_HToInv_M-125_13TeV"]->GetXaxis()->SetTitle("Compressed E_{T} [GeV]");
-  hcHCALTT_Val_Sig["PU20bx25_VBF_HToInv_M-125_13TeV"]->GetYaxis()->SetRangeUser(0.1,10e11);
-  hcHCALTT_Val_Sig["PU20bx25_VBF_HToInv_M-125_13TeV"]->GetYaxis()->SetTitle("Entries");
+  hcHCALTT_Val_Sig["PU20bx25_VBF_HToInv_M-125_13TeV"]->GetYaxis()->SetRangeUser(10e-7,0.1);
   hcHCALTT_Val_Sig.draw(c,attDrawAttributesSig);
   c->SetLogy();
   c->SaveAs("HcalTT_Val_Sig.pdf"); 
@@ -492,12 +483,12 @@ int main(){
   hcRCTRegion_Val_Sig.setLegend(attLegendText,attLegendAttribute);  
   hcRCTRegion_Val_Sig["PU20bx25_VBF_HToInv_M-125_13TeV"]->GetXaxis()->SetRangeUser(0,1100);
   hcRCTRegion_Val_Sig["PU20bx25_VBF_HToInv_M-125_13TeV"]->GetXaxis()->SetTitle("Compressed E_{T} [GeV]");
-  hcRCTRegion_Val_Sig["PU20bx25_VBF_HToInv_M-125_13TeV"]->GetYaxis()->SetRangeUser(0.1,10e10);
-  hcRCTRegion_Val_Sig["PU20bx25_VBF_HToInv_M-125_13TeV"]->GetYaxis()->SetTitle("Entries");
+  hcRCTRegion_Val_Sig["PU20bx25_VBF_HToInv_M-125_13TeV"]->GetYaxis()->SetRangeUser(10e-7,0.1);
   hcRCTRegion_Val_Sig.draw(c,attDrawAttributesSig);
   c->SetLogy();
   c->SaveAs("RCTRegion_Val_Sig.pdf");
   
+  //_______________________________________________________________________________
   // 127 Saturation
   //_______________________________________________________________________________
   TH1D *hECALTT_Barrel_CompressedEt = (TH1D*) fSig["PU40bx25_VBF_HToInv_M-125_13TeV"]->Get(Form("Run_%d/EcalTT/ECALTT_Barrel_CompressedEt",1));
@@ -519,16 +510,13 @@ int main(){
   c->SetLogy(false);
   TH2D *hECALTT_CompressedEt127_EtaPhiTotal = (TH2D*) fSig["PU40bx25_VBF_HToInv_M-125_13TeV"]->Get(Form("Run_%d/EcalTT/ECALTT_CompressedEt127_EtaPhiTotal",1));
   hECALTT_CompressedEt127_EtaPhiTotal->SetLineColor(kBlue);
-  hECALTT_CompressedEt127_EtaPhiTotal->GetXaxis()->SetTitle("Compressed E_{T} [GeV]");
+  hECALTT_CompressedEt127_EtaPhiTotal->GetXaxis()->SetTitle("RCT iEta");
   hECALTT_CompressedEt127_EtaPhiTotal->GetXaxis()->SetLabelSize(0.015);
-  hECALTT_CompressedEt127_EtaPhiTotal->GetYaxis()->SetTitle("Entries");
+  hECALTT_CompressedEt127_EtaPhiTotal->GetYaxis()->SetTitle("RCT iPhi");
   hECALTT_CompressedEt127_EtaPhiTotal->GetYaxis()->SetLabelSize(0.015);
   hECALTT_CompressedEt127_EtaPhiTotal->Draw("colz");
   c->SaveAs("ECALTT_CompressedEt127_EtaPhiTotal.pdf");  
-  
 
-  
-  
   delete c;
   
   return 0;  
