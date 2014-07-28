@@ -49,7 +49,7 @@ map<string,double> getEff_partial(TFile* f,int run,string nNum,string nDen,doubl
     string trigName = hNum->GetXaxis()->GetBinLabel(i);
 
     int iDen=0;
-    for(unsigned a=1; a<hDen->GetNbinsX()+1; a++){ 
+    for(int a=1; a<hDen->GetNbinsX()+1; a++){ 
       if(hDen->GetXaxis()->GetBinLabel(a)==trigName){iDen=a; break;}
     }
     
@@ -185,7 +185,13 @@ THStack* doTrigSeedStack(map<string,TFile*> f,string trigName){
   pt->Draw();
   c->SaveAs(Form("%s.pdf",trigName.c_str()));  
   
-  delete hETM,hHTT,hBoth,st,l,c,pt;
+  delete hETM;
+  delete hHTT;
+  delete hBoth;
+  delete st;
+  delete l;
+  delete c;
+  delete pt;
   
   return st;
   
