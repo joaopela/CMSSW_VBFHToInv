@@ -307,10 +307,9 @@ void TrigStudies::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetu
       if( firedETM && !firedHTT){hHLTAlgoCounts_ETM ->Fill(pName.c_str(),1);}
       if(!firedETM &&  firedHTT){hHLTAlgoCounts_HTT ->Fill(pName.c_str(),1);}
       if( firedETM &&  firedHTT){hHLTAlgoCounts_Both->Fill(pName.c_str(),1);}
-      if(!firedETM && !firedHTT){hHLTAlgoCounts_None->Fill(pName.c_str(),1);}      
+      if(!firedETM && !firedHTT){hHLTAlgoCounts_None->Fill(pName.c_str(),1);}
+      
     }
-      
-      
   }
   
   // Filling saturation counts
@@ -323,7 +322,6 @@ void TrigStudies::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetu
     hL1ETM_Saturated->Fill(mets->begin()->et());
     hL1HTT_Saturated->Fill(mhts->begin()->etTotal());
   }
-  
 }
 
 void TrigStudies::beginJob(){}
@@ -349,6 +347,7 @@ void TrigStudies::beginRun(edm::Run const& iRun, edm::EventSetup const& iSetup){
   h1D_ECALTT["ECALTT_Barrel_CompressedEt"]         = new TH1D("ECALTT_Barrel_CompressedEt",        "ECALTT Barrel CompressedEt",         512,-0.5,511.5); 
   h1D_ECALTT["ECALTT_Endcap_CompressedEt"]         = new TH1D("ECALTT_Endcap_CompressedEt",        "ECALTT Endcap CompressedEt",         512,-0.5,511.5); 
   h2D_ECALTT["ECALTT_CompressedEt127_EtaPhiTotal"] = new TH2D("ECALTT_CompressedEt127_EtaPhiTotal","ECALTT CompressedEt=127 EtaPhiTotal",56,0.5,56.5,72,0.5,72.5);
+  
   for(int i=0; i<28; i++){
     h2D_ECALTT["ECALTT_CompressedEt127_EtaPhiTotal"]->GetXaxis()->SetBinLabel(i+1, Form("%d",-28+i));
     h2D_ECALTT["ECALTT_CompressedEt127_EtaPhiTotal"]->GetXaxis()->SetBinLabel(56-i,Form("%d", 28-i));    
@@ -357,7 +356,6 @@ void TrigStudies::beginRun(edm::Run const& iRun, edm::EventSetup const& iSetup){
     h2D_ECALTT["ECALTT_CompressedEt127_EtaPhiTotal"]->GetYaxis()->SetBinLabel(i,Form("%d",i));
   }
  
-  
   for(auto it=h1D_ECALTT.begin(); it!=h1D_ECALTT.end(); it++){it->second->SetDirectory(ecalDir);}
   for(auto it=h2D_ECALTT.begin(); it!=h2D_ECALTT.end(); it++){it->second->SetDirectory(ecalDir);}
   
@@ -409,8 +407,14 @@ void TrigStudies::beginRun(edm::Run const& iRun, edm::EventSetup const& iSetup){
   }
     
   for(unsigned i=0; i<m_selHLTrigger.size(); i++){
-    hHLTAlgoCounts->GetXaxis()->SetBinLabel(i+1,m_selHLTrigger[i].c_str());
-    cout << "Looking for HLT: " << m_selHLTrigger[i] << endl;
+    string trigName = m_selHLTrigger[i];
+    
+    hHLTAlgoCounts     ->GetXaxis()->SetBinLabel(i+1,trigName.c_str());
+    hHLTAlgoCounts_ETM ->GetXaxis()->SetBinLabel(i+1,trigName.c_str());
+    hHLTAlgoCounts_HTT ->GetXaxis()->SetBinLabel(i+1,trigName.c_str());
+    hHLTAlgoCounts_Both->GetXaxis()->SetBinLabel(i+1,trigName.c_str());
+    hHLTAlgoCounts_None->GetXaxis()->SetBinLabel(i+1,trigName.c_str());
+    cout << "Looking for HLT: " << trigName << endl;
   }    
 }
 
