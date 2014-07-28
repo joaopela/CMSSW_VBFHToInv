@@ -94,21 +94,21 @@ private:
   std::map<std::string,TH2D*> h2D_ECALTT;
   std::map<std::string,TH1D*> hHCALTT;
   
-  TH1D* hEventCount;
+  TH1I* hEventCount;
   
   
-  TH1D* hL1AlgoCounts;
+  TH1I* hL1AlgoCounts;
   TH1D* hL1ETM;
   TH1D* hL1HTT;
   
   TH1D* hL1ETM_Saturated;
   TH1D* hL1HTT_Saturated;
   
-  TH1D* hHLTAlgoCounts;
-  TH1D* hHLTAlgoCounts_ETM;
-  TH1D* hHLTAlgoCounts_HTT;
-  TH1D* hHLTAlgoCounts_Both;
-  TH1D* hHLTAlgoCounts_None;
+  TH1I* hHLTAlgoCounts;
+  TH1I* hHLTAlgoCounts_ETM;
+  TH1I* hHLTAlgoCounts_HTT;
+  TH1I* hHLTAlgoCounts_Both;
+  TH1I* hHLTAlgoCounts_None;
   
   TH1D* hRCTRegion_Val;
   TH1D* hEcalTT_Val;
@@ -119,10 +119,10 @@ private:
   TH1D* hEcalTT_Et;
   TH1D* hHcalTT_Et;
   
-  TH1D* hEcalTT_NSaturated;
-  TH1D* hHcalTT_NSaturated;
-  TH1D* hRCTRegion_NSaturated;
-  TH1D* hTotal_NSaturated;
+  TH1I* hEcalTT_NSaturated;
+  TH1I* hHcalTT_NSaturated;
+  TH1I* hRCTRegion_NSaturated;
+  TH1I* hTotal_NSaturated;
   
   bool m_verbose;
   
