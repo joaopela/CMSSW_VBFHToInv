@@ -148,7 +148,7 @@ void TrigStudies::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetu
       }
       
       // Barrel-Endcap overlap are TT 16 and 17
-      if(abs(lEcalTPItr->id().ieta()<17)){
+      if(abs(lEcalTPItr->id().ieta())<17){
         hECALTT_Barrel_CompressedEt->Fill(lEcalTPItr->compressedEt());
       }
       else{
@@ -339,12 +339,12 @@ void TrigStudies::beginRun(edm::Run const& iRun, edm::EventSetup const& iSetup){
   TDirectory* ecalDir = runDir->mkdir("EcalTT");
   
   // General plots
-  hEventCount    = new TH1D("EventCount",   "EventCount"   ,   1, 0.5,  1.5); hEventCount  ->SetDirectory(runDir);
+  hEventCount    = new TH1I("EventCount",   "EventCount"   ,   1, 0.5,  1.5); hEventCount  ->SetDirectory(runDir);
 
-  hEcalTT_NSaturated    = new TH1D("hEcalTT_NSaturated   ","hEcalTT_NSaturated   ",11,-0.5,10.5); hEcalTT_NSaturated   ->SetDirectory(runDir);
-  hHcalTT_NSaturated    = new TH1D("hHcalTT_NSaturated   ","hHcalTT_NSaturated   ",11,-0.5,10.5); hHcalTT_NSaturated   ->SetDirectory(runDir);
-  hRCTRegion_NSaturated = new TH1D("hRCTRegion_NSaturated","hRCTRegion_NSaturated",11,-0.5,10.5); hRCTRegion_NSaturated->SetDirectory(runDir);
-  hTotal_NSaturated     = new TH1D("hTotal_NSaturated    ","hTotal_NSaturated    ",11,-0.5,10.5); hTotal_NSaturated    ->SetDirectory(runDir);
+  hEcalTT_NSaturated    = new TH1I("hEcalTT_NSaturated   ","hEcalTT_NSaturated   ",11,-0.5,10.5); hEcalTT_NSaturated   ->SetDirectory(runDir);
+  hHcalTT_NSaturated    = new TH1I("hHcalTT_NSaturated   ","hHcalTT_NSaturated   ",11,-0.5,10.5); hHcalTT_NSaturated   ->SetDirectory(runDir);
+  hRCTRegion_NSaturated = new TH1I("hRCTRegion_NSaturated","hRCTRegion_NSaturated",11,-0.5,10.5); hRCTRegion_NSaturated->SetDirectory(runDir);
+  hTotal_NSaturated     = new TH1I("hTotal_NSaturated    ","hTotal_NSaturated    ",11,-0.5,10.5); hTotal_NSaturated    ->SetDirectory(runDir);
   
   h1D_ECALTT["ECALTT_Barrel_CompressedEt"]         = new TH1D("ECALTT_Barrel_CompressedEt",        "ECALTT Barrel CompressedEt",         512,-0.5,511.5); 
   h1D_ECALTT["ECALTT_Endcap_CompressedEt"]         = new TH1D("ECALTT_Endcap_CompressedEt",        "ECALTT Endcap CompressedEt",         512,-0.5,511.5); 
@@ -377,18 +377,18 @@ void TrigStudies::beginRun(edm::Run const& iRun, edm::EventSetup const& iSetup){
   
   
   // L1T Plots
-  hL1AlgoCounts    = new TH1D("L1AlgoCounts",    "L1AlgoCounts",     128,-0.5,127.5); hL1AlgoCounts->SetDirectory(runDir);
+  hL1AlgoCounts    = new TH1I("L1AlgoCounts",    "L1AlgoCounts",     128,-0.5,127.5); hL1AlgoCounts->SetDirectory(runDir);
   hL1ETM           = new TH1D("L1ETM",           "L1ETM",            500,   0, 1000);   hL1ETM->SetDirectory(runDir);
   hL1HTT           = new TH1D("L1HTT",           "L1HTT",           1000,   0, 2000);   hL1HTT->SetDirectory(runDir); 
   hL1ETM_Saturated = new TH1D("hL1ETM_Saturated","hL1ETM_Saturated", 500,   0, 1000);   hL1ETM_Saturated->SetDirectory(runDir);
   hL1HTT_Saturated = new TH1D("hL1HTT_Saturated","hL1HTT_Saturated",1000,   0, 2000);   hL1HTT_Saturated->SetDirectory(runDir);
   
   // HLT Plots
-  hHLTAlgoCounts      = new TH1D("HLTAlgoCounts",     "HLTAlgoCounts",     nSelHLTAlgos,-0.5,nSelHLTAlgos-0.5); hHLTAlgoCounts     ->SetDirectory(runDir);
-  hHLTAlgoCounts_ETM  = new TH1D("HLTAlgoCounts_ETM", "HLTAlgoCounts_ETM", nSelHLTAlgos,-0.5,nSelHLTAlgos-0.5); hHLTAlgoCounts_ETM ->SetDirectory(runDir);
-  hHLTAlgoCounts_HTT  = new TH1D("HLTAlgoCounts_HTT", "HLTAlgoCounts_HTT", nSelHLTAlgos,-0.5,nSelHLTAlgos-0.5); hHLTAlgoCounts_HTT ->SetDirectory(runDir);
-  hHLTAlgoCounts_Both = new TH1D("HLTAlgoCounts_Both","HLTAlgoCounts_Both",nSelHLTAlgos,-0.5,nSelHLTAlgos-0.5); hHLTAlgoCounts_Both->SetDirectory(runDir);
-  hHLTAlgoCounts_None = new TH1D("HLTAlgoCounts_None","HLTAlgoCounts_None",nSelHLTAlgos,-0.5,nSelHLTAlgos-0.5); hHLTAlgoCounts_None->SetDirectory(runDir);
+  hHLTAlgoCounts      = new TH1I("HLTAlgoCounts",     "HLTAlgoCounts",     nSelHLTAlgos,-0.5,nSelHLTAlgos-0.5); hHLTAlgoCounts     ->SetDirectory(runDir);
+  hHLTAlgoCounts_ETM  = new TH1I("HLTAlgoCounts_ETM", "HLTAlgoCounts_ETM", nSelHLTAlgos,-0.5,nSelHLTAlgos-0.5); hHLTAlgoCounts_ETM ->SetDirectory(runDir);
+  hHLTAlgoCounts_HTT  = new TH1I("HLTAlgoCounts_HTT", "HLTAlgoCounts_HTT", nSelHLTAlgos,-0.5,nSelHLTAlgos-0.5); hHLTAlgoCounts_HTT ->SetDirectory(runDir);
+  hHLTAlgoCounts_Both = new TH1I("HLTAlgoCounts_Both","HLTAlgoCounts_Both",nSelHLTAlgos,-0.5,nSelHLTAlgos-0.5); hHLTAlgoCounts_Both->SetDirectory(runDir);
+  hHLTAlgoCounts_None = new TH1I("HLTAlgoCounts_None","HLTAlgoCounts_None",nSelHLTAlgos,-0.5,nSelHLTAlgos-0.5); hHLTAlgoCounts_None->SetDirectory(runDir);
   
   
   ESHandle<L1GtTriggerMenu> menuRcd;
