@@ -225,46 +225,70 @@ void TrigStudies::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetu
   for(unsigned i=0; i<m_selHLTrigger.size(); i++){
  
     string pName = m_selHLTrigger[i];
-    vector<string> l1SeedsETM;
-    vector<string> l1SeedsHTT;   
-    
-    if     (pName=="HLT_DiPFJet40_PFMETnoMu65_MJJ800VBF_AllJets_v"   ) {l1SeedsETM.push_back("L1_ETM40");}
-    else if(pName=="HLT_DiPFJet40_PFMETnoMu65_MJJ600VBF_LeadingJets_v"){l1SeedsETM.push_back("L1_ETM40");}
-    
-    else if(pName=="HLT_DiPFJet40_PFMETnoMu75_MJJ800VBF_AllJets_v")    {l1SeedsETM.push_back("L1_ETM40");}
-    else if(pName=="HLT_DiPFJet40_PFMETnoMu75_MJJ600VBF_LeadingJets_v"){l1SeedsETM.push_back("L1_ETM40");}     
-    
-    else if(pName=="HLT_DiJet20_MJJ650_AllJets_DEta3p5_HT120_VBF_v"){
-      l1SeedsHTT.push_back("L1_HTT200");
-      l1SeedsHTT.push_back("L1_HTT175");
-      l1SeedsETM.push_back("L1_ETM40");
-      l1SeedsETM.push_back("L1_ETM50");
-    }
-    else if(pName=="HLT_DiJet30_MJJ700_AllJets_DEta3p5_VBF_v"){
-      l1SeedsHTT.push_back("L1_HTT200");
-      l1SeedsHTT.push_back("L1_HTT175");
-      l1SeedsETM.push_back("L1_ETM40");
-      l1SeedsETM.push_back("L1_ETM50");
-    }
-    else if(pName=="HLT_DiJet35_MJJ650_AllJets_DEta3p5_VBF_v"){
-      l1SeedsHTT.push_back("L1_HTT200");
-      l1SeedsHTT.push_back("L1_HTT175");
-      l1SeedsHTT.push_back("L1_HTT150");
-      l1SeedsETM.push_back("L1_ETM40");
-    }
-    else if(pName=="HLT_DiJet35_MJJ700_AllJets_DEta3p5_VBF_v"){
-      l1SeedsHTT.push_back("L1_HTT200");
-      l1SeedsHTT.push_back("L1_HTT175");
-      l1SeedsETM.push_back("L1_ETM40");
-    }
-    else if(pName=="HLT_DiJet35_MJJ750_AllJets_DEta3p5_VBF_v"){
-      l1SeedsHTT.push_back("L1_HTT200");
-      l1SeedsHTT.push_back("L1_HTT175");
-      l1SeedsETM.push_back("L1_ETM40");
-    }
-    
+      
     if(testTrigger(iEvent,hltresults,pName)){
       hHLTAlgoCounts->Fill(pName.c_str(),1);
+      
+      if(pName=="HLT_DiPFJet40_PFMETnoMu65_MJJ800VBF_AllJets_v"){
+        if(l1Word[m_l1Alias["L1_ETM40"]]) {hHLTNewAlgoCounts->Fill("L1_ETM40 + HLT_DiPFJet40_PFMETnoMu65_MJJ800VBF_AllJets_v",1);}
+        if(l1Word[m_l1Alias["L1_ETM50"]]) {hHLTNewAlgoCounts->Fill("L1_ETM50 + HLT_DiPFJet40_PFMETnoMu65_MJJ800VBF_AllJets_v",1);}
+        if(l1Word[m_l1Alias["L1_ETM70"]]) {hHLTNewAlgoCounts->Fill("L1_ETM70 + HLT_DiPFJet40_PFMETnoMu65_MJJ800VBF_AllJets_v",1);}
+        if(l1Word[m_l1Alias["L1_ETM100"]]){hHLTNewAlgoCounts->Fill("L1_ETM100 + HLT_DiPFJet40_PFMETnoMu65_MJJ800VBF_AllJets_v",1);}        
+      }
+      else if(pName=="HLT_DiPFJet40_PFMETnoMu65_MJJ600VBF_LeadingJets_v"){
+        if(l1Word[m_l1Alias["L1_ETM40"]]) {hHLTNewAlgoCounts->Fill("L1_ETM40 + HLT_DiPFJet40_PFMETnoMu65_MJJ600VBF_LeadingJets_v",1);}
+        if(l1Word[m_l1Alias["L1_ETM50"]]) {hHLTNewAlgoCounts->Fill("L1_ETM50 + HLT_DiPFJet40_PFMETnoMu65_MJJ600VBF_LeadingJets_v",1);}
+        if(l1Word[m_l1Alias["L1_ETM70"]]) {hHLTNewAlgoCounts->Fill("L1_ETM70 + HLT_DiPFJet40_PFMETnoMu65_MJJ600VBF_LeadingJets_v",1);}
+        if(l1Word[m_l1Alias["L1_ETM100"]]){hHLTNewAlgoCounts->Fill("L1_ETM100 + HLT_DiPFJet40_PFMETnoMu65_MJJ600VBF_LeadingJets_v",1);}        
+      }
+      else if(pName=="HLT_DiPFJet40_PFMETnoMu75_MJJ800VBF_AllJets_v"){
+        if(l1Word[m_l1Alias["L1_ETM40"]]) {hHLTNewAlgoCounts->Fill("L1_ETM40 + HLT_DiPFJet40_PFMETnoMu75_MJJ800VBF_AllJets_v",1);}
+        if(l1Word[m_l1Alias["L1_ETM50"]]) {hHLTNewAlgoCounts->Fill("L1_ETM50 + HLT_DiPFJet40_PFMETnoMu75_MJJ800VBF_AllJets_v",1);}
+        if(l1Word[m_l1Alias["L1_ETM70"]]) {hHLTNewAlgoCounts->Fill("L1_ETM70 + HLT_DiPFJet40_PFMETnoMu75_MJJ800VBF_AllJets_v",1);}
+        if(l1Word[m_l1Alias["L1_ETM100"]]){hHLTNewAlgoCounts->Fill("L1_ETM100 + HLT_DiPFJet40_PFMETnoMu75_MJJ800VBF_AllJets_v",1);}        
+      }
+      else if(pName=="HLT_DiPFJet40_PFMETnoMu75_MJJ600VBF_LeadingJets_v"){
+        if(l1Word[m_l1Alias["L1_ETM40"]]) {hHLTNewAlgoCounts->Fill("L1_ETM40 + HLT_DiPFJet40_PFMETnoMu75_MJJ600VBF_LeadingJets_v",1);}
+        if(l1Word[m_l1Alias["L1_ETM50"]]) {hHLTNewAlgoCounts->Fill("L1_ETM50 + HLT_DiPFJet40_PFMETnoMu75_MJJ600VBF_LeadingJets_v",1);}
+        if(l1Word[m_l1Alias["L1_ETM70"]]) {hHLTNewAlgoCounts->Fill("L1_ETM70 + HLT_DiPFJet40_PFMETnoMu75_MJJ600VBF_LeadingJets_v",1);}
+        if(l1Word[m_l1Alias["L1_ETM100"]]){hHLTNewAlgoCounts->Fill("L1_ETM100 + HLT_DiPFJet40_PFMETnoMu75_MJJ600VBF_LeadingJets_v",1);}        
+      }
+ 
+      // Filling seeds list
+      vector<string> l1SeedsETM;
+      vector<string> l1SeedsHTT;
+      if     (pName=="HLT_DiPFJet40_PFMETnoMu65_MJJ800VBF_AllJets_v"   ) {l1SeedsETM.push_back("L1_ETM40");}
+      else if(pName=="HLT_DiPFJet40_PFMETnoMu65_MJJ600VBF_LeadingJets_v"){l1SeedsETM.push_back("L1_ETM40");}
+      else if(pName=="HLT_DiPFJet40_PFMETnoMu75_MJJ800VBF_AllJets_v")    {l1SeedsETM.push_back("L1_ETM40");}
+      else if(pName=="HLT_DiPFJet40_PFMETnoMu75_MJJ600VBF_LeadingJets_v"){l1SeedsETM.push_back("L1_ETM40");}     
+      else if(pName=="HLT_DiJet20_MJJ650_AllJets_DEta3p5_HT120_VBF_v"){
+        l1SeedsHTT.push_back("L1_HTT200");
+        l1SeedsHTT.push_back("L1_HTT175");
+        l1SeedsETM.push_back("L1_ETM40");
+        l1SeedsETM.push_back("L1_ETM50");
+      }
+      else if(pName=="HLT_DiJet30_MJJ700_AllJets_DEta3p5_VBF_v"){
+        l1SeedsHTT.push_back("L1_HTT200");
+        l1SeedsHTT.push_back("L1_HTT175");
+        l1SeedsETM.push_back("L1_ETM40");
+        l1SeedsETM.push_back("L1_ETM50");
+      }
+      else if(pName=="HLT_DiJet35_MJJ650_AllJets_DEta3p5_VBF_v"){
+        l1SeedsHTT.push_back("L1_HTT200");
+        l1SeedsHTT.push_back("L1_HTT175");
+        l1SeedsHTT.push_back("L1_HTT150");
+        l1SeedsETM.push_back("L1_ETM40");
+      }
+      else if(pName=="HLT_DiJet35_MJJ700_AllJets_DEta3p5_VBF_v"){
+        l1SeedsHTT.push_back("L1_HTT200");
+        l1SeedsHTT.push_back("L1_HTT175");
+        l1SeedsETM.push_back("L1_ETM40");
+      }
+      else if(pName=="HLT_DiJet35_MJJ750_AllJets_DEta3p5_VBF_v"){
+        l1SeedsHTT.push_back("L1_HTT200");
+        l1SeedsHTT.push_back("L1_HTT175");
+        l1SeedsETM.push_back("L1_ETM40");
+      }
       
       if(m_verbose){cout << "=> Fired HLT: " << pName.c_str() << endl;}
       
@@ -388,6 +412,23 @@ void TrigStudies::beginRun(edm::Run const& iRun, edm::EventSetup const& iSetup){
   hHLTAlgoCounts_Both = new TH1I("HLTAlgoCounts_Both","HLTAlgoCounts_Both",nSelHLTAlgos,-0.5,nSelHLTAlgos-0.5); hHLTAlgoCounts_Both->SetDirectory(runDir);
   hHLTAlgoCounts_None = new TH1I("HLTAlgoCounts_None","HLTAlgoCounts_None",nSelHLTAlgos,-0.5,nSelHLTAlgos-0.5); hHLTAlgoCounts_None->SetDirectory(runDir);
   
+  hHLTNewAlgoCounts = new TH1I("hHLTNewAlgoCounts",     "hHLTNewAlgoCounts",16,-0.5,16-0.5); hHLTNewAlgoCounts->SetDirectory(runDir);
+  hHLTNewAlgoCounts->GetXaxis()->SetBinLabel( 1,"L1_ETM40 + HLT_DiPFJet40_PFMETnoMu65_MJJ800VBF_AllJets_v");  
+  hHLTNewAlgoCounts->GetXaxis()->SetBinLabel( 2,"L1_ETM50 + HLT_DiPFJet40_PFMETnoMu65_MJJ800VBF_AllJets_v");
+  hHLTNewAlgoCounts->GetXaxis()->SetBinLabel( 3,"L1_ETM70 + HLT_DiPFJet40_PFMETnoMu65_MJJ800VBF_AllJets_v");
+  hHLTNewAlgoCounts->GetXaxis()->SetBinLabel( 4,"L1_ETM100 + HLT_DiPFJet40_PFMETnoMu65_MJJ800VBF_AllJets_v");
+  hHLTNewAlgoCounts->GetXaxis()->SetBinLabel( 5,"L1_ETM40 + HLT_DiPFJet40_PFMETnoMu65_MJJ600VBF_LeadingJets_v");
+  hHLTNewAlgoCounts->GetXaxis()->SetBinLabel( 6,"L1_ETM50 + HLT_DiPFJet40_PFMETnoMu65_MJJ600VBF_LeadingJets_v");
+  hHLTNewAlgoCounts->GetXaxis()->SetBinLabel( 7,"L1_ETM70 + HLT_DiPFJet40_PFMETnoMu65_MJJ600VBF_LeadingJets_v");
+  hHLTNewAlgoCounts->GetXaxis()->SetBinLabel( 8,"L1_ETM100 + HLT_DiPFJet40_PFMETnoMu65_MJJ600VBF_LeadingJets_v");
+  hHLTNewAlgoCounts->GetXaxis()->SetBinLabel( 9,"L1_ETM40 + HLT_DiPFJet40_PFMETnoMu75_MJJ800VBF_AllJets_v");  
+  hHLTNewAlgoCounts->GetXaxis()->SetBinLabel(10,"L1_ETM50 + HLT_DiPFJet40_PFMETnoMu75_MJJ800VBF_AllJets_v");
+  hHLTNewAlgoCounts->GetXaxis()->SetBinLabel(11,"L1_ETM70 + HLT_DiPFJet40_PFMETnoMu75_MJJ800VBF_AllJets_v");
+  hHLTNewAlgoCounts->GetXaxis()->SetBinLabel(12,"L1_ETM100 + HLT_DiPFJet40_PFMETnoMu75_MJJ800VBF_AllJets_v");
+  hHLTNewAlgoCounts->GetXaxis()->SetBinLabel(13,"L1_ETM40 + HLT_DiPFJet40_PFMETnoMu75_MJJ600VBF_LeadingJets_v");
+  hHLTNewAlgoCounts->GetXaxis()->SetBinLabel(14,"L1_ETM50 + HLT_DiPFJet40_PFMETnoMu75_MJJ600VBF_LeadingJets_v");
+  hHLTNewAlgoCounts->GetXaxis()->SetBinLabel(15,"L1_ETM70 + HLT_DiPFJet40_PFMETnoMu75_MJJ600VBF_LeadingJets_v");
+  hHLTNewAlgoCounts->GetXaxis()->SetBinLabel(16,"L1_ETM100 + HLT_DiPFJet40_PFMETnoMu75_MJJ600VBF_LeadingJets_v");
   
   ESHandle<L1GtTriggerMenu> menuRcd;
   iSetup.get<L1GtTriggerMenuRcd>().get(menuRcd);

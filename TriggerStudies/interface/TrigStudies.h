@@ -96,7 +96,6 @@ private:
   
   TH1I* hEventCount;
   
-  
   TH1I* hL1AlgoCounts;
   TH1D* hL1ETM;
   TH1D* hL1HTT;
@@ -105,6 +104,7 @@ private:
   TH1D* hL1HTT_Saturated;
   
   TH1I* hHLTAlgoCounts;
+  TH1I* hHLTNewAlgoCounts;  
   TH1I* hHLTAlgoCounts_ETM;
   TH1I* hHLTAlgoCounts_HTT;
   TH1I* hHLTAlgoCounts_Both;
