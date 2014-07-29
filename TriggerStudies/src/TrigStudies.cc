@@ -27,21 +27,23 @@ using namespace edm;
 TrigStudies::TrigStudies(const edm::ParameterSet& pset){
 
   // Getting InputTag from configuration file
-  m_InputTag_L1GTReadoutRecord      = pset.getParameter<InputTag>("inputTag_L1GTReadoutRecord");
-  m_InputTag_L1Extra_mets           = pset.getUntrackedParameter ("inputTag_L1Extra_mets",InputTag("l1extraParticles","MET"));
-  m_InputTag_L1Extra_mhts           = pset.getUntrackedParameter ("inputTag_L1Extra_mhts",InputTag("l1extraParticles","MHT"));
-  m_InputTag_HLTResults             = pset.getParameter<InputTag>("inputTag_HLTResults");
-  m_InputTag_L1CaloRegionCollection = pset.getUntrackedParameter ("inputTag_L1CaloRegionCollection",InputTag("gctDigis"));
-  m_InputTag_EcalTriggerPrimitives  = pset.getUntrackedParameter ("inputTag_EcalTriggerPrimitives", InputTag("ecalDigis","EcalTriggerPrimitives"));
-  m_InputTag_HcalTriggerPrimitives  = pset.getUntrackedParameter ("inputTag_HcalTriggerPrimitives", InputTag("valHcalTriggerPrimitiveDigis"));
+  m_InputTag_L1GTReadoutRecord      = pset.getUntrackedParameter("inputTag_L1GTReadoutRecord",     InputTag("gtDigis"));
+  m_InputTag_L1Extra_mets           = pset.getUntrackedParameter("inputTag_L1Extra_mets",          InputTag("l1extraParticles","MET"));
+  m_InputTag_L1Extra_mhts           = pset.getUntrackedParameter("inputTag_L1Extra_mhts",          InputTag("l1extraParticles","MHT"));
+  m_InputTag_HLTResults             = pset.getUntrackedParameter("inputTag_HLTResults",            InputTag("TriggerResults","HLT"));
+  m_InputTag_L1CaloRegionCollection = pset.getUntrackedParameter("inputTag_L1CaloRegionCollection",InputTag("gctDigis"));
+  m_InputTag_EcalTriggerPrimitives  = pset.getUntrackedParameter("inputTag_EcalTriggerPrimitives", InputTag("ecalDigis","EcalTriggerPrimitives"));
+  m_InputTag_HcalTriggerPrimitives  = pset.getUntrackedParameter("inputTag_HcalTriggerPrimitives", InputTag("valHcalTriggerPrimitiveDigis"));
 
   // Getting other parameters from configuration file
   m_verbose      = pset.getUntrackedParameter<bool>("verbose",false);
   m_selHLTrigger = pset.getParameter<std::vector<string> >("selHLTrigger");
   
+  string outputFilename = pset.getUntrackedParameter<string>("outputFilename","TrigStudiesResults.root");
+  
   // Initialising other variables 
   currentRunNumber = 0;
-  fOut = new TFile("TrigStudiesResults.root","RECREATE");
+  fOut = new TFile(outputFilename.c_str(),"RECREATE");
 
 }
 
