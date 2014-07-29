@@ -88,9 +88,11 @@ process.load("VBFHiggsToInvisible.Samples.VBF_HToInv_M-125_13TeV_powheg-pythia6_
 process.trgEff = cms.EDAnalyzer('TrigStudies',
                               
   verbose                    = cms.untracked.bool(False),
-  inputTag_L1GTReadoutRecord = cms.InputTag("gtDigis"),
-  
-  inputTag_HLTResults        = cms.InputTag("TriggerResults::HLT"),
+  inputTag_L1GTReadoutRecord = cms.untracked.InputTag("gtDigis"),
+  inputTag_HLTResults        = cms.untracked.InputTag("TriggerResults::HLT"),
+
+  outputFilename = cms.untracked.string("TrigStudiesResults_VBFInv_PU40bx50.root"),
+
   selHLTrigger               = cms.vstring("HLT_DiPFJet40_PFMETnoMu65_MJJ800VBF_AllJets_v",
                                            "HLT_DiPFJet40_PFMETnoMu65_MJJ600VBF_LeadingJets_v",
                                            "HLT_DiPFJet40_PFMETnoMu75_MJJ800VBF_AllJets_v",
