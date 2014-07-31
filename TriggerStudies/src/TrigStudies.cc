@@ -26,8 +26,11 @@ using namespace edm;
 
 TrigStudies::TrigStudies(const edm::ParameterSet& pset){
 
+  ps = pset;
+  
   // Getting InputTag from configuration file
   m_InputTag_L1GTReadoutRecord      = pset.getUntrackedParameter("inputTag_L1GTReadoutRecord",     InputTag("gtDigis"));
+//   m_InputTag_L1Extra_mets           = pset.getUntrackedParameter("inputTag_L1Extra_mets",          InputTag("l1extraParticles","MET"));  
   m_InputTag_L1Extra_mets           = pset.getUntrackedParameter("inputTag_L1Extra_mets",          InputTag("l1extraParticles","MET"));
   m_InputTag_L1Extra_mhts           = pset.getUntrackedParameter("inputTag_L1Extra_mhts",          InputTag("l1extraParticles","MHT"));
   m_InputTag_HLTResults             = pset.getUntrackedParameter("inputTag_HLTResults",            InputTag("TriggerResults","HLT"));
@@ -36,8 +39,10 @@ TrigStudies::TrigStudies(const edm::ParameterSet& pset){
   m_InputTag_HcalTriggerPrimitives  = pset.getUntrackedParameter("inputTag_HcalTriggerPrimitives", InputTag("valHcalTriggerPrimitiveDigis"));
 
   // Getting other parameters from configuration file
-  m_verbose      = pset.getUntrackedParameter<bool>("verbose",false);
-  m_selHLTrigger = pset.getParameter<std::vector<string> >("selHLTrigger");
+  m_verbose       = pset.getUntrackedParameter<bool>("verbose",false);
+  m_runAlgoTester = pset.getUntrackedParameter<bool>("runAlgoTester",false);
+
+  m_selHLTrigger = pset.getParameter< vector<string> >("selHLTrigger");
   
   string outputFilename = pset.getUntrackedParameter<string>("outputFilename","TrigStudiesResults.root");
   
@@ -45,10 +50,17 @@ TrigStudies::TrigStudies(const edm::ParameterSet& pset){
   currentRunNumber = 0;
   fOut = new TFile(outputFilename.c_str(),"RECREATE");
 
+  if(m_runAlgoTester){
+    myAlgos = new AlgoTester(pset);
+  }
+  
 }
 
 TrigStudies::~TrigStudies(){
+  
   fOut->Write();
+  
+  delete myAlgos;
 }
 
 void TrigStudies::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup){
@@ -59,6 +71,15 @@ void TrigStudies::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetu
   nHcalTT_NSaturated    = 0;
   nRCTRegion_NSaturated = 0;
   nTotal_NSaturated     = 0;
+  
+  if(m_runAlgoTester){
+      
+    L1ExtraPayload evL1Extra(ps,iEvent);
+    vector<bool> resAlgo = myAlgos->runAlgos(evL1Extra);
+    for(unsigned i=0; i<resAlgo.size(); i++){
+      if(resAlgo[i]){hL1NewAlgoCounts->Fill(i);}
+    }
+  }
   
   // Getting Final Decision Logic (FDL) Data from GT
   Handle<L1GlobalTriggerReadoutRecord> gtReadoutRecordData;
@@ -81,6 +102,8 @@ void TrigStudies::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetu
   edm::ESHandle<L1CaloHcalScale>          lHcalScaleHandle;
   iSetup.get<L1CaloEcalScaleRcd>().get( lEcalScaleHandle );
   iSetup.get<L1CaloHcalScaleRcd>().get( lHcalScaleHandle );
+  
+  
   
   if(mets.isValid()){
     if (mets->size()!=0){
@@ -459,6 +482,18 @@ void TrigStudies::beginRun(edm::Run const& iRun, edm::EventSetup const& iSetup){
     hHLTAlgoCounts_None->GetXaxis()->SetBinLabel(i+1,trigName.c_str());
     cout << "Looking for HLT: " << trigName << endl;
   }    
+  
+  if(m_runAlgoTester){
+    TDirectory* dirL1AlgoTester = runDir->mkdir("L1AlgoTester");
+    vector<string> l1tAlgos = ps.getParameter< vector<string> >("algoTesterAlgos");
+    int nL1TAlgo = l1tAlgos.size();
+    
+    hL1NewAlgoCounts = new TH1I("L1NewAlgoCounts","L1NewAlgoCounts",nL1TAlgo,-0.5,nL1TAlgo-0.5); hL1NewAlgoCounts->SetDirectory(dirL1AlgoTester);
+    for(int i=1; i<=nL1TAlgo; i++){
+      hL1NewAlgoCounts->GetXaxis()->SetBinLabel(i,l1tAlgos[i-1].c_str());
+    }  
+  }  
+ 
 }
 
 void TrigStudies::endRun(edm::Run const&, edm::EventSetup const&){}

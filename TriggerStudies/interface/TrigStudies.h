@@ -21,13 +21,7 @@
 //
 //
 
-// system include files
-#include <memory>
-#include <string>
-#include <vector>
-#include <map>
-
-// user include files
+// CMSSW includes
 #include "FWCore/Framework/interface/Frameworkfwd.h"
 #include "FWCore/Framework/interface/EDAnalyzer.h"
 
@@ -42,7 +36,6 @@
 #include "DataFormats/Common/interface/TriggerResults.h"
 #include "FWCore/Common/interface/TriggerNames.h"
 
-//DataFormats
 #include "DataFormats/L1Trigger/interface/L1EtMissParticleFwd.h"
 #include "DataFormats/L1Trigger/interface/L1EtMissParticle.h"
 #include "DataFormats/L1GlobalTrigger/interface/L1GlobalTriggerReadoutRecord.h"
@@ -53,9 +46,20 @@
 #include "CondFormats/L1TObjects/interface/L1GtTriggerMenu.h"
 #include "CondFormats/DataRecord/interface/L1GtTriggerMenuRcd.h"
 
+// ROOT includes
 #include "TH1D.h"
 #include "TH2D.h"
 #include "TFile.h"
+
+// My includes
+#include "VBFHiggsToInvisible/TriggerStudies/interface/L1ExtraPayload.h"
+#include "VBFHiggsToInvisible/TriggerStudies/interface/AlgoTester.h"
+
+// System include files
+#include <memory>
+#include <string>
+#include <vector>
+#include <map>
 
 //
 // class declaration
@@ -124,7 +128,10 @@ private:
   TH1I* hRCTRegion_NSaturated;
   TH1I* hTotal_NSaturated;
   
+  TH1I* hL1NewAlgoCounts;
+  
   bool m_verbose;
+  bool m_runAlgoTester;
   
   int nEcalTT_NSaturated;
   int nHcalTT_NSaturated;
@@ -145,6 +152,10 @@ private:
   edm::InputTag m_InputTag_L1CaloRegionCollection;
   edm::InputTag m_InputTag_EcalTriggerPrimitives; 
   edm::InputTag m_InputTag_HcalTriggerPrimitives;
+  
+  edm::ParameterSet ps;
+  
+  AlgoTester *myAlgos;
   
 };
 
