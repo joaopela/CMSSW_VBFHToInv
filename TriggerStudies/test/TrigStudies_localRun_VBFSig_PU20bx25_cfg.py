@@ -100,7 +100,11 @@ process.trgEff = cms.EDAnalyzer('TrigStudies',
                                            "HLT_DiJet35_MJJ650_AllJets_DEta3p5_VBF_v",
                                            "HLT_DiJet35_MJJ700_AllJets_DEta3p5_VBF_v",
                                            "HLT_DiJet35_MJJ750_AllJets_DEta3p5_VBF_v"),
-  
+
+  runAlgoTester   = cms.untracked.bool(True),
+  algoTesterAlgos = cms.vstring("L1_DoubleJetC60_ETM60",
+                                "L1_DoubleJet60_ETM60"),
+
 )
 
 process.p = cms.Path(

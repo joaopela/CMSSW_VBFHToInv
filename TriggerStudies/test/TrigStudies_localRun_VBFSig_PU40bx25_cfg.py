@@ -4,7 +4,7 @@ process = cms.Process("TrgEff")
 
 ################################################################
 process.load("FWCore.MessageService.MessageLogger_cfi")
-process.MessageLogger.cerr.FwkReport.reportEvery = 100
+process.MessageLogger.cerr.FwkReport.reportEvery = 1
 
 process.options = cms.untracked.PSet(
     wantSummary = cms.untracked.bool( True )
@@ -88,18 +88,24 @@ process.load("VBFHiggsToInvisible.Samples.VBF_HToInv_M-125_13TeV_powheg-pythia6_
 process.trgEff = cms.EDAnalyzer('TrigStudies',
                               
   verbose                    = cms.untracked.bool(False),
-  inputTag_L1GTReadoutRecord = cms.InputTag("gtDigis"),
-  
-  inputTag_HLTResults        = cms.InputTag("TriggerResults::HLT"),
-  selHLTrigger               = cms.vstring("HLT_DiPFJet40_PFMETnoMu65_MJJ800VBF_AllJets_v",
-                                           "HLT_DiPFJet40_PFMETnoMu65_MJJ600VBF_LeadingJets_v",
-                                           "HLT_DiPFJet40_PFMETnoMu75_MJJ800VBF_AllJets_v",
-                                           "HLT_DiPFJet40_PFMETnoMu75_MJJ600VBF_LeadingJets_v",                                          
-                                           "HLT_DiJet20_MJJ650_AllJets_DEta3p5_HT120_VBF_v",
-                                           "HLT_DiJet30_MJJ700_AllJets_DEta3p5_VBF_v",
-                                           "HLT_DiJet35_MJJ650_AllJets_DEta3p5_VBF_v",
-                                           "HLT_DiJet35_MJJ700_AllJets_DEta3p5_VBF_v",
-                                           "HLT_DiJet35_MJJ750_AllJets_DEta3p5_VBF_v"),
+  inputTag_L1GTReadoutRecord = cms.untracked.InputTag("gtDigis"),
+  inputTag_HLTResults        = cms.untracked.InputTag("TriggerResults::HLT"),
+
+  outputFilename = cms.untracked.string("TrigStudiesResults_VBFInv_PU40bx25.root"),
+
+  selHLTrigger    = cms.vstring("HLT_DiPFJet40_PFMETnoMu65_MJJ800VBF_AllJets_v",
+                                "HLT_DiPFJet40_PFMETnoMu65_MJJ600VBF_LeadingJets_v",
+                                "HLT_DiPFJet40_PFMETnoMu75_MJJ800VBF_AllJets_v",
+                                "HLT_DiPFJet40_PFMETnoMu75_MJJ600VBF_LeadingJets_v",                                          
+                                "HLT_DiJet20_MJJ650_AllJets_DEta3p5_HT120_VBF_v",
+                                "HLT_DiJet30_MJJ700_AllJets_DEta3p5_VBF_v",
+                                "HLT_DiJet35_MJJ650_AllJets_DEta3p5_VBF_v",
+                                "HLT_DiJet35_MJJ700_AllJets_DEta3p5_VBF_v",
+                                "HLT_DiJet35_MJJ750_AllJets_DEta3p5_VBF_v"),
+
+  runAlgoTester   = cms.untracked.bool(True),
+  algoTesterAlgos = cms.vstring("L1_DoubleJetC60_ETM60",
+                                "L1_DoubleJet60_ETM60"),
   
 )
 
