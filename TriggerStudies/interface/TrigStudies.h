@@ -132,6 +132,7 @@ private:
   
   bool m_verbose;
   bool m_runAlgoTester;
+  bool m_doOtherStuff;
   
   int nEcalTT_NSaturated;
   int nHcalTT_NSaturated;
