@@ -67,6 +67,40 @@ std::string parseToLaTeX(std::string s) {
 }
 
 //####################################################################
+void doTable(map<string,double> &pu20bx25, map<string,double> &pu40bx50, map<string,double> &pu40bx25, string title, string filename){
+  
+  rat::LatexTabular tabular0(pu20bx25.size()+1,4);
+  
+  tabular0.setColumnDecorationBefore(0,"|");
+  tabular0.setColumnDecorationBefore(1,"||");
+  tabular0.setColumnDecorationBefore(2,"|");
+  tabular0.setColumnDecorationBefore(3,"|");
+  tabular0.setColumnDecorationAfter (3,"|");
+  
+  tabular0.setRowDecorationBefore(0,"\\hline");
+  tabular0.setRowDecorationBefore(1,"\\hline \\hline");
+  tabular0.setRowDecorationAfter (pu20bx25.size(),"\\hline");
+  
+  tabular0.setCellContent(0,0,title);
+  tabular0.setCellContent(0,1,"PU20bx25");
+  tabular0.setCellContent(0,2,"PU40bx50");
+  tabular0.setCellContent(0,3,"PU40bx25");
+  
+  int c=0;
+  for(auto it=pu20bx25.begin(); it!=pu20bx25.end(); it++){
+    c++;
+    tabular0.setCellContent(c,0,parseToLaTeX(it->first));
+    tabular0.setCellContent(c,1,pu20bx25[it->first]);  
+    tabular0.setCellContent(c,2,pu40bx50[it->first]);
+    tabular0.setCellContent(c,3,pu40bx25[it->first]);
+  }
+  
+  tabular0.saveAs(filename);
+  
+}
+
+
+//####################################################################
 void doTableL1T(vector<string> &selL1T,map<string,double> &pu20bx25, map<string,double> &pu40bx50, map<string,double> &pu40bx25, string filename){
   
   rat::LatexTabular tabular0(selL1T.size()+1,4);
@@ -87,7 +121,7 @@ void doTableL1T(vector<string> &selL1T,map<string,double> &pu20bx25, map<string,
   tabular0.setCellContent(0,3,"PU40bx25");
   
   for(unsigned i=0; i<selL1T.size(); i++){
-    tabular0.setCellContent(i+1,0,parseToLaTeX(selL1T[i]).c_str());
+    tabular0.setCellContent(i+1,0,parseToLaTeX(selL1T[i]));
     tabular0.setCellContent(i+1,1,pu20bx25[selL1T[i]]);  
     tabular0.setCellContent(i+1,2,pu40bx50[selL1T[i]]);
     tabular0.setCellContent(i+1,3,pu40bx25[selL1T[i]]);
@@ -480,9 +514,10 @@ int main(){
   hcL1HTT_Sig.draw(c,attDrawAttributesSig);
   c->SetLogy();
   c->SaveAs("L1HTT_Sig.pdf");
-  
-  // L1 Quantities Saturated
+
   //_______________________________________________________________________________  
+  // L1 Quantities Saturated
+  //_______________________________________________________________________________
   rat::HistogramCollection<string,TH1D> hcL1ETM_Saturated_NG(fNG,Form("Run_%d/hL1ETM_Saturated",1));
   hcL1ETM_Saturated_NG.scaleTo1();
   hcL1ETM_Saturated_NG.setLineColor(attLineColor);
@@ -641,6 +676,37 @@ int main(){
   hECALTT_CompressedEt127_EtaPhiTotal->GetYaxis()->SetLabelSize(0.015);
   hECALTT_CompressedEt127_EtaPhiTotal->Draw("colz");
   c->SaveAs("ECALTT_CompressedEt127_EtaPhiTotal.pdf");  
+
+  //_______________________________________________________________________________
+  // Baseline calculations
+  //_______________________________________________________________________________
+
+  // Signal: Trigger efficiency
+  map<string,double> l1t_hlt_PU20bx25 = getEff(fSig["PU20bx25_VBF_HToInv_M-125_13TeV"],1,"hHLTNewAlgoCounts");
+  map<string,double> l1t_hlt_PU40bx50 = getEff(fSig["PU40bx50_VBF_HToInv_M-125_13TeV"],1,"hHLTNewAlgoCounts");
+  map<string,double> l1t_hlt_PU40bx25 = getEff(fSig["PU40bx25_VBF_HToInv_M-125_13TeV"],1,"hHLTNewAlgoCounts");
+  doTable(l1t_hlt_PU20bx25,l1t_hlt_PU40bx50,l1t_hlt_PU40bx25,"L1+HLT","VBFInv_HLTNewAlgoCountsBunchEff.tex");
+
+  // Neutrino Gun: Trigger efficiency 
+  l1t_hlt_PU20bx25 = getEff(fNG["PU20bx25_Neutrino_gun"],1,"hHLTNewAlgoCounts");
+  l1t_hlt_PU40bx50 = getEff(fNG["PU40bx50_Neutrino_gun"],1,"hHLTNewAlgoCounts");
+  l1t_hlt_PU40bx25 = getEff(fNG["PU40bx25_Neutrino_gun"],1,"hHLTNewAlgoCounts");
+  doTable(l1t_hlt_PU20bx25,l1t_hlt_PU40bx50,l1t_hlt_PU40bx25,"L1+HLT","NeutrinoGun_HLTNewAlgoCountsBunchEff.tex"); 
+  
+  l1t_hlt_PU20bx25 = getEff(fNG["PU20bx25_Neutrino_gun"],1,"hHLTNewAlgoCounts",double(ratePerBunch));
+  l1t_hlt_PU40bx50 = getEff(fNG["PU40bx50_Neutrino_gun"],1,"hHLTNewAlgoCounts",double(ratePerBunch));
+  l1t_hlt_PU40bx25 = getEff(fNG["PU40bx25_Neutrino_gun"],1,"hHLTNewAlgoCounts",double(ratePerBunch));
+  doTable(l1t_hlt_PU20bx25,l1t_hlt_PU40bx50,l1t_hlt_PU40bx25,"L1+HLT","NeutrinoGun_HLTNewAlgoCountsBunchRate.tex");
+  
+  l1t_hlt_PU20bx25 = getEff(fNG["PU20bx25_Neutrino_gun"],1,"hHLTNewAlgoCounts",double(ratePerBunch)*double(nMaxBunch25ns));
+  l1t_hlt_PU40bx50 = getEff(fNG["PU40bx50_Neutrino_gun"],1,"hHLTNewAlgoCounts",double(ratePerBunch)*double(nMaxBunch50ns));
+  l1t_hlt_PU40bx25 = getEff(fNG["PU40bx25_Neutrino_gun"],1,"hHLTNewAlgoCounts",double(ratePerBunch)*double(nMaxBunch25ns));
+  doTable(l1t_hlt_PU20bx25,l1t_hlt_PU40bx50,l1t_hlt_PU40bx25,"L1+HLT","NeutrinoGun_HLTNewAlgoCountsMaxRate.tex");
+  
+  //_______________________________________________________________________________
+  // New L1T Algos
+  //_______________________________________________________________________________
+  
   
   delete c;
   
