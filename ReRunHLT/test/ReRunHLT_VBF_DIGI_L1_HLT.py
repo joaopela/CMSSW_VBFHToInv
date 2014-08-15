@@ -7,10 +7,19 @@ import FWCore.ParameterSet.Config as cms
 
 process = cms.Process('HLT2')
 
+################################################################
+process.load("FWCore.MessageService.MessageLogger_cfi")
+process.MessageLogger.cerr.FwkReport.reportEvery = 1000
+
+process.options = cms.untracked.PSet(
+    wantSummary = cms.untracked.bool( True )
+)
+################################################################
+
+
 # import of standard configurations
 process.load('Configuration.StandardSequences.Services_cff')
 process.load('SimGeneral.HepPDTESSource.pythiapdt_cfi')
-process.load('FWCore.MessageService.MessageLogger_cfi')
 process.load('Configuration.EventContent.EventContent_cff')
 process.load('SimGeneral.MixingModule.mixNoPU_cfi')
 process.load('Configuration.Geometry.GeometryExtended2015Reco_cff')
