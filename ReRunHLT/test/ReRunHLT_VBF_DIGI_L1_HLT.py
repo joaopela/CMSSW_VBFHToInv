@@ -30,18 +30,17 @@ process.load('Configuration.StandardSequences.EndOfProcess_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 process.load('VBFHiggsToInvisible.ReRunHLT.HLT_VBF_cff')
 
+# For producing L1 Extra objects 
+process.load("L1Trigger.L1ExtraFromDigis.l1extraParticles_cff")
+
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32(100)
+    input = cms.untracked.int32(200)
 )
 
 # Input source
 process.source = cms.Source("PoolSource",
     secondaryFileNames = cms.untracked.vstring(),
     fileNames = cms.untracked.vstring('/store/mc/Fall13dr/VBF_HToInv_M-125_13TeV_powheg-pythia6/GEN-SIM-RAW/tsg_PU20bx25_POSTLS162_V2-v1/00000/001A6D13-E16C-E311-BE56-00266CFAE7C4.root')
-)
-
-process.options = cms.untracked.PSet(
-
 )
 
 # Production Info
@@ -51,12 +50,17 @@ process.configurationMetadata = cms.untracked.PSet(
     name = cms.untracked.string('Applications')
 )
 
-# Output definition
+process.p = cms.Path(
+  process.l1extraParticles
+)
 
+# Output definition
 process.HLTDEBUGoutput = cms.OutputModule("PoolOutputModule",
     splitLevel = cms.untracked.int32(0),
     eventAutoFlushCompressedSize = cms.untracked.int32(5242880),
-    outputCommands = cms.untracked.vstring( 'drop *',
+    outputCommands = cms.untracked.vstring( 
+      'drop *',
+      'keep *_l1extraParticles_*_*',
       'keep *_hltL1GtObjectMap_*_HLT2',
       'keep FEDRawDataCollection_rawDataCollector_*_HLT2',
       'keep FEDRawDataCollection_source_*_HLT2',
@@ -82,7 +86,7 @@ process.endjob_step = cms.EndPath(process.endOfProcess)
 process.HLTDEBUGoutput_step = cms.EndPath(process.HLTDEBUGoutput)
 
 # Schedule definition
-process.schedule = cms.Schedule(process.digitisation_step,process.L1simulation_step)
+process.schedule = cms.Schedule(process.digitisation_step,process.L1simulation_step,process.p)
 process.schedule.extend(process.HLTSchedule)
 process.schedule.extend([process.endjob_step,process.HLTDEBUGoutput_step])
 
