@@ -6,11 +6,28 @@
  
 using namespace std;
  
+struct less_l1ExtraJet{
+  bool operator() (const l1extra::L1JetParticle &j1,const l1extra::L1JetParticle &j2) {
+    return (j1.pt() < j2.pt());
+  }
+};
+
+struct greater_l1ExtraJet{
+  bool operator() (const l1extra::L1JetParticle &j1,const l1extra::L1JetParticle &j2) {
+    return (j1.pt() > j2.pt());
+  }
+};
+
 L1ExtraPayload::L1ExtraPayload(){
-  variablesLoaded = false;
+  variablesLoaded    = false;
+  m_l1tAllJet_cached = false;
 }
+
 L1ExtraPayload::L1ExtraPayload(const edm::ParameterSet& pset, const edm::Event& iEvent){
 
+  variablesLoaded    = true;
+  m_l1tAllJet_cached = false;
+  
   edm::InputTag inputTag_L1EmParticle_Isolated    = pset.getUntrackedParameter("inputTag_L1EmParticle_Isolated",   edm::InputTag("l1extraParticles","Isolated"   ));
   edm::InputTag inputTag_L1EmParticle_NonIsolated = pset.getUntrackedParameter("inputTag_L1EmParticle_NonIsolated",edm::InputTag("l1extraParticles","NonIsolated"));
   edm::InputTag inputTag_L1EtMissParticle_MET     = pset.getUntrackedParameter("inputTag_L1EtMissParticle_MET",    edm::InputTag("l1extraParticles","MET"        ));
@@ -32,7 +49,6 @@ L1ExtraPayload::L1ExtraPayload(const edm::ParameterSet& pset, const edm::Event& 
   iEvent.getByLabel(inputTag_L1JetParticle_Tau,       m_L1JetParticle_Tau);
   iEvent.getByLabel(inputTag_L1MuonParticle,          m_L1MuonParticle);
   
-  variablesLoaded = false;
   if(!m_L1EmParticle_Isolated.isValid()){
     cout << "[L1ExtraPayload:] ERROR: Unable to retrieve L1EmParticle_Isolated getByLabel(...) result is not valid!" << endl;
     variablesLoaded=false;
@@ -72,7 +88,43 @@ L1ExtraPayload::L1ExtraPayload(const edm::ParameterSet& pset, const edm::Event& 
   
 }
 
-L1ExtraPayload::~L1ExtraPayload(){}
+L1ExtraPayload::~L1ExtraPayload(){
+  
+  if(m_l1tAllJet_cached){delete m_l1tAllJet;}
+  
+}
+
+
+l1extra::L1JetParticleCollection* L1ExtraPayload::getL1TAllJets(){
+
+  if(m_l1tAllJet_cached){return m_l1tAllJet;}
+  else{
+
+    m_l1tAllJet = new l1extra::L1JetParticleCollection();
+    
+    // Protecting from accessing unsigned handles if not loaded 
+    if(!variablesLoaded){
+      cout << "[L1ExtraPayload:] ERROR: Unable to getL1TAllJets() since variablesLoaded=false." << endl;
+      return m_l1tAllJet;
+    }
+    
+    for(unsigned i=0; i<m_L1JetParticle_Central->size(); i++){
+      m_l1tAllJet->push_back((*m_L1JetParticle_Central)[i]);
+    }
+    for(unsigned i=0; i<m_L1JetParticle_Forward->size(); i++){
+      m_l1tAllJet->push_back((*m_L1JetParticle_Forward)[i]);
+    }
+    for(unsigned i=0; i<m_L1JetParticle_Tau->size(); i++){
+      m_l1tAllJet->push_back((*m_L1JetParticle_Tau)[i]);
+    }
+    
+    sort(m_l1tAllJet->begin(),m_l1tAllJet->end(),greater_l1ExtraJet());
+    
+    m_l1tAllJet_cached = true;
+    return m_l1tAllJet;
+  }
+
+}
 
 bool L1ExtraPayload::isValid(){
   return variablesLoaded;

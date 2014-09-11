@@ -43,6 +43,9 @@ public:
   
   bool isValid();
   
+  // Get all jets (Central and forward)
+  l1extra::L1JetParticleCollection* getL1TAllJets();
+  
   // Public variable
   bool variablesLoaded;
   
@@ -55,6 +58,12 @@ public:
   edm::Handle<l1extra::L1JetParticleCollection>    m_L1JetParticle_Forward;
   edm::Handle<l1extra::L1JetParticleCollection>    m_L1JetParticle_Tau;
   edm::Handle<l1extra::L1MuonParticleCollection>   m_L1MuonParticle;
+  
+  
+private:
+  
+  bool                              m_l1tAllJet_cached;
+  l1extra::L1JetParticleCollection* m_l1tAllJet;
   
 };
 
