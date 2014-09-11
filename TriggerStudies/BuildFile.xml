@@ -9,6 +9,12 @@
 <use name="CondFormats/L1TObjects"/>
 <use name="CondFormats/DataRecord"/>
 <use name="rootgraphics"/>
+<use name="PhysicsTools/UtilAlgos"/>
+<use name="PhysicsTools/PatAlgos"/>
+<use name="PhysicsTools/PatUtils"/>
+<use name="PhysicsTools/CandUtils"/>
+<use name="DataFormats/Candidate"/>
+<use name="DataFormats/PatCandidates"/>
 <use name="root"/>
 <flags CXXFLAGS="-g"/>
 <flags EDM_PLUGIN="1"/>
