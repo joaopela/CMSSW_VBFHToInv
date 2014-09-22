@@ -36,7 +36,6 @@ L1AlgoWPStudies::L1AlgoWPStudies(const edm::ParameterSet& pset){
   
   // Getting InputTag from configuration file
   m_InputTag_L1GTReadoutRecord      = pset.getUntrackedParameter("inputTag_L1GTReadoutRecord",     InputTag("gtDigis"));
-  //   m_InputTag_L1Extra_mets           = pset.getUntrackedParameter("inputTag_L1Extra_mets",          InputTag("l1extraParticles","MET"));  
   m_InputTag_L1Extra_mets           = pset.getUntrackedParameter("inputTag_L1Extra_mets",          InputTag("l1extraParticles","MET"));
   m_InputTag_L1Extra_mhts           = pset.getUntrackedParameter("inputTag_L1Extra_mhts",          InputTag("l1extraParticles","MHT"));
   m_InputTag_HLTResults             = pset.getUntrackedParameter("inputTag_HLTResults",            InputTag("TriggerResults","HLT"));
@@ -68,220 +67,94 @@ void L1AlgoWPStudies::analyze(const edm::Event& iEvent, const edm::EventSetup& i
   L1ExtraPayload evL1Extra(ps,iEvent);
   l1extra::L1JetParticleCollection *l1tJets = evL1Extra.getL1TAllJets();
   
-  bool   vbf   = false;
-  double jetPt = -1;
-  double mjj   = -1;
-  double deta  =  0;
-  double dphi  =  0;
-  
-  double jet0_met_dphi    = 0;
-  double jet1_met_dphi    = 0;
-  double jets_met_mindphi = 0;
-  double jets_met_maxdphi = 0;
-  
-  double MHToverHTT       = 0;
-  
-  if((*l1tJets).size()>2){
+  L1TPlotsData evData;
+
+  bool   vbf               = false;
+  double jetPt             = -1;
+  double jets_met_mindphi  =  10;
+  double jets_met_maxdphi  = -10;
+
+  evData.l1t_etm.first    = true; evData.l1t_etm.second    = evL1Extra.m_L1EtMissParticle_MET->begin()->et();
+  evData.MHToverHTT.first = true; evData.MHToverHTT.second = evL1Extra.m_L1EtMissParticle_MHT->begin()->etMiss()/evL1Extra.m_L1EtMissParticle_MHT->begin()->etTotal();
+
+  if((*l1tJets).size()>0){
+    evData.dijet_pt0 .first = true; evData.dijet_pt0.second  = (*l1tJets)[0].pt();
+    evData.dijet_eta0.first = true; evData.dijet_eta0.second = (*l1tJets)[0].eta();
+    
+    for(unsigned i=0; i<l1tJets->size(); i++){
+      
+      double jet_met_dphi = abs(reco::deltaPhi((*l1tJets)[i].phi(),evL1Extra.m_L1EtMissParticle_MET->begin()->phi()));
+      
+      if     (i==0){evData.jet0_met_dphi.first = true; evData.jet0_met_dphi.second = jet_met_dphi;}
+      else if(i==1){evData.jet1_met_dphi.first = true; evData.jet1_met_dphi.second = jet_met_dphi;}
+      
+      if(jet_met_dphi<jets_met_mindphi){jets_met_mindphi=jet_met_dphi;}
+      if(jet_met_dphi>jets_met_maxdphi){jets_met_maxdphi=jet_met_dphi;}
+    }
+    evData.jets_met_mindphi.first = true; evData.jets_met_mindphi.second = jets_met_mindphi; 
+    evData.jets_met_maxdphi.first = true; evData.jets_met_maxdphi.second = jets_met_maxdphi; 
+  }
+
+  if((*l1tJets).size()>1){
+    
+    evData.dijet_pt1 .first = true; evData.dijet_pt1 .second = (*l1tJets)[1].pt();        
+    evData.dijet_eta1.first = true; evData.dijet_eta1.second = (*l1tJets)[1].eta();      
     
     vbf = ( (*l1tJets)[0].eta()>0 && (*l1tJets)[1].eta()<0 ) || ( (*l1tJets)[0].eta()<0 && (*l1tJets)[1].eta()>0 );
     
     jetPt = (*l1tJets)[1].pt();
-    deta  = abs( (*l1tJets)[0].eta() - (*l1tJets)[1].eta() );
-
-    dphi             = abs(reco::deltaPhi((*l1tJets)[0].phi(),(*l1tJets)[1].phi()));
-    jet0_met_dphi    = abs(reco::deltaPhi((*l1tJets)[0].phi(),evL1Extra.m_L1EtMissParticle_MET->begin()->phi()));
-    jet1_met_dphi    = abs(reco::deltaPhi((*l1tJets)[1].phi(),evL1Extra.m_L1EtMissParticle_MET->begin()->phi()));
-    if(jet0_met_dphi > jet1_met_dphi){
-      jets_met_mindphi = jet1_met_dphi;
-      jets_met_maxdphi = jet0_met_dphi;
-    }else{
-      jets_met_mindphi = jet0_met_dphi;
-      jets_met_maxdphi = jet1_met_dphi;
-    }
+    evData.dijet_deta.first = true; evData.dijet_deta.second = abs( (*l1tJets)[0].eta() - (*l1tJets)[1].eta() );
+    evData.dijet_dphi.first = true; evData.dijet_dphi.second = abs(reco::deltaPhi((*l1tJets)[0].phi(),(*l1tJets)[1].phi()));
     
-    MHToverHTT = evL1Extra.m_L1EtMissParticle_MHT->begin()->etMiss()/evL1Extra.m_L1EtMissParticle_MHT->begin()->etTotal();
+    evData.dijet_met_mindphi.first = true; 
+    evData.dijet_met_maxdphi.first = true; 
+    if(evData.jet0_met_dphi.second > evData.jet1_met_dphi.second){
+      evData.dijet_met_mindphi.second = evData.jet1_met_dphi.second;
+      evData.dijet_met_maxdphi.second = evData.jet0_met_dphi.second;
+    }else{
+      evData.dijet_met_mindphi.second = evData.jet0_met_dphi.second;
+      evData.dijet_met_maxdphi.second = evData.jet1_met_dphi.second;
+    }
     
     double px = (*l1tJets)[0].px() + (*l1tJets)[1].px(); 
     double py = (*l1tJets)[0].py() + (*l1tJets)[1].py(); 
     double pz = (*l1tJets)[0].pz() + (*l1tJets)[1].pz(); 
     double normaP = pow(px,2) + pow(py,2) + pow(pz,2);
-    mjj    = sqrt(pow((*l1tJets)[0].energy()+(*l1tJets)[1].energy(),2) - normaP);
     
-  }else{return;}
+    evData.dijet_mjj.first = true; evData.dijet_mjj.second = sqrt(pow((*l1tJets)[0].energy()+(*l1tJets)[1].energy(),2) - normaP);
 
-  L1TPlots *p = m_wpPlots["NoCuts"];
-  p->l1t_etm   ->Fill(evL1Extra.m_L1EtMissParticle_MET->begin()->et());  
-  p->dijet_pt0 ->Fill((*l1tJets)[0].pt());
-  p->dijet_pt1 ->Fill((*l1tJets)[1].pt());
-  p->dijet_eta0->Fill((*l1tJets)[0].eta());
-  p->dijet_eta1->Fill((*l1tJets)[1].eta());
-  p->dijet_deta->Fill(deta);
-  p->dijet_dphi->Fill(dphi);
-  p->dijet_mjj ->Fill(mjj);
-  p->jet0_met_dphi   ->Fill(jet0_met_dphi);
-  p->jet1_met_dphi   ->Fill(jet1_met_dphi);
-  p->jets_met_mindphi->Fill(jets_met_mindphi);
-  p->jets_met_maxdphi->Fill(jets_met_maxdphi);
-  p->MHToverHTT      ->Fill(MHToverHTT);
+  }
+
+  m_wpPlots["NoCuts"]->fill(evData);
   
-  if(vbf){
-    L1TPlots *p = m_wpPlots["DijetVBF"];
-    p->l1t_etm   ->Fill(evL1Extra.m_L1EtMissParticle_MET->begin()->et());  
-    p->dijet_pt0 ->Fill((*l1tJets)[0].pt());
-    p->dijet_pt1 ->Fill((*l1tJets)[1].pt());
-    p->dijet_eta0->Fill((*l1tJets)[0].eta());
-    p->dijet_eta1->Fill((*l1tJets)[1].eta());
-    p->dijet_deta->Fill(deta);
-    p->dijet_dphi->Fill(dphi);
-    p->dijet_mjj ->Fill(mjj);
-    p->jet0_met_dphi   ->Fill(jet0_met_dphi);
-    p->jet1_met_dphi   ->Fill(jet1_met_dphi);
-    p->jets_met_mindphi->Fill(jets_met_mindphi);
-    p->jets_met_maxdphi->Fill(jets_met_maxdphi);
-    p->MHToverHTT      ->Fill(MHToverHTT);
-  }
+  // MET based triggers
+  if(evL1Extra.m_L1EtMissParticle_MET->begin()->et()>=40){m_wpPlots["L1T_ETM40"]->fill(evData);}  
+  if(evL1Extra.m_L1EtMissParticle_MET->begin()->et()>=70){m_wpPlots["L1T_ETM70"]->fill(evData);}
+ 
+  // HTT based triggers
+  if(evL1Extra.m_L1EtMissParticle_MHT->begin()->etTotal()>=125){m_wpPlots["L1T_HTT125"]->fill(evData);}  
 
-  if(vbf && (*l1tJets)[1].pt()>=30){
-    L1TPlots *p = m_wpPlots["DijetVBF30"];
-    p->l1t_etm   ->Fill(evL1Extra.m_L1EtMissParticle_MET->begin()->et());  
-    p->dijet_pt0 ->Fill((*l1tJets)[0].pt());
-    p->dijet_pt1 ->Fill((*l1tJets)[1].pt());
-    p->dijet_eta0->Fill((*l1tJets)[0].eta());
-    p->dijet_eta1->Fill((*l1tJets)[1].eta());
-    p->dijet_deta->Fill(deta);
-    p->dijet_dphi->Fill(dphi);
-    p->dijet_mjj ->Fill(mjj);
-    p->jet0_met_dphi   ->Fill(jet0_met_dphi);
-    p->jet1_met_dphi   ->Fill(jet1_met_dphi);
-    p->jets_met_mindphi->Fill(jets_met_mindphi);
-    p->jets_met_maxdphi->Fill(jets_met_maxdphi);
-    p->MHToverHTT      ->Fill(MHToverHTT);
-  }
-
-  if(vbf && (*l1tJets)[1].pt()>=40){
-    L1TPlots *p = m_wpPlots["DijetVBF40"];
-    p->l1t_etm   ->Fill(evL1Extra.m_L1EtMissParticle_MET->begin()->et());  
-    p->dijet_pt0 ->Fill((*l1tJets)[0].pt());
-    p->dijet_pt1 ->Fill((*l1tJets)[1].pt());
-    p->dijet_eta0->Fill((*l1tJets)[0].eta());
-    p->dijet_eta1->Fill((*l1tJets)[1].eta());
-    p->dijet_deta->Fill(deta);
-    p->dijet_dphi->Fill(dphi);
-    p->dijet_mjj ->Fill(mjj);
-    p->jet0_met_dphi   ->Fill(jet0_met_dphi);
-    p->jet1_met_dphi   ->Fill(jet1_met_dphi);
-    p->jets_met_mindphi->Fill(jets_met_mindphi);
-    p->jets_met_maxdphi->Fill(jets_met_maxdphi);
-    p->MHToverHTT      ->Fill(MHToverHTT);
-  }
-
-  if(vbf && (*l1tJets)[1].pt()>=30 && deta>=3.0){
-    L1TPlots *p = m_wpPlots["DijetVBF30_DEta3p0"];
-    p->l1t_etm   ->Fill(evL1Extra.m_L1EtMissParticle_MET->begin()->et());  
-    p->dijet_pt0 ->Fill((*l1tJets)[0].pt());
-    p->dijet_pt1 ->Fill((*l1tJets)[1].pt());
-    p->dijet_eta0->Fill((*l1tJets)[0].eta());
-    p->dijet_eta1->Fill((*l1tJets)[1].eta());
-    p->dijet_deta->Fill(deta);
-    p->dijet_dphi->Fill(dphi);
-    p->dijet_mjj ->Fill(mjj);
-    p->jet0_met_dphi   ->Fill(jet0_met_dphi);
-    p->jet1_met_dphi   ->Fill(jet1_met_dphi);
-    p->jets_met_mindphi->Fill(jets_met_mindphi);
-    p->jets_met_maxdphi->Fill(jets_met_maxdphi);
-    p->MHToverHTT      ->Fill(MHToverHTT);
-  }
-
-  if(vbf && (*l1tJets)[1].pt()>=40 && deta>=3.0){
-    L1TPlots *p = m_wpPlots["DijetVBF40_DEta3p0"];
-    p->l1t_etm   ->Fill(evL1Extra.m_L1EtMissParticle_MET->begin()->et());  
-    p->dijet_pt0 ->Fill((*l1tJets)[0].pt());
-    p->dijet_pt1 ->Fill((*l1tJets)[1].pt());
-    p->dijet_eta0->Fill((*l1tJets)[0].eta());
-    p->dijet_eta1->Fill((*l1tJets)[1].eta());
-    p->dijet_deta->Fill(deta);
-    p->dijet_dphi->Fill(dphi);
-    p->dijet_mjj ->Fill(mjj);
-    p->jet0_met_dphi   ->Fill(jet0_met_dphi);
-    p->jet1_met_dphi   ->Fill(jet1_met_dphi);
-    p->jets_met_mindphi->Fill(jets_met_mindphi);
-    p->jets_met_maxdphi->Fill(jets_met_maxdphi);
-    p->MHToverHTT      ->Fill(MHToverHTT);
-  }
+  // MHT based triggers
+  if(evL1Extra.m_L1EtMissParticle_MHT->begin()->et()>=40){m_wpPlots["L1T_MHT40"]->fill(evData);}
   
-  if(evL1Extra.m_L1EtMissParticle_MET->begin()->et()>=40){
-    L1TPlots *p = m_wpPlots["L1T_ETM40"];
-    p->l1t_etm   ->Fill(evL1Extra.m_L1EtMissParticle_MET->begin()->et());  
-    p->dijet_pt0 ->Fill((*l1tJets)[0].pt());
-    p->dijet_pt1 ->Fill((*l1tJets)[1].pt());
-    p->dijet_eta0->Fill((*l1tJets)[0].eta());
-    p->dijet_eta1->Fill((*l1tJets)[1].eta());
-    p->dijet_deta->Fill(deta);
-    p->dijet_dphi->Fill(dphi);
-    p->dijet_mjj ->Fill(mjj);
-    p->jet0_met_dphi   ->Fill(jet0_met_dphi);
-    p->jet1_met_dphi   ->Fill(jet1_met_dphi);
-    p->jets_met_mindphi->Fill(jets_met_mindphi);
-    p->jets_met_maxdphi->Fill(jets_met_maxdphi);
-    p->MHToverHTT      ->Fill(MHToverHTT);
-  }
+  // Dijet based triggers
+  if((*l1tJets).size()>=2){m_wpPlots["Dijet"]->fill(evData);}
   
-  if(evL1Extra.m_L1EtMissParticle_MET->begin()->et()>=70){
-    L1TPlots *p = m_wpPlots["L1T_ETM70"];
-    p->l1t_etm   ->Fill(evL1Extra.m_L1EtMissParticle_MET->begin()->et());  
-    p->dijet_pt0 ->Fill((*l1tJets)[0].pt());
-    p->dijet_pt1 ->Fill((*l1tJets)[1].pt());
-    p->dijet_eta0->Fill((*l1tJets)[0].eta());
-    p->dijet_eta1->Fill((*l1tJets)[1].eta());
-    p->dijet_deta->Fill(deta);
-    p->dijet_dphi->Fill(dphi);
-    p->dijet_mjj ->Fill(mjj);
-    p->jet0_met_dphi   ->Fill(jet0_met_dphi);
-    p->jet1_met_dphi   ->Fill(jet1_met_dphi);
-    p->jets_met_mindphi->Fill(jets_met_mindphi);
-    p->jets_met_maxdphi->Fill(jets_met_maxdphi);
-    p->MHToverHTT      ->Fill(MHToverHTT);
-  }
-   
-   if(evL1Extra.m_L1EtMissParticle_MHT->begin()->etTotal()>=125){
-     L1TPlots *p = m_wpPlots["L1T_HTT125"];
-     p->l1t_etm   ->Fill(evL1Extra.m_L1EtMissParticle_MET->begin()->et());  
-     p->dijet_pt0 ->Fill((*l1tJets)[0].pt());
-     p->dijet_pt1 ->Fill((*l1tJets)[1].pt());
-     p->dijet_eta0->Fill((*l1tJets)[0].eta());
-     p->dijet_eta1->Fill((*l1tJets)[1].eta());
-     p->dijet_deta->Fill(deta);
-     p->dijet_dphi->Fill(dphi);
-     p->dijet_mjj ->Fill(mjj);
-     p->jet0_met_dphi   ->Fill(jet0_met_dphi);
-     p->jet1_met_dphi   ->Fill(jet1_met_dphi);
-     p->jets_met_mindphi->Fill(jets_met_mindphi);
-     p->jets_met_maxdphi->Fill(jets_met_maxdphi);
-     p->MHToverHTT      ->Fill(MHToverHTT);
-   }
+  if((*l1tJets).size()>=2 && vbf){m_wpPlots["DijetVBF"]->fill(evData);};
 
-   if(evL1Extra.m_L1EtMissParticle_MHT->begin()->et()>=40){
-     L1TPlots *p = m_wpPlots["L1T_MHT40"];
-     p->l1t_etm   ->Fill(evL1Extra.m_L1EtMissParticle_MET->begin()->et());  
-     p->dijet_pt0 ->Fill((*l1tJets)[0].pt());
-     p->dijet_pt1 ->Fill((*l1tJets)[1].pt());
-     p->dijet_eta0->Fill((*l1tJets)[0].eta());
-     p->dijet_eta1->Fill((*l1tJets)[1].eta());
-     p->dijet_deta->Fill(deta);
-     p->dijet_dphi->Fill(dphi);
-     p->dijet_mjj ->Fill(mjj);
-     p->jet0_met_dphi   ->Fill(jet0_met_dphi);
-     p->jet1_met_dphi   ->Fill(jet1_met_dphi);
-     p->jets_met_mindphi->Fill(jets_met_mindphi);
-     p->jets_met_maxdphi->Fill(jets_met_maxdphi);
-     p->MHToverHTT      ->Fill(MHToverHTT);
-   }
+  if((*l1tJets).size()>=2 && vbf && (*l1tJets)[1].pt()>=30){m_wpPlots["DijetVBF30"]->fill(evData);}
+  if((*l1tJets).size()>=2 && vbf && (*l1tJets)[1].pt()>=40){m_wpPlots["DijetVBF40"]->fill(evData);}
+
+  if((*l1tJets).size()>=2 && vbf && (*l1tJets)[1].pt()>=30 && evData.dijet_deta.second>=3.0){m_wpPlots["DijetVBF30_DEta3p0"]->fill(evData);}
+  if((*l1tJets).size()>=2 && vbf && (*l1tJets)[1].pt()>=40 && evData.dijet_deta.second>=3.0){m_wpPlots["DijetVBF40_DEta3p0"]->fill(evData);}
+  
+  
    
   for(unsigned i=0; i<vDijet_Mjj.size(); i++){
     
     double cut = double(i)*5;
     
-    if(jetPt >= cut){vDijet_Mjj[i]->Fill(mjj);}
+    if(jetPt >= cut){vDijet_Mjj[i]->Fill(evData.dijet_mjj.second);}
   }
 }
 
@@ -308,6 +181,9 @@ void L1AlgoWPStudies::beginRun(edm::Run const& iRun, edm::EventSetup const& iSet
   TDirectory* d = runDir->mkdir("NoCuts");
   m_wpPlots["NoCuts"] = new L1TPlots(d);
 
+  d = runDir->mkdir("Dijet");
+  m_wpPlots["Dijet"] = new L1TPlots(d);
+  
   d = runDir->mkdir("DijetVBF");
   m_wpPlots["DijetVBF"] = new L1TPlots(d);
   
