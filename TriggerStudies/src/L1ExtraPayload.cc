@@ -114,9 +114,9 @@ l1extra::L1JetParticleCollection* L1ExtraPayload::getL1TAllJets(){
     for(unsigned i=0; i<m_L1JetParticle_Forward->size(); i++){
       m_l1tAllJet->push_back((*m_L1JetParticle_Forward)[i]);
     }
-    for(unsigned i=0; i<m_L1JetParticle_Tau->size(); i++){
-      m_l1tAllJet->push_back((*m_L1JetParticle_Tau)[i]);
-    }
+//     for(unsigned i=0; i<m_L1JetParticle_Tau->size(); i++){
+//       m_l1tAllJet->push_back((*m_L1JetParticle_Tau)[i]);
+//     }
     
     sort(m_l1tAllJet->begin(),m_l1tAllJet->end(),greater_l1ExtraJet());
     
