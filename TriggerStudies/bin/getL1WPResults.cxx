@@ -82,8 +82,8 @@ int main(){
 
   art::File *fOut = new art::File("L1AlgoWPStudiesResults_PU40bx25_eff.root","RECREATE");
   
-  art::File *fSig = new art::File("L1AlgoWPStudiesResults_VBFInv_PU40bx25.root");
-  art::File *fBkg = new art::File("L1AlgoWPStudiesResults_NeutrinoGun_PU40bx25.root");
+  art::File *fSig = new art::File("L1AlgoWPStudiesResults_L1TEmuStage1_VBFInv_PU40bx25v1.root");
+  art::File *fBkg = new art::File("L1AlgoWPStudiesResults_L1TEmuStage1_NeutrinoGun_PU40bx25v1.root");
   
   vector<TH1*> hSig = fSig->getHistograms();
   vector<TH1*> hBkg = fBkg->getHistograms();
