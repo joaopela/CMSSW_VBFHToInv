@@ -2,8 +2,8 @@
 <use name="rootgraphics"/>
 <use name="boost"/>
 
-<flags CXXFLAGS="-g -I$(ICTOOLSSYS)/src/"/>
-<flags LDFLAGS="$(ICTOOLSSYS)/lib/libICFWCore.so $(ICTOOLSSYS)/lib/libICPlots.so $(ICTOOLSSYS)/lib/libICLatex.so -L$(ICTOOLSSYS)/lib/"/>
+<flags CXXFLAGS="-g -I$(HEPFWSYS)/src/"/>
+<flags LDFLAGS="$(HEPFWSYS)/lib/libHEPFWFWCore.so $(HEPFWSYS)/lib/libHEPFWPlots.so $(HEPFWSYS)/lib/libHEPFWLatex.so -L$(HEPFWSYS)/lib/"/>
 
 <bin name="vbfinv_getResultsTriggerStudy" file="getResultsTriggerStudy.cxx"></bin>
 <bin name="vbfinv_getL1WPResults"         file="getL1WPResults.cxx"></bin>
