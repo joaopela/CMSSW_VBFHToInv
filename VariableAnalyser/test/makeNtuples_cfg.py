@@ -125,7 +125,7 @@ process.selectedAndFilteredPatJets = process.selectedPatJets.clone(
 )
 
 ################################################################
-### MET Filters-curretly from Sasha's code
+### MET Filters-currently from Sasha's code
 #################################################################
 ## The iso-based HBHE noise filter
 process.load('CommonTools.RecoAlgos.HBHENoiseFilterResultProducer_cfi')
