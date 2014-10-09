@@ -37,6 +37,7 @@
 #include "VBFHiggsToInvisible/TriggerStudies/interface/L1ExtraPayload.h"
 #include "VBFHiggsToInvisible/TriggerStudies/interface/AlgoTester.h"
 #include "VBFHiggsToInvisible/TriggerStudies/interface/L1TPlots.h"
+#include "VBFHiggsToInvisible/TriggerStudies/interface/L1TDijet.h"
 
 // System include files
 #include <memory>
@@ -73,7 +74,8 @@ private:
  
   std::vector<TH1D*> vDijet_Mjj;
   
-  std::map<std::string,L1TPlots*> m_wpPlots; 
+  std::map<std::string,L1TPlots*> m_wpPlots;
+  std::map<std::string,L1TPlots*> m_wpSameDijetPlots;
   
   edm::InputTag m_InputTag_L1GTReadoutRecord;
   edm::InputTag m_InputTag_L1Extra_mets;
