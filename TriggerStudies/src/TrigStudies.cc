@@ -30,7 +30,6 @@ TrigStudies::TrigStudies(const edm::ParameterSet& pset){
   
   // Getting InputTag from configuration file
   m_InputTag_L1GTReadoutRecord      = pset.getUntrackedParameter("inputTag_L1GTReadoutRecord",     InputTag("gtDigis"));
-//   m_InputTag_L1Extra_mets           = pset.getUntrackedParameter("inputTag_L1Extra_mets",          InputTag("l1extraParticles","MET"));  
   m_InputTag_L1Extra_mets           = pset.getUntrackedParameter("inputTag_L1Extra_mets",          InputTag("l1extraParticles","MET"));
   m_InputTag_L1Extra_mhts           = pset.getUntrackedParameter("inputTag_L1Extra_mhts",          InputTag("l1extraParticles","MHT"));
   m_InputTag_HLTResults             = pset.getUntrackedParameter("inputTag_HLTResults",            InputTag("TriggerResults","HLT"));
@@ -42,7 +41,7 @@ TrigStudies::TrigStudies(const edm::ParameterSet& pset){
   m_verbose       = pset.getUntrackedParameter<bool>("verbose",       false);
   m_doOtherStuff  = pset.getUntrackedParameter<bool>("m_doOtherStuff",false);
   m_runAlgoTester = pset.getUntrackedParameter<bool>("runAlgoTester", false);
-    
+  
   // Initialising other variables 
   currentRunNumber = 0;
 
