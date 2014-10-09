@@ -22,12 +22,13 @@
 
 using namespace std;
 
-TCanvas* doCanvas(TH1D* sig,TH1D* bkg){
+TCanvas* doCanvas(TH1D* sig,TH1D* bkg,const char* name){
   
+  //const int nMaxBunch50ns = 1380;
   const int nMaxBunch25ns = 2808;
   const int ratePerBunch  = 11246;
   
-  TCanvas *c0 = new TCanvas(Form("rates_%s",sig->GetTitle()));
+  TCanvas *c0 = new TCanvas(Form("rates_%s",name));
   
   TPad *pad = new TPad("pad","",0,0,1,1);
   pad->SetFillColor(0);
@@ -37,6 +38,7 @@ TCanvas* doCanvas(TH1D* sig,TH1D* bkg){
   pad->cd();
   
   sig->GetYaxis()->SetTitleOffset(1.5);
+  sig->GetYaxis()->SetTitle("Signal Efficiency");
   sig->Draw();
   
   ///////////
@@ -65,6 +67,13 @@ TCanvas* doCanvas(TH1D* sig,TH1D* bkg){
   //draw an axis on the right side
   //c0->SaveAs("PU40bx50_rate_DijetVBF30_L1TETM_logScale.pdf");  
   
+  for(int i=0; i<=sig->GetNbinsX()+1; i++){
+    if(sig->GetBinContent(i)>=0.2 && rate->GetBinContent(i)<=5000){
+      cout << "==> Name: " << sig->GetName() << " cut: " << sig->GetXaxis()->GetBinLowEdge(i) << " Sig eff: " << sig->GetBinContent(i) << " Rate: " << rate->GetBinContent(i) << endl;
+      break;
+    }
+  }
+  
   return c0;
   
 }
@@ -72,61 +81,91 @@ TCanvas* doCanvas(TH1D* sig,TH1D* bkg){
 //####################################################################
 int main(){
 
-  rat::Style myStyle;
+  hepfw::Style myStyle;
   myStyle.setTDRStyle();
   
-  // Constants for rate calculations  
-//   const int nMaxBunch50ns = 1380;
-//   const int nMaxBunch25ns = 2808;
-//   const int ratePerBunch  = 11246;
-
   art::File *fOut = new art::File("L1AlgoWPStudiesResults_PU40bx25_eff.root","RECREATE");
   
-  art::File *fSig = new art::File("L1AlgoWPStudiesResults_L1TEmuStage1_VBFInv_PU40bx25v1.root");
-  art::File *fBkg = new art::File("L1AlgoWPStudiesResults_L1TEmuStage1_NeutrinoGun_PU40bx25v1.root");
+  art::File *fSig = new art::File("L1AlgoWPStudiesResults_L1TEmuStage1_VBFInv_PU40bx25.root");
+  art::File *fBkg = new art::File("L1AlgoWPStudiesResults_L1TEmuStage1_NeutrinoGun_PU40bx25.root");
   
   vector<TH1*> hSig = fSig->getHistograms();
   vector<TH1*> hBkg = fBkg->getHistograms();
+  
+  TH1I* hSigTotal = (TH1I*) fSig->Get("Run_1/EventCount");
+  double nSigEvents = hSigTotal->GetBinContent(1);
+  
+  TH1I* hBkgTotal = (TH1I*) fBkg->Get("Run_1/EventCount");
+  double nBkgEvents = hBkgTotal->GetBinContent(1);
   
   fOut->copyDirectoryStructure(fSig);
   fOut->Write();
   
   for(unsigned s=0; s<hSig.size(); s++){
-
-    TH1D *pSig = (TH1D*) hSig[s];
-    string dirTitle = pSig->GetDirectory()->GetTitle();
     
-    if(dirTitle == "Efficiency"){
+    TH1D *pSig = (TH1D*) hSig[s];
+
+    string sigTitle = pSig->GetTitle();
+    string sigPath  = pSig->GetDirectory()->GetPath();
+    sigPath  = sigPath.substr(sigPath.find(':')+2,sigPath.size()-1);
+
+    for(unsigned b=0; b<hBkg.size(); b++){
       
-      string sigPath = pSig->GetDirectory()->GetPath();
-      sigPath  = sigPath.substr(sigPath.find(':')+1,sigPath.size()-1);
-//       sigPath += "/Efficiency";
+      TH1D *pBkg = (TH1D*) hBkg[b];
       
-      string sigTitle = pSig->GetTitle();
+      string bkgTitle = pBkg->GetTitle();
+      string bkgPath  = pBkg->GetDirectory()->GetPath();
+      bkgPath = bkgPath.substr(bkgPath.find(':')+2,bkgPath.size()-1);
       
-      for(unsigned b=0; b<hBkg.size(); b++){
+      if(sigTitle == bkgTitle && sigPath == bkgPath){
         
-        TH1D *pBkg = (TH1D*) hBkg[b];
+        cout << "Plot: " << sigPath << " name: " << pSig->GetName() << " title: " << pSig->GetTitle() << endl;
         
-        string bkgPath = pBkg->GetDirectory()->GetPath();
-        bkgPath = bkgPath.substr(bkgPath.find(':')+1,bkgPath.size()-1);
-//         bkgPath += "/Efficiency";
+        TH1D *pSigEff = (TH1D*) pSig->Clone(Form("Sig_%s_eff",pSig->GetName()));
+        TH1D *pBkgEff = (TH1D*) pBkg->Clone(Form("Bkg_%s_eff",pBkg->GetName()));
         
-        string bkgTitle = pBkg->GetTitle();
+        bool reverseIntegral = false;
         
-        if(sigTitle == bkgTitle && sigPath == bkgPath){
-           
-           cout << "sigPath: " << sigPath << " title: " << pSig->GetTitle() << endl;
-           
-           TCanvas* c = doCanvas(pSig,pBkg);
-           
-           TDirectoryFile *d = (TDirectoryFile*) fOut->Get(sigPath.c_str());
-           d->WriteTObject(c);
-           
-           break;
-         }
-      }  
-    }
+        // Plots that cut will be 'less than' so integral must be reversed
+        if(string(pSig->GetName()).find("dijet_dphi")   != std::string::npos){reverseIntegral=true;}
+        if(string(pSig->GetName()).find("jets_mindphi") != std::string::npos){reverseIntegral=true;}
+        if(string(pSig->GetName()).find("jets_maxdphi") != std::string::npos){reverseIntegral=true;}
+        
+        if(reverseIntegral){
+          for(int i=0; i<=pSigEff->GetNbinsX()+1; i++){
+            pSigEff->SetBinContent(i,pSig->Integral(0,i));
+          }
+          
+          for(int i=0; i<=pBkgEff->GetNbinsX()+1; i++){
+            pBkgEff->SetBinContent(i,pSig->Integral(0,i));
+          }
+          
+        }else{
+          
+          for(int i=0; i<=pSigEff->GetNbinsX()+1; i++){
+            pSigEff->SetBinContent(i,pSigEff->Integral(i,pSigEff->GetNbinsX()+1));
+          }
+          
+          for(int i=0; i<=pBkgEff->GetNbinsX()+1; i++){
+            pBkgEff->SetBinContent(i,pBkgEff->Integral(i,pBkgEff->GetNbinsX()+1));
+          }
+        }
+        pSigEff->Scale(1/nSigEvents);
+        pBkgEff->Scale(1/nBkgEvents);
+        
+        TCanvas* c = doCanvas(pSigEff,pBkgEff,pSig->GetName());
+        
+        TDirectoryFile *d = (TDirectoryFile*) fOut->Get(sigPath.c_str());
+        d->WriteTObject(c);
+        
+        delete pSigEff;
+        delete pBkgEff;
+        delete c;
+        
+        break;
+      }
+    }  
+    
   }
   
   
