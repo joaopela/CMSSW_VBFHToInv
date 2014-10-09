@@ -69,7 +69,7 @@ std::string parseToLaTeX(std::string s) {
 //####################################################################
 void doTable(map<string,double> &pu20bx25, map<string,double> &pu40bx50, map<string,double> &pu40bx25, string title, string filename){
   
-  rat::LatexTabular tabular0(pu20bx25.size()+1,4);
+  hepfw::LatexTabular tabular0(pu20bx25.size()+1,4);
   
   tabular0.setColumnDecorationBefore(0,"|");
   tabular0.setColumnDecorationBefore(1,"||");
@@ -103,7 +103,7 @@ void doTable(map<string,double> &pu20bx25, map<string,double> &pu40bx50, map<str
 //####################################################################
 void doTableL1T(vector<string> &selL1T,map<string,double> &pu20bx25, map<string,double> &pu40bx50, map<string,double> &pu40bx25, string filename){
   
-  rat::LatexTabular tabular0(selL1T.size()+1,4);
+  hepfw::LatexTabular tabular0(selL1T.size()+1,4);
   
   tabular0.setColumnDecorationBefore(0,"|");
   tabular0.setColumnDecorationBefore(1,"||");
@@ -134,7 +134,7 @@ void doTableL1T(vector<string> &selL1T,map<string,double> &pu20bx25, map<string,
 //####################################################################
 void doTableHLT(vector<string> &selHLT,map<string,double> &pu20bx25, map<string,double> &pu40bx50, map<string,double> &pu40bx25, string filename){
   
-  rat::LatexTabular tabular0(selHLT.size()+1,4);
+  hepfw::LatexTabular tabular0(selHLT.size()+1,4);
   
   tabular0.setColumnDecorationBefore(0,"|");
   tabular0.setColumnDecorationBefore(1,"||");
@@ -234,7 +234,7 @@ THStack* doTrigSeedStack(map<string,TFile*> f,string trigName){
 //####################################################################
 int main(){
 
-  rat::Style myStyle;
+  hepfw::Style myStyle;
   myStyle.setTDRStyle();
 
   // Constants for rate calculations  
@@ -345,7 +345,7 @@ int main(){
   //____________________________________________________________
   
   cout << "Saturation Probability ECAL TT:" << endl;
-  rat::HistogramCollection<string,TH1I> hEcalTT_NSaturated_NG (fNG, Form("Run_%d/hEcalTT_NSaturated",1));
+  hepfw::HistogramCollection<string,TH1I> hEcalTT_NSaturated_NG (fNG, Form("Run_%d/hEcalTT_NSaturated",1));
   cout << "Neutrino Gun (PU20bx25) num=" << hEcalTT_NSaturated_NG["PU20bx25_Neutrino_gun"]->GetBinContent(1) 
        << " den="  << hEcalTT_NSaturated_NG["PU20bx25_Neutrino_gun"]->GetEntries() 
        << " prob=" << hEcalTT_NSaturated_NG["PU20bx25_Neutrino_gun"]->GetBinContent(1)/hEcalTT_NSaturated_NG["PU20bx25_Neutrino_gun"]->GetEntries() 
@@ -359,13 +359,13 @@ int main(){
        << " prob=" << hEcalTT_NSaturated_NG["PU40bx25_Neutrino_gun"]->GetBinContent(1)/hEcalTT_NSaturated_NG["PU40bx25_Neutrino_gun"]->GetEntries() 
        << endl;
   
-  rat::HistogramCollection<string,TH1I> hEcalTT_NSaturated_Sig(fSig,Form("Run_%d/hEcalTT_NSaturated",1));
+  hepfw::HistogramCollection<string,TH1I> hEcalTT_NSaturated_Sig(fSig,Form("Run_%d/hEcalTT_NSaturated",1));
   cout << "VBF H(Inv) (PU20bx25): " << hEcalTT_NSaturated_Sig["PU20bx25_VBF_HToInv_M-125_13TeV"]->GetBinContent(1)/hEcalTT_NSaturated_Sig["PU20bx25_VBF_HToInv_M-125_13TeV"]->GetEntries() << endl;
   cout << "VBF H(Inv) (PU40bx50): " << hEcalTT_NSaturated_Sig["PU40bx50_VBF_HToInv_M-125_13TeV"]->GetBinContent(1)/hEcalTT_NSaturated_Sig["PU40bx50_VBF_HToInv_M-125_13TeV"]->GetEntries() << endl;
   cout << "VBF H(Inv) (PU40bx25): " << hEcalTT_NSaturated_Sig["PU40bx25_VBF_HToInv_M-125_13TeV"]->GetBinContent(1)/hEcalTT_NSaturated_Sig["PU40bx25_VBF_HToInv_M-125_13TeV"]->GetEntries() << endl;
   
   cout << "Saturation Probability HCAL TT:" << endl;
-  rat::HistogramCollection<string,TH1I> hHcalTT_NSaturated_NG (fNG, Form("Run_%d/hHcalTT_NSaturated",1));
+  hepfw::HistogramCollection<string,TH1I> hHcalTT_NSaturated_NG (fNG, Form("Run_%d/hHcalTT_NSaturated",1));
   cout << "Neutrino Gun (PU20bx25) num=" << hHcalTT_NSaturated_NG["PU20bx25_Neutrino_gun"]->GetBinContent(1)
        << " den="  << hHcalTT_NSaturated_NG["PU20bx25_Neutrino_gun"]->GetEntries()
        << " prob=" << hHcalTT_NSaturated_NG["PU20bx25_Neutrino_gun"]->GetBinContent(1)/hHcalTT_NSaturated_NG["PU20bx25_Neutrino_gun"]->GetEntries() 
@@ -379,18 +379,18 @@ int main(){
        << " prob=" << hHcalTT_NSaturated_NG["PU40bx25_Neutrino_gun"]->GetBinContent(1)/hHcalTT_NSaturated_NG["PU40bx25_Neutrino_gun"]->GetEntries() 
        << endl;
   
-  rat::HistogramCollection<string,TH1I> hHcalTT_NSaturated_Sig(fSig,Form("Run_%d/hHcalTT_NSaturated",1));
+  hepfw::HistogramCollection<string,TH1I> hHcalTT_NSaturated_Sig(fSig,Form("Run_%d/hHcalTT_NSaturated",1));
   cout << "VBF H(Inv) (PU20bx25): " << hHcalTT_NSaturated_Sig["PU20bx25_VBF_HToInv_M-125_13TeV"]->GetBinContent(1)/hHcalTT_NSaturated_Sig["PU20bx25_VBF_HToInv_M-125_13TeV"]->GetEntries() << endl;
   cout << "VBF H(Inv) (PU40bx50): " << hHcalTT_NSaturated_Sig["PU40bx50_VBF_HToInv_M-125_13TeV"]->GetBinContent(1)/hHcalTT_NSaturated_Sig["PU40bx50_VBF_HToInv_M-125_13TeV"]->GetEntries() << endl;
   cout << "VBF H(Inv) (PU40bx25): " << hHcalTT_NSaturated_Sig["PU40bx25_VBF_HToInv_M-125_13TeV"]->GetBinContent(1)/hHcalTT_NSaturated_Sig["PU40bx25_VBF_HToInv_M-125_13TeV"]->GetEntries() << endl;
   
   cout << "Saturation Probability RCT Region:" << endl;
-  rat::HistogramCollection<string,TH1I> hRCTRegion_NSaturated_NG (fNG, Form("Run_%d/hRCTRegion_NSaturated",1));
+  hepfw::HistogramCollection<string,TH1I> hRCTRegion_NSaturated_NG (fNG, Form("Run_%d/hRCTRegion_NSaturated",1));
   cout << "Neutrino Gun (PU20bx25): " << hRCTRegion_NSaturated_NG["PU20bx25_Neutrino_gun"]->GetBinContent(1)/hRCTRegion_NSaturated_NG["PU20bx25_Neutrino_gun"]->GetEntries() << endl;
   cout << "Neutrino Gun (PU40bx50): " << hRCTRegion_NSaturated_NG["PU40bx50_Neutrino_gun"]->GetBinContent(1)/hRCTRegion_NSaturated_NG["PU40bx50_Neutrino_gun"]->GetEntries() << endl;
   cout << "Neutrino Gun (PU40bx25): " << hRCTRegion_NSaturated_NG["PU40bx25_Neutrino_gun"]->GetBinContent(1)/hRCTRegion_NSaturated_NG["PU40bx25_Neutrino_gun"]->GetEntries() << endl;
   
-  rat::HistogramCollection<string,TH1I> hRCTRegion_NSaturated_Sig(fSig,Form("Run_%d/hRCTRegion_NSaturated",1));
+  hepfw::HistogramCollection<string,TH1I> hRCTRegion_NSaturated_Sig(fSig,Form("Run_%d/hRCTRegion_NSaturated",1));
   cout << "VBF H(Inv) (PU20bx25): " << hRCTRegion_NSaturated_Sig["PU20bx25_VBF_HToInv_M-125_13TeV"]->GetBinContent(1)/hRCTRegion_NSaturated_Sig["PU20bx25_VBF_HToInv_M-125_13TeV"]->GetEntries() << endl;
   cout << "VBF H(Inv) (PU40bx50): " << hRCTRegion_NSaturated_Sig["PU40bx50_VBF_HToInv_M-125_13TeV"]->GetBinContent(1)/hRCTRegion_NSaturated_Sig["PU40bx50_VBF_HToInv_M-125_13TeV"]->GetEntries() << endl;
   cout << "VBF H(Inv) (PU40bx25): " << hRCTRegion_NSaturated_Sig["PU40bx25_VBF_HToInv_M-125_13TeV"]->GetBinContent(1)/hRCTRegion_NSaturated_Sig["PU40bx25_VBF_HToInv_M-125_13TeV"]->GetEntries() << endl;  
@@ -468,7 +468,7 @@ int main(){
   // L1 Quantities
   //_______________________________________________________________________________
   c->SetLogy(false);
-  rat::HistogramCollection<string,TH1D> hcL1ETM_NG(fNG,Form("Run_%d/L1ETM",1));
+  hepfw::HistogramCollection<string,TH1D> hcL1ETM_NG(fNG,Form("Run_%d/L1ETM",1));
   hcL1ETM_NG.scaleTo1();
   hcL1ETM_NG.setLineColor(attLineColor);
   hcL1ETM_NG.setLegend(attLegendText,attLegendAttribute);
@@ -480,7 +480,7 @@ int main(){
   c->SaveAs("L1ETM_NG.pdf");
   
   c->SetLogy(false);
-  rat::HistogramCollection<string,TH1D> hcL1HTT_NG(fNG,Form("Run_%d/L1HTT",1));
+  hepfw::HistogramCollection<string,TH1D> hcL1HTT_NG(fNG,Form("Run_%d/L1HTT",1));
   hcL1HTT_NG.scaleTo1();
   hcL1HTT_NG.setLineColor(attLineColor);
   hcL1HTT_NG.setLegend(attLegendText,attLegendAttribute);  
@@ -492,7 +492,7 @@ int main(){
   c->SetLogy();
   c->SaveAs("L1HTT_NG.pdf");
 
-  rat::HistogramCollection<string,TH1D> hcL1ETM_Sig(fSig,Form("Run_%d/L1ETM",1));
+  hepfw::HistogramCollection<string,TH1D> hcL1ETM_Sig(fSig,Form("Run_%d/L1ETM",1));
   hcL1ETM_Sig.scaleTo1();
   hcL1ETM_Sig.setLineColor(attLineColor);
   hcL1ETM_Sig.setLegend(attLegendText,attLegendAttribute);
@@ -504,7 +504,7 @@ int main(){
   c->SaveAs("L1ETM_Sig.pdf");
   
   c->SetLogy(false);
-  rat::HistogramCollection<string,TH1D> hcL1HTT_Sig(fSig,Form("Run_%d/L1HTT",1));
+  hepfw::HistogramCollection<string,TH1D> hcL1HTT_Sig(fSig,Form("Run_%d/L1HTT",1));
   hcL1HTT_Sig.scaleTo1();
   hcL1HTT_Sig.setLineColor(attLineColor);
   hcL1HTT_Sig.setLegend(attLegendText,attLegendAttribute);  
@@ -518,7 +518,7 @@ int main(){
   //_______________________________________________________________________________  
   // L1 Quantities Saturated
   //_______________________________________________________________________________
-  rat::HistogramCollection<string,TH1D> hcL1ETM_Saturated_NG(fNG,Form("Run_%d/hL1ETM_Saturated",1));
+  hepfw::HistogramCollection<string,TH1D> hcL1ETM_Saturated_NG(fNG,Form("Run_%d/hL1ETM_Saturated",1));
   hcL1ETM_Saturated_NG.scaleTo1();
   hcL1ETM_Saturated_NG.setLineColor(attLineColor);
   hcL1ETM_Saturated_NG.setLegend(attLegendText,attLegendAttribute);
@@ -530,7 +530,7 @@ int main(){
   c->SaveAs("L1ETM_Saturated_NG.pdf");
   
   c->SetLogy(false);
-  rat::HistogramCollection<string,TH1D> hcL1HTT_Saturated_NG(fNG,Form("Run_%d/hL1HTT_Saturated",1));  
+  hepfw::HistogramCollection<string,TH1D> hcL1HTT_Saturated_NG(fNG,Form("Run_%d/hL1HTT_Saturated",1));  
   hcL1HTT_Saturated_NG.scaleTo1();
   hcL1HTT_Saturated_NG.setLineColor(attLineColor);
   hcL1HTT_Saturated_NG.setLegend(attLegendText,attLegendAttribute);  
@@ -541,7 +541,7 @@ int main(){
   c->SetLogy();
   c->SaveAs("L1HTT_Saturated_NG.pdf");
 
-  rat::HistogramCollection<string,TH1D> hcL1ETM_Saturated_Sig(fSig,Form("Run_%d/hL1ETM_Saturated",1));
+  hepfw::HistogramCollection<string,TH1D> hcL1ETM_Saturated_Sig(fSig,Form("Run_%d/hL1ETM_Saturated",1));
   hcL1ETM_Saturated_Sig.scaleTo1();
   hcL1ETM_Saturated_Sig.rebin(5);
   hcL1ETM_Saturated_Sig.setLineColor(attLineColor);
@@ -554,7 +554,7 @@ int main(){
   c->SaveAs("L1ETM_Saturated_Sig.pdf");
   
   c->SetLogy(false);
-  rat::HistogramCollection<string,TH1D> hcL1HTT_Saturated_Sig(fSig,Form("Run_%d/hL1HTT_Saturated",1));
+  hepfw::HistogramCollection<string,TH1D> hcL1HTT_Saturated_Sig(fSig,Form("Run_%d/hL1HTT_Saturated",1));
   hcL1HTT_Saturated_Sig.scaleTo1();
   hcL1HTT_Saturated_Sig.rebin(5);
   hcL1HTT_Saturated_Sig.setLineColor(attLineColor);
@@ -570,7 +570,7 @@ int main(){
   // ECAL TT HCAL TT and RCT Regions
   //_______________________________________________________________________________ 
   c->SetLogy(false);
-  rat::HistogramCollection<string,TH1D> hcECALTT_Val_NG(fNG,Form("Run_%d/hEcalTT_Val",1));
+  hepfw::HistogramCollection<string,TH1D> hcECALTT_Val_NG(fNG,Form("Run_%d/hEcalTT_Val",1));
   hcECALTT_Val_NG.scaleTo1();
   hcECALTT_Val_NG.rebin(2);
   hcECALTT_Val_NG.setLineColor(attLineColor);
@@ -583,7 +583,7 @@ int main(){
   c->SaveAs("EcalTT_Val_NG.pdf"); 
   
   c->SetLogy(false);
-  rat::HistogramCollection<string,TH1D> hcHCALTT_Val_NG(fNG,Form("Run_%d/hHcalTT_Val",1));  
+  hepfw::HistogramCollection<string,TH1D> hcHCALTT_Val_NG(fNG,Form("Run_%d/hHcalTT_Val",1));  
   hcHCALTT_Val_NG.scaleTo1();
   hcHCALTT_Val_NG.rebin(2);
   hcHCALTT_Val_NG.setLineColor(attLineColor);
@@ -597,7 +597,7 @@ int main(){
   c->SaveAs("HcalTT_Val_NG.pdf"); 
 
   c->SetLogy(false);
-  rat::HistogramCollection<string,TH1D> hcRCTRegion_Val_NG(fNG,Form("Run_%d/hRCTRegion_Val",1));  
+  hepfw::HistogramCollection<string,TH1D> hcRCTRegion_Val_NG(fNG,Form("Run_%d/hRCTRegion_Val",1));  
   hcRCTRegion_Val_NG.scaleTo1();
   hcRCTRegion_Val_NG.rebin(4);
   hcRCTRegion_Val_NG.setLineColor(attLineColor);
@@ -610,7 +610,7 @@ int main(){
   c->SaveAs("RCTRegion_Val_NG.pdf");
   
   c->SetLogy(false);
-  rat::HistogramCollection<string,TH1D> hcECALTT_Val_Sig(fSig,Form("Run_%d/hEcalTT_Val",1));
+  hepfw::HistogramCollection<string,TH1D> hcECALTT_Val_Sig(fSig,Form("Run_%d/hEcalTT_Val",1));
   hcECALTT_Val_Sig.scaleTo1();
   hcECALTT_Val_Sig.rebin(2);
   hcECALTT_Val_Sig.setLineColor(attLineColor);
@@ -623,7 +623,7 @@ int main(){
   c->SaveAs("EcalTT_Val_Sig.pdf"); 
   
   c->SetLogy(false);
-  rat::HistogramCollection<string,TH1D> hcHCALTT_Val_Sig(fSig,Form("Run_%d/hHcalTT_Val",1));  
+  hepfw::HistogramCollection<string,TH1D> hcHCALTT_Val_Sig(fSig,Form("Run_%d/hHcalTT_Val",1));  
   hcHCALTT_Val_Sig.scaleTo1();
   hcHCALTT_Val_Sig.rebin(2);
   hcHCALTT_Val_Sig.setLineColor(attLineColor);
@@ -636,7 +636,7 @@ int main(){
   c->SaveAs("HcalTT_Val_Sig.pdf"); 
   
   c->SetLogy(false);
-  rat::HistogramCollection<string,TH1D> hcRCTRegion_Val_Sig(fSig,Form("Run_%d/hRCTRegion_Val",1));  
+  hepfw::HistogramCollection<string,TH1D> hcRCTRegion_Val_Sig(fSig,Form("Run_%d/hRCTRegion_Val",1));  
   hcRCTRegion_Val_Sig.scaleTo1();
   hcRCTRegion_Val_Sig.rebin(4);
   hcRCTRegion_Val_Sig.setLineColor(attLineColor);
