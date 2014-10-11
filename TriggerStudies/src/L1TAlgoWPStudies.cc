@@ -222,49 +222,89 @@ void L1AlgoWPStudies::analyze(const edm::Event& iEvent, const edm::EventSetup& i
   //#######################################################################
   for(unsigned i=0; i<m_allL1TDijets.size(); i++){
     L1TDijet* dijet = &(m_allL1TDijets[i]);
-    if(dijet->vbf() && dijet->j1()->pt()>=30 && dijet->deta()>=3.0){m_wpSameDijetPlots["DijetVBF30_DEta3p0"]->fill(evData);}
+    if(dijet->vbf() && dijet->j1()->pt()>=30 && dijet->deta()>=3.0){
+      m_wpSameDijetPlots["DijetVBF30_DEta3p0"]->fill(evData);
+      if(evL1Extra.m_L1EtMissParticle_MET->begin()->et()<70){
+        m_wpSameDijetNotETM70Plots["DijetVBF30_DEta3p0"]->fill(evData);
+      }
+    }
     break;
   }
   
   for(unsigned i=0; i<m_allL1TDijets.size(); i++){
     L1TDijet* dijet = &(m_allL1TDijets[i]);
-    if(dijet->vbf() && dijet->j1()->pt()>=40 && dijet->deta()>=3.0){m_wpSameDijetPlots["DijetVBF40_DEta3p0"]->fill(evData);}
+    if(dijet->vbf() && dijet->j1()->pt()>=40 && dijet->deta()>=3.0){
+      m_wpSameDijetPlots["DijetVBF40_DEta3p0"]->fill(evData);
+      if(evL1Extra.m_L1EtMissParticle_MET->begin()->et()<70){
+        m_wpSameDijetNotETM70Plots["DijetVBF40_DEta3p0"]->fill(evData);
+      }
+    }
     break;
   }
   
   for(unsigned i=0; i<m_allL1TDijets.size(); i++){
     L1TDijet* dijet = &(m_allL1TDijets[i]);
-    if(dijet->vbf() && dijet->j1()->pt()>=30 && dijet->deta()>=3.5){m_wpSameDijetPlots["DijetVBF30_DEta3p5"]->fill(evData);}
+    if(dijet->vbf() && dijet->j1()->pt()>=30 && dijet->deta()>=3.5){
+      m_wpSameDijetPlots["DijetVBF30_DEta3p5"]->fill(evData);
+      if(evL1Extra.m_L1EtMissParticle_MET->begin()->et()<70){
+        m_wpSameDijetNotETM70Plots["DijetVBF30_DEta3p5"]->fill(evData);
+      }
+    }
     break;
   }
   
   for(unsigned i=0; i<m_allL1TDijets.size(); i++){
     L1TDijet* dijet = &(m_allL1TDijets[i]);
-    if(dijet->vbf() && dijet->j1()->pt()>=40 && dijet->deta()>=3.5){m_wpSameDijetPlots["DijetVBF40_DEta3p5"]->fill(evData);}
+    if(dijet->vbf() && dijet->j1()->pt()>=40 && dijet->deta()>=3.5){
+      m_wpSameDijetPlots["DijetVBF40_DEta3p5"]->fill(evData);
+      if(evL1Extra.m_L1EtMissParticle_MET->begin()->et()<70){
+        m_wpSameDijetNotETM70Plots["DijetVBF40_DEta3p5"]->fill(evData);
+      }
+    }
     break;
   }
   
   for(unsigned i=0; i<m_allL1TDijets.size(); i++){
     L1TDijet* dijet = &(m_allL1TDijets[i]);
-    if(dijet->vbf() && dijet->j1()->pt()>=30 && dijet->dphi()<=1.0){m_wpSameDijetPlots["DijetVBF30_DPhiJJ1p0"]->fill(evData);}
+    if(dijet->vbf() && dijet->j1()->pt()>=30 && dijet->dphi()<=1.0){
+      m_wpSameDijetPlots["DijetVBF30_DPhiJJ1p0"]->fill(evData);
+      if(evL1Extra.m_L1EtMissParticle_MET->begin()->et()<70){
+        m_wpSameDijetNotETM70Plots["DijetVBF30_DPhiJJ1p0"]->fill(evData);
+      }
+    }
     break;
   }
   
   for(unsigned i=0; i<m_allL1TDijets.size(); i++){
     L1TDijet* dijet = &(m_allL1TDijets[i]);
-    if(dijet->vbf() && dijet->j1()->pt()>=40 && dijet->dphi()<=1.0){m_wpSameDijetPlots["DijetVBF40_DPhiJJ1p0"]->fill(evData);}
+    if(dijet->vbf() && dijet->j1()->pt()>=40 && dijet->dphi()<=1.0){
+      m_wpSameDijetPlots["DijetVBF40_DPhiJJ1p0"]->fill(evData);
+      if(evL1Extra.m_L1EtMissParticle_MET->begin()->et()<70){
+        m_wpSameDijetNotETM70Plots["DijetVBF40_DPhiJJ1p0"]->fill(evData);
+      }
+    }
     break;
   }
   
   for(unsigned i=0; i<m_allL1TDijets.size(); i++){
     L1TDijet* dijet = &(m_allL1TDijets[i]);
-    if(dijet->vbf() && dijet->j1()->pt()>=30 && dijet->dphi()<=1.5){m_wpSameDijetPlots["DijetVBF30_DPhiJJ1p5"]->fill(evData);}
+    if(dijet->vbf() && dijet->j1()->pt()>=30 && dijet->dphi()<=1.5){
+      m_wpSameDijetPlots["DijetVBF30_DPhiJJ1p5"]->fill(evData);
+      if(evL1Extra.m_L1EtMissParticle_MET->begin()->et()<70){
+        m_wpSameDijetNotETM70Plots["DijetVBF30_DPhiJJ1p5"]->fill(evData);
+      }
+    }
     break;
   }
   
   for(unsigned i=0; i<m_allL1TDijets.size(); i++){
     L1TDijet* dijet = &(m_allL1TDijets[i]);
-    if(dijet->vbf() && dijet->j1()->pt()>=40 && dijet->dphi()<=1.5){m_wpSameDijetPlots["DijetVBF40_DPhiJJ1p5"]->fill(evData);}
+    if(dijet->vbf() && dijet->j1()->pt()>=40 && dijet->dphi()<=1.5){
+      m_wpSameDijetPlots["DijetVBF40_DPhiJJ1p5"]->fill(evData);
+      if(evL1Extra.m_L1EtMissParticle_MET->begin()->et()<70){
+        m_wpSameDijetNotETM70Plots["DijetVBF40_DPhiJJ1p5"]->fill(evData);
+      }
+    }
     break;
   }
   
@@ -398,6 +438,34 @@ void L1AlgoWPStudies::beginRun(edm::Run const& iRun, edm::EventSetup const& iSet
   
   d = dirSameDijet->mkdir("DijetVBF40_DPhiJJ1p5");
   m_wpSameDijetPlots["DijetVBF40_DPhiJJ1p5"] = new L1TPlots(d);
+  
+  //####################################
+  
+  TDirectory* dirSameDijetNotETM70 = runDir->mkdir("SameDijetNotETM70");
+  
+  d = dirSameDijetNotETM70->mkdir("DijetVBF30_DEta3p0");
+  m_wpSameDijetNotETM70Plots["DijetVBF30_DEta3p0"] = new L1TPlots(d);
+  
+  d = dirSameDijetNotETM70->mkdir("DijetVBF40_DEta3p0");
+  m_wpSameDijetNotETM70Plots["DijetVBF40_DEta3p0"] = new L1TPlots(d);
+  
+  d = dirSameDijetNotETM70->mkdir("DijetVBF30_DEta3p5");
+  m_wpSameDijetNotETM70Plots["DijetVBF30_DEta3p5"] = new L1TPlots(d);
+  
+  d = dirSameDijetNotETM70->mkdir("DijetVBF40_DEta3p5");
+  m_wpSameDijetNotETM70Plots["DijetVBF40_DEta3p5"] = new L1TPlots(d);
+  
+  d = dirSameDijetNotETM70->mkdir("DijetVBF30_DPhiJJ1p0");
+  m_wpSameDijetNotETM70Plots["DijetVBF30_DPhiJJ1p0"] = new L1TPlots(d);
+  
+  d = dirSameDijetNotETM70->mkdir("DijetVBF40_DPhiJJ1p0");
+  m_wpSameDijetNotETM70Plots["DijetVBF40_DPhiJJ1p0"] = new L1TPlots(d);
+  
+  d = dirSameDijetNotETM70->mkdir("DijetVBF30_DPhiJJ1p5");
+  m_wpSameDijetNotETM70Plots["DijetVBF30_DPhiJJ1p5"] = new L1TPlots(d);
+  
+  d = dirSameDijetNotETM70->mkdir("DijetVBF40_DPhiJJ1p5");
+  m_wpSameDijetNotETM70Plots["DijetVBF40_DPhiJJ1p5"] = new L1TPlots(d);
   
   //####################################
   //m_wpConsectivePlots

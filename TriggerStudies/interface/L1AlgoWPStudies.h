@@ -76,6 +76,7 @@ private:
   
   std::map<std::string,L1TPlots*> m_wpPlots;
   std::map<std::string,L1TPlots*> m_wpSameDijetPlots;
+  std::map<std::string,L1TPlots*> m_wpSameDijetNotETM70Plots;
   
   edm::InputTag m_InputTag_L1GTReadoutRecord;
   edm::InputTag m_InputTag_L1Extra_mets;
