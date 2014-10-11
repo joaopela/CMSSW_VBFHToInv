@@ -20,9 +20,11 @@
 #include "Plots/Style/interface/Style.h"
 #include "FWCore/IO/interface/File.h"
 
+#include <boost/algorithm/string.hpp>
+
 using namespace std;
 
-TCanvas* doCanvas(TH1D* sig,TH1D* bkg,const char* name){
+TCanvas* doCanvas(TH1D* sig,TH1D* bkg,TH1D* notETM,const char* name,const char* path){
   
   //const int nMaxBunch50ns = 1380;
   const int nMaxBunch25ns = 2808;
@@ -41,6 +43,14 @@ TCanvas* doCanvas(TH1D* sig,TH1D* bkg,const char* name){
   sig->GetYaxis()->SetTitle("Signal Efficiency");
   sig->Draw();
   
+  if(notETM){
+    notETM->GetYaxis()->SetTitleOffset(1.5);
+    notETM->SetTitle("Signal Efficiency");
+    notETM->SetFillColor(kGreen);
+    notETM->SetFillStyle(3001);
+    notETM->Draw("same");
+  }
+
   ///////////
   c0->cd();
   TPad *overlay = new TPad("overlay","",0,0,1,1);
@@ -69,11 +79,32 @@ TCanvas* doCanvas(TH1D* sig,TH1D* bkg,const char* name){
   
   for(int i=0; i<=sig->GetNbinsX()+1; i++){
     if(sig->GetBinContent(i)>=0.2 && rate->GetBinContent(i)<=5000){
-      cout << "==> Name: " << sig->GetName() << " cut: " << sig->GetXaxis()->GetBinLowEdge(i) << " Sig eff: " << sig->GetBinContent(i) << " Rate: " << rate->GetBinContent(i) << endl;
+      cout << "==> Path:" << path
+           << " Name: " << sig->GetName() 
+           << " cut: " << sig->GetXaxis()->GetBinLowEdge(i) 
+           << " Rate: " << rate->GetBinContent(i)
+           << " Sig eff: " << sig->GetBinContent(i);
+      if(notETM){cout << " Eff not(ETM70)" << notETM->GetBinContent(i);}
+      cout << endl;
       break;
     }
   }
   
+  if(notETM){
+  
+    for(int i=0; i<=sig->GetNbinsX()+1; i++){
+      if(notETM->GetBinContent(i)>=0.03 && rate->GetBinContent(i)<=5000){
+        cout << "==> Path:" << path
+             << " Name: " << sig->GetName() 
+             << " cut: " << sig->GetXaxis()->GetBinLowEdge(i) 
+             << " Rate: " << rate->GetBinContent(i)
+             << " Sig eff: " << sig->GetBinContent(i);
+        if(notETM){cout << " Eff not(ETM70)" << notETM->GetBinContent(i);}
+        cout << endl;
+        break;
+      }
+    }
+  }
   return c0;
   
 }
@@ -97,7 +128,7 @@ int main(){
   
   TH1I* hBkgTotal = (TH1I*) fBkg->Get("Run_1/EventCount");
   double nBkgEvents = hBkgTotal->GetBinContent(1);
-  
+
   fOut->copyDirectoryStructure(fSig);
   fOut->Write();
   
@@ -105,7 +136,7 @@ int main(){
     
     TH1D *pSig = (TH1D*) hSig[s];
 
-    string sigTitle = pSig->GetTitle();
+    string sigTitle = pSig->GetName();
     string sigPath  = pSig->GetDirectory()->GetPath();
     sigPath  = sigPath.substr(sigPath.find(':')+2,sigPath.size()-1);
 
@@ -113,16 +144,30 @@ int main(){
       
       TH1D *pBkg = (TH1D*) hBkg[b];
       
-      string bkgTitle = pBkg->GetTitle();
+      string bkgTitle = pBkg->GetName();
       string bkgPath  = pBkg->GetDirectory()->GetPath();
       bkgPath = bkgPath.substr(bkgPath.find(':')+2,bkgPath.size()-1);
       
       if(sigTitle == bkgTitle && sigPath == bkgPath){
         
-        cout << "Plot: " << sigPath << " name: " << pSig->GetName() << " title: " << pSig->GetTitle() << endl;
+        //cout << "Plot: " << sigPath << " name: " << pSig->GetName() << " title: " << pSig->GetTitle() << endl;
         
-        TH1D *pSigEff = (TH1D*) pSig->Clone(Form("Sig_%s_eff",pSig->GetName()));
-        TH1D *pBkgEff = (TH1D*) pBkg->Clone(Form("Bkg_%s_eff",pBkg->GetName()));
+        TH1D *pSigEff   = (TH1D*) pSig->Clone(Form("Sig_%s_eff",pSig->GetName()));
+        TH1D *pBkgEff   = (TH1D*) pBkg->Clone(Form("Bkg_%s_eff",pBkg->GetName()));
+        
+        TH1D *pNoETM    = 0;
+        TH1D *pNoETMEff = 0;
+        if(sigPath.find("SameDijet")!=std::string::npos){
+          
+          string nameSameDijet = Form("%s/%s",sigPath.c_str(),sigTitle.c_str());
+          
+          boost::replace_all(nameSameDijet,"SameDijet","SameDijetNotETM70");
+          pNoETM = (TH1D*) fSig->Get(nameSameDijet.c_str());
+          
+          if(pNoETM){
+            pNoETMEff = (TH1D*) pNoETM->Clone(Form("ETM_%s_eff",pBkg->GetName()));
+          }
+        }
         
         bool reverseIntegral = false;
         
@@ -132,34 +177,32 @@ int main(){
         if(string(pSig->GetName()).find("jets_maxdphi") != std::string::npos){reverseIntegral=true;}
         
         if(reverseIntegral){
-          for(int i=0; i<=pSigEff->GetNbinsX()+1; i++){
-            pSigEff->SetBinContent(i,pSig->Integral(0,i));
-          }
+          for(int i=0; i<=pSigEff->GetNbinsX()+1; i++){pSigEff->SetBinContent(i,pSig->Integral(0,i));}
+          for(int i=0; i<=pBkgEff->GetNbinsX()+1; i++){pBkgEff->SetBinContent(i,pSig->Integral(0,i));}
           
-          for(int i=0; i<=pBkgEff->GetNbinsX()+1; i++){
-            pBkgEff->SetBinContent(i,pSig->Integral(0,i));
+          if(pNoETMEff){
+            for(int i=0; i<=pNoETMEff->GetNbinsX()+1; i++){pNoETMEff->SetBinContent(i,pNoETM->Integral(0,i));}
           }
-          
         }else{
+          for(int i=0; i<=pSigEff->GetNbinsX()+1; i++){pSigEff->SetBinContent(i,pSigEff->Integral(i,pSigEff->GetNbinsX()+1));}
+          for(int i=0; i<=pBkgEff->GetNbinsX()+1; i++){pBkgEff->SetBinContent(i,pBkgEff->Integral(i,pBkgEff->GetNbinsX()+1));}
           
-          for(int i=0; i<=pSigEff->GetNbinsX()+1; i++){
-            pSigEff->SetBinContent(i,pSigEff->Integral(i,pSigEff->GetNbinsX()+1));
-          }
-          
-          for(int i=0; i<=pBkgEff->GetNbinsX()+1; i++){
-            pBkgEff->SetBinContent(i,pBkgEff->Integral(i,pBkgEff->GetNbinsX()+1));
+          if(pNoETMEff){
+            for(int i=0; i<=pNoETMEff->GetNbinsX()+1; i++){pNoETMEff->SetBinContent(i,pNoETM->Integral(i,pSigEff->GetNbinsX()+1));}
           }
         }
-        pSigEff->Scale(1/nSigEvents);
-        pBkgEff->Scale(1/nBkgEvents);
+        pSigEff  ->Scale(1/nSigEvents);
+        pBkgEff  ->Scale(1/nBkgEvents);
+        if(pNoETMEff){pNoETMEff->Scale(1/nSigEvents);}
         
-        TCanvas* c = doCanvas(pSigEff,pBkgEff,pSig->GetName());
+        TCanvas* c = doCanvas(pSigEff,pBkgEff,pNoETMEff,pSig->GetName(),sigPath.c_str());
         
         TDirectoryFile *d = (TDirectoryFile*) fOut->Get(sigPath.c_str());
         d->WriteTObject(c);
         
         delete pSigEff;
         delete pBkgEff;
+        delete pNoETMEff;
         delete c;
         
         break;
