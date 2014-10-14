@@ -4172,11 +4172,11 @@ process.AOutput = cms.EndPath( process.hltPreAOutput + process.hltOutputA )
 process.load( "DQMServices.Core.DQMStore_cfi" )
 process.DQMStore.enableMultiThread = True
 
-process.dqmOutput = cms.OutputModule("DQMRootOutputModule",
-    fileName = cms.untracked.string("DQMIO.root")
-)
+#process.dqmOutput = cms.OutputModule("DQMRootOutputModule",
+    #fileName = cms.untracked.string("DQMIO.root")
+#)
 
-process.DQMOutput = cms.EndPath( process.dqmOutput )
+#process.DQMOutput = cms.EndPath( process.dqmOutput )
 
 
 
@@ -4252,7 +4252,7 @@ if 'hltDQML1SeedLogicScalers' in process.__dict__:
 
 # limit the number of events to be processed
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32( 1000 )
+    input = cms.untracked.int32( 10 )
 )
 
 # enable the TrigReport and TimeReport
