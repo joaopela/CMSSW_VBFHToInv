@@ -11,10 +11,13 @@
 #include "TGaxis.h"
 
 #include <iostream>
+#include <sstream>
+#include <fstream>
 #include <string>
 #include <map>
 #include <vector>
 #include <stdio.h>
+#include <cstdlib>
 #include <boost/algorithm/string.hpp>
 
 #include "Plots/Style/interface/Style.h"
@@ -24,7 +27,7 @@
 
 using namespace std;
 
-TCanvas* doCanvas(TH1D* sig,TH1D* bkg,TH1D* notETM,const char* name,const char* path){
+TCanvas* doCanvas(TH1D* sig,TH1D* bkg,TH1D* notETM,const char* name,const char* path,ostringstream &iStream){
   
   //const int nMaxBunch50ns = 1380;
   const int nMaxBunch25ns = 2808;
@@ -39,11 +42,17 @@ TCanvas* doCanvas(TH1D* sig,TH1D* bkg,TH1D* notETM,const char* name,const char* 
   pad->Draw();
   pad->cd();
   
+  if(string(name)=="l1t_etm"){sig->GetXaxis()->SetRangeUser(0,200);}
+  if(string(name)=="dijet_pt0 "){sig->GetXaxis()->SetTitle("Leading Jet p_{#perp}");}
+  
   sig->GetYaxis()->SetTitleOffset(1.5);
   sig->GetYaxis()->SetTitle("Signal Efficiency");
   sig->Draw();
   
+  
   if(notETM){
+    if(string(name)=="l1t_etm"){notETM->GetXaxis()->SetRangeUser(0,200);}
+    if(string(name)=="dijet_pt0 "){notETM->GetXaxis()->SetTitle("Leading Jet p_{#perp}");}
     notETM->GetYaxis()->SetTitleOffset(1.5);
     notETM->SetTitle("Signal Efficiency");
     notETM->SetFillColor(kGreen);
@@ -64,8 +73,10 @@ TCanvas* doCanvas(TH1D* sig,TH1D* bkg,TH1D* notETM,const char* name,const char* 
   overlay->SetTicky(false);
   
   TH1D * rate = (TH1D*) bkg->Clone(Form("rate_%s",sig->GetTitle()));
+  if(string(name)=="l1t_etm"){rate->GetXaxis()->SetRangeUser(0,200);}
+  if(string(name)=="dijet_pt0 "){rate->GetXaxis()->SetTitle("Leading Jet p_{#perp}");}
   // rate->GetYaxis()->SetRangeUser(1,1.2e7);
-  rate->GetYaxis()->SetTitle("L1T Rate (Hz)");
+  rate->GetYaxis()->SetTitle("HLT Rate (Hz)");
   rate->Scale(ratePerBunch*nMaxBunch25ns);
   rate->SetLineColor(kRed);
   rate->GetYaxis()->SetAxisColor(kRed);
@@ -74,18 +85,30 @@ TCanvas* doCanvas(TH1D* sig,TH1D* bkg,TH1D* notETM,const char* name,const char* 
   rate->GetYaxis()->SetTitleOffset(1.5);  
   rate->Draw("Y+");
   
+  TLegend *l = new TLegend(0.50,0.80,0.85,0.95);
+  l->SetBorderSize(1);
+  l->AddEntry(sig,"VBF Inv Eff");
+  if(notETM){
+    l->AddEntry(notETM,"VBF Inv Eff (not ETM70)");
+  }
+  l->AddEntry(rate, "Neutrino Gun Rate");
+  l->Draw();
+  
   //draw an axis on the right side
   //c0->SaveAs("PU40bx50_rate_DijetVBF30_L1TETM_logScale.pdf");  
   
   for(int i=0; i<=sig->GetNbinsX()+1; i++){
     if(sig->GetBinContent(i)>=0.2 && rate->GetBinContent(i)<=5000){
-      cout << "==> Path:" << path
-           << " Name: " << sig->GetName() 
-           << " cut: " << sig->GetXaxis()->GetBinLowEdge(i) 
-           << " Rate: " << rate->GetBinContent(i)
-           << " Sig eff: " << sig->GetBinContent(i);
-      if(notETM){cout << " Eff not(ETM70)" << notETM->GetBinContent(i);}
-      cout << endl;
+
+      double valNotEtm = -1;
+      if(notETM){valNotEtm = notETM->GetBinContent(i);}
+      
+      iStream << Form("| %40s | %20s | %7.2f | %4.0f | %5.3f | %5.3f |\n",
+                   path,sig->GetName(),
+                   sig->GetXaxis()->GetBinLowEdge(i),
+                   rate->GetBinContent(i),
+                   sig->GetBinContent(i),
+                   valNotEtm);
       break;
     }
   }
@@ -94,17 +117,22 @@ TCanvas* doCanvas(TH1D* sig,TH1D* bkg,TH1D* notETM,const char* name,const char* 
   
     for(int i=0; i<=sig->GetNbinsX()+1; i++){
       if(notETM->GetBinContent(i)>=0.03 && rate->GetBinContent(i)<=5000){
-        cout << "==> Path:" << path
-             << " Name: " << sig->GetName() 
-             << " cut: " << sig->GetXaxis()->GetBinLowEdge(i) 
-             << " Rate: " << rate->GetBinContent(i)
-             << " Sig eff: " << sig->GetBinContent(i);
-        if(notETM){cout << " Eff not(ETM70)" << notETM->GetBinContent(i);}
-        cout << endl;
+        double valNotEtm = -1;
+        if(notETM){valNotEtm = notETM->GetBinContent(i);}
+        
+        iStream << Form("| %40s | %20s | %7.2f | %4.0f | %5.3f | %5.3f |\n",
+                     path,sig->GetName(),
+                     sig->GetXaxis()->GetBinLowEdge(i),
+                     rate->GetBinContent(i),
+                     sig->GetBinContent(i),
+                     valNotEtm);
         break;
       }
     }
   }
+  
+  
+  
   return c0;
   
 }
@@ -131,6 +159,9 @@ int main(){
 
   fOut->copyDirectoryStructure(fSig);
   fOut->Write();
+  
+  ostringstream myStream;
+  myStream << "| *Base Cut* | *Variable Cut* | *Variable Value* | *Rate* | *Sig Eff* | *Sig Eff (NOT ETM70)* |" << endl;
   
   for(unsigned s=0; s<hSig.size(); s++){
     
@@ -174,7 +205,7 @@ int main(){
         // Plots that cut will be 'less than' so integral must be reversed
         if(string(pSig->GetName()).find("dijet_dphi")   != std::string::npos){reverseIntegral=true;}
         if(string(pSig->GetName()).find("jets_mindphi") != std::string::npos){reverseIntegral=true;}
-        if(string(pSig->GetName()).find("jets_maxdphi") != std::string::npos){reverseIntegral=true;}
+        if(string(pSig->GetName()).find("jets_met_maxdphi") != std::string::npos){reverseIntegral=true;}
         
         if(reverseIntegral){
           for(int i=0; i<=pSigEff->GetNbinsX()+1; i++){pSigEff->SetBinContent(i,pSig->Integral(0,i));}
@@ -195,10 +226,13 @@ int main(){
         pBkgEff  ->Scale(1/nBkgEvents);
         if(pNoETMEff){pNoETMEff->Scale(1/nSigEvents);}
         
-        TCanvas* c = doCanvas(pSigEff,pBkgEff,pNoETMEff,pSig->GetName(),sigPath.c_str());
+        TCanvas* c = doCanvas(pSigEff,pBkgEff,pNoETMEff,pSig->GetName(),sigPath.c_str(),myStream);
         
         TDirectoryFile *d = (TDirectoryFile*) fOut->Get(sigPath.c_str());
         d->WriteTObject(c);
+        
+        system(Form("mkdir -p %s",sigPath.c_str()));
+        c->SaveAs(Form("%s/%s.%s",sigPath.c_str(),pSig->GetName(),"png"));
         
         delete pSigEff;
         delete pBkgEff;
@@ -218,6 +252,8 @@ int main(){
   
   cout << "L1AlgoWPStudiesResults_VBFInv_PU40bx25.root      has " << hSig.size() << " histograms!" << endl;
   cout << "L1AlgoWPStudiesResults_NeutrinoGun_PU40bx25.root has " << hBkg.size() << " histograms!" << endl;
+  
+  cout << myStream.str();
   
   fOut->Write();
   
