@@ -4,7 +4,8 @@
 #include "DataFormats/PatCandidates/interface/TriggerEvent.h"
 #include "DataFormats/PatCandidates/interface/TriggerObject.h"
 
-
+// VBFHiggsToInvisible includes
+#include "VBFHiggsToInvisible/TriggerStudies/interface/HLTEventData.h"
 #include "VBFHiggsToInvisible/TriggerStudies/interface/L1ExtraPayload.h"
 #include "VBFHiggsToInvisible/TriggerStudies/interface/L1TDijet.h"
 #include "VBFHiggsToInvisible/TriggerStudies/interface/TriggerJet.h"
@@ -42,6 +43,9 @@ HLTPathStudies::~HLTPathStudies(){
 }
 
 void HLTPathStudies::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup){
+  
+  HLTEventData myHLTData(ps,iEvent);
+  myHLTData.print();
   
   // Counting the current event
   hEventCount->Fill(1);
