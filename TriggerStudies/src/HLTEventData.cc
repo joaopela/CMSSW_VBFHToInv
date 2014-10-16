@@ -80,6 +80,13 @@ HLTEventData::~HLTEventData(){
   }
 }
 
+bool         HLTEventData::getPathFired(std::string path){
+  return m_evPathFired[path];
+}
+
+HLTPathData* HLTEventData::getPathData (std::string path){
+  return m_evPathData[path];
+}
 
 void HLTEventData::print(){
   
