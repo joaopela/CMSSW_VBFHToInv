@@ -45,7 +45,20 @@ HLTPathStudies::~HLTPathStudies(){
 void HLTPathStudies::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup){
   
   HLTEventData myHLTData(ps,iEvent);
-  myHLTData.print();
+  
+  if(myHLTData.getPathFired("HLT_CaloMET_CaloVBF_v1")){
+    cout << "Fired: HLT_CaloMET_CaloVBF_v1" << endl;
+    cout << "=> Passed hltDiCaloJet10: " << myHLTData.getPathData("HLT_CaloMET_CaloVBF_v1")->getFilterObjects("hltDiCaloJet10").size() << endl;
+    cout << "=> Passed hltMET65      : " << myHLTData.getPathData("HLT_CaloMET_CaloVBF_v1")->getFilterObjects("hltMET65").size()       << endl;
+  }
+  
+  if(myHLTData.getPathFired("HLT_PFMET_PFVBF_v1")){
+    cout << "Fired: HLT_PFMET_PFVBF_v1" << endl;
+    cout << "=> Passed hltDiPFJet10    : " << myHLTData.getPathData("HLT_PFMET_PFVBF_v1")->getFilterObjects("hltDiPFJet10")    .size() << endl;
+    cout << "=> Passed hltPFMET80Filter: " << myHLTData.getPathData("HLT_PFMET_PFVBF_v1")->getFilterObjects("hltPFMET80Filter").size() << endl;
+  }
+  
+  //myHLTData.print();
   
   // Counting the current event
   hEventCount->Fill(1);
