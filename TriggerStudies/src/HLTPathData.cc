@@ -14,6 +14,14 @@ HLTPathData::~HLTPathData(){
   for(unsigned i=0; i<m_objects.size(); i++){
     delete m_objects[i];
   }
+  
+  for(auto i=m_diobjects.begin(); i!=m_diobjects.end(); i++){
+    
+    vector<HLTDiobject*>* col = &(i->second);
+    for(unsigned x=0; x<col->size(); x++){
+      delete (*col)[x];
+    }
+  }
 }
 
 void HLTPathData::addObject(HLTObject *object){m_objects.push_back(object);}
@@ -53,7 +61,35 @@ vector<HLTObject*> HLTPathData::getFilterObjects(std::string filterName){
     }
   }
   return out;
+}
 
+vector<HLTDiobject*> HLTPathData::getFilterDiobjects(std::string filterName){
+  
+  auto it = m_diobjects.find(filterName);
+  if(it!=m_diobjects.end()){return it->second;}
+  
+  vector<HLTObject*> objs = this->getFilterObjects(filterName);
+  
+  m_diobjects[filterName] = vector<HLTDiobject*>();
+  vector<HLTDiobject*>* pCol = &(m_diobjects[filterName]);
+  
+  for(unsigned a=0; a<objs.size() ; a++){
+    for(unsigned b=a+1; b<objs.size() ; b++){
+      
+      HLTObject* objA = objs[a];
+      HLTObject* objB = objs[b];
+      HLTDiobject* diobj;
+      
+      if(objA->pt()>objB->pt()){
+        diobj = new HLTDiobject(objA,objB);
+      }else{
+        diobj = new HLTDiobject(objB,objA);
+      }
+      pCol->push_back(diobj);
+    }
+  }
+  
+  return m_diobjects[filterName];
 }
 
 void HLTPathData::print(){
