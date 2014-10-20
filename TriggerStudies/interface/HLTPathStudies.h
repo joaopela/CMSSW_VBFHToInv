@@ -73,13 +73,8 @@ private:
   TFile* fOut;
   
   TH1I* hEventCount;
-  TH1I* hHLTAlgoCounts;
   TH1I* hHLTPathCount;
-
-  std::map<std::string,HLTPlots*> m_hNoCuts;
-  std::map<std::string,HLTPlots*> m_hETM70;
-  std::map<std::string,HLTPlots*> m_hDijetVBF30_DEta3p5_ETM50;
-  std::map<std::string,HLTPlots*> m_hDijetVBF30_DEta3p5_Jet96;
+  TH1D* hHLT_jet_eta;
   
 };
 
