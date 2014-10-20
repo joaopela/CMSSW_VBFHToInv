@@ -33,6 +33,8 @@ public:
     cached_mjj  = false;
   }
   
+  ~TriggerDijet(){}
+  
   bool vbf(){
     
     if(!cached_vbf){
