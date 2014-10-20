@@ -18,6 +18,7 @@
 #include "FWCore/Common/interface/TriggerNames.h"
 
 #include "VBFHiggsToInvisible/TriggerStudies/interface/HLTPlots.h"
+#include "VBFHiggsToInvisible/TriggerStudies/interface/HLTAlgoPFDijet.h"
 
 // ROOT includes
 #include "TH1I.h"
@@ -48,17 +49,14 @@ private:
   void endLuminosityBlock(edm::LuminosityBlock const&, edm::EventSetup const&);
   
   void analyze(const edm::Event&, const edm::EventSetup&);
-
-  void fillPlots(bool seedA,bool seedB,bool seedC,std::string path,double met);
   
   void printFiredHLT(const edm::Event& iEvent, edm::Handle<edm::TriggerResults> iHLT);
   bool testTrigger  (const edm::Event& iEvent, edm::Handle<edm::TriggerResults> iHLT, std::string iTriggerName);
   
-  
-  
   // ----------member data ---------------------------
   
   bool m_verbose;
+  bool m_doL1TAnalysis;
   
   edm::ParameterSet ps;
   
@@ -70,10 +68,13 @@ private:
   edm::InputTag m_InputTag_EcalTriggerPrimitives; 
   edm::InputTag m_InputTag_HcalTriggerPrimitives;
   
+  std::vector< std::pair<HLTAlgo*,HLTPlots*> > m_algos;
+  
   TFile* fOut;
   
   TH1I* hEventCount;
   TH1I* hHLTAlgoCounts;
+  TH1I* hHLTPathCount;
 
   std::map<std::string,HLTPlots*> m_hNoCuts;
   std::map<std::string,HLTPlots*> m_hETM70;

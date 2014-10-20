@@ -30,663 +30,162 @@ HLTPathStudies::HLTPathStudies(const edm::ParameterSet& pset){
   m_InputTag_HcalTriggerPrimitives  = pset.getUntrackedParameter("inputTag_HcalTriggerPrimitives", edm::InputTag("valHcalTriggerPrimitiveDigis"));
   
   // Getting other parameters from configuration file
-  m_verbose       = pset.getUntrackedParameter<bool>("verbose",false);
+  m_doL1TAnalysis = pset.getUntrackedParameter<bool>("doL1TAnalysis",false);
+  m_verbose       = pset.getUntrackedParameter<bool>("verbose",      false);
 
+  // Creating output file
   string outputFilename = pset.getUntrackedParameter<string>("outputFilename","HLTPathStudiesResults.root");
   fOut = new TFile(outputFilename.c_str(),"RECREATE");
+  
+  // This histogram will be used to count our events (for normalisation later)
+  hEventCount = new TH1I("EventCount","EventCount",1,0.5,1.5); hEventCount->SetDirectory(fOut);
 
+  // Other histograms
+  hHLTPathCount = new TH1I("HLTPathCount","HLTPathCount",2,0.5,2.5); hEventCount->SetDirectory(fOut);
+  hHLTPathCount->GetXaxis()->SetBinLabel(1,"HLT_PFMET_PFVBF_v1");
+  hHLTPathCount->GetXaxis()->SetBinLabel(2,"HLT_CaloMET_CaloVBF_v1");
+  
+  // #################################################################
+  // Initiating plots and algos for no L1T seeds
+  // #################################################################
+  TDirectory *dNoCuts = fOut->mkdir("L1T_NoCuts");
+  
+  vector< pair<double,double> > cutsDijetPt;
+  cutsDijetPt.push_back(pair<double,double>(  0, 0));
+  cutsDijetPt.push_back(pair<double,double>( 40,40));
+  cutsDijetPt.push_back(pair<double,double>( 50,50));
+  cutsDijetPt.push_back(pair<double,double>( 60,60));
+  cutsDijetPt.push_back(pair<double,double>( 50,40));
+  cutsDijetPt.push_back(pair<double,double>( 60,40));
+  cutsDijetPt.push_back(pair<double,double>( 70,40));
+  cutsDijetPt.push_back(pair<double,double>( 80,40));
+  cutsDijetPt.push_back(pair<double,double>( 90,40));
+  cutsDijetPt.push_back(pair<double,double>(100,40));
+  
+  vector<double> cutsDijetMjj;
+  cutsDijetMjj.push_back(  0);
+  cutsDijetMjj.push_back(500);
+  cutsDijetMjj.push_back(600);
+  cutsDijetMjj.push_back(700);
+  cutsDijetMjj.push_back(800);
+  cutsDijetMjj.push_back(900);
+  cutsDijetMjj.push_back(1000);
+  cutsDijetMjj.push_back(1100);
+  
+  vector<double> cutsDijetDEta;
+  cutsDijetDEta.push_back(  0);
+  cutsDijetDEta.push_back(3.5);
+  cutsDijetDEta.push_back(3.7);
+  cutsDijetDEta.push_back(3.9);
+  cutsDijetDEta.push_back(4.1);
+  cutsDijetDEta.push_back(4.3);
+  cutsDijetDEta.push_back(4.5);
+  
+  for(unsigned iDijetPt=0; iDijetPt<cutsDijetPt.size(); iDijetPt++){
+    for(unsigned iDijetMjj=0; iDijetMjj<cutsDijetMjj.size(); iDijetMjj++){
+      for(unsigned iDijetDEta=0; iDijetDEta<cutsDijetDEta.size(); iDijetDEta++){
+
+        string algoName = Form("HLT_DijetVBF%.0f-%.0f_DEta%.1f_MJJ%.0f",cutsDijetPt[iDijetPt].first,cutsDijetPt[iDijetPt].second,cutsDijetDEta[iDijetDEta],cutsDijetMjj[iDijetMjj]);
+        
+        // New HLT algo declaration
+        HLTAlgoPFDijet* myAlgo  = new HLTAlgoPFDijet(algoName);
+        myAlgo->setVBF         (true);
+        myAlgo->setJetsMinPt   (cutsDijetPt[iDijetPt].first,cutsDijetPt[iDijetPt].second);
+        myAlgo->setDijetMinDEta(cutsDijetDEta[iDijetDEta]);
+        myAlgo->setDijetMinMjj (cutsDijetMjj[iDijetMjj]);
+        
+        TDirectory *d       = dNoCuts->mkdir(algoName.c_str());
+        HLTPlots   *myPlots = new HLTPlots(d);
+        
+        m_algos.push_back(pair<HLTAlgo*,HLTPlots*>(myAlgo,myPlots));
+      }
+    }
+  }
 }
 
 HLTPathStudies::~HLTPathStudies(){
   
   fOut->Write();
+  
+  for(unsigned i=0; i<m_algos.size(); i++){
+    delete m_algos[i].first;
+    delete m_algos[i].second;
+  }
+
 }
 
 void HLTPathStudies::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup){
-  
-  HLTEventData myHLTData(ps,iEvent);
-  
-  if(myHLTData.getPathFired("HLT_CaloMET_CaloVBF_v1")){
-    cout << "Fired: HLT_CaloMET_CaloVBF_v1" << endl;
-    cout << "=> Passed hltDiCaloJet10: " << myHLTData.getPathData("HLT_CaloMET_CaloVBF_v1")->getFilterObjects("hltDiCaloJet10").size() << endl;
-    cout << "=> Passed hltMET65      : " << myHLTData.getPathData("HLT_CaloMET_CaloVBF_v1")->getFilterObjects("hltMET65").size()       << endl;
-  }
-  
-  if(myHLTData.getPathFired("HLT_PFMET_PFVBF_v1")){
-    cout << "Fired: HLT_PFMET_PFVBF_v1" << endl;
-    cout << "=> Passed hltDiPFJet10    : " << myHLTData.getPathData("HLT_PFMET_PFVBF_v1")->getFilterObjects("hltDiPFJet10")    .size() << endl;
-    cout << "=> Passed hltPFMET80Filter: " << myHLTData.getPathData("HLT_PFMET_PFVBF_v1")->getFilterObjects("hltPFMET80Filter").size() << endl;
-  }
-  
-  //myHLTData.print();
-  
+
   // Counting the current event
   hEventCount->Fill(1);
-
-  // Extracting L1Extra information
-  L1ExtraPayload evL1Extra(ps,iEvent);
-  l1extra::L1JetParticleCollection *l1tJets = evL1Extra.getL1TAllJets();
   
-  edm::Handle<edm::TriggerResults> hltresults;
-  iEvent.getByLabel(m_InputTag_HLTResults, hltresults);
-  
-  // Debug function to print all HLT Path fired on each event
-  //printFiredHLT(iEvent,hltresults);
-  
-  //___________________________________________________________________________________________  
-  // Get the PAT TriggerEvent
-  edm::Handle< pat::TriggerEvent > triggerEvent;
-  iEvent.getByLabel( "patTriggerEvent", triggerEvent );
-  
-  // Get a vector of all HLT paths
-  std::vector<pat::TriggerPath> const* paths = triggerEvent->paths();
-  
-  // Find the full label of the chosen HLT path (i.e. with the version number)
-  bool fired = true;
-  std::string full_name;
-  
-  bool        calo_fired = true;
-  std::string calo_full_name;
-  for (unsigned i = 0; i < paths->size(); ++i) {
-    std::string name = paths->at(i).name();
-    if (name.find("HLT_CaloMET_CaloVBF_v1") != name.npos) {
-      calo_full_name = name;
-      if (!(paths->at(i).wasAccept())) calo_fired = false;
-    }
-    if (name.find("HLT_PFMET_PFVBF_v1") != name.npos) {
-      full_name = name;
-      if (!(paths->at(i).wasAccept())) fired = false;
-      // break; // Stop loop after we find the first match
-    }
-  }
-  
-  // If we did not fire pf or calo trigger stop processing this event
-  // since we will not have all the necessary objects to do any calculations
-   if (!fired && calo_fired) return;
-
-   // #### Calo Objects ####################################################################################
-   // Getting all the HLT objects from the calo based HLT path
-   // ######################################################################################################
-   vector<TriggerJet>   hltCaloJets;
-   vector<TriggerDijet> hltCaloDijets;
-   double calo_met_pt  = 0;
-   bool   passTrigCalo = false;
-   
-   // Get a vector of the objects used in the chosen path
-   pat::TriggerObjectRefVector pathObjects = triggerEvent->pathObjects(calo_full_name, false);
-   for (unsigned j = 0; j < pathObjects.size(); ++j) {
-     
-     bool isMET = false;
-     bool isJet = false;
-     
-     // Get the filters this object was used in
-     pat::TriggerFilterRefVector filters = triggerEvent->objectFilters((pathObjects)[j], false);
-     for (unsigned k = 0; k < filters.size(); ++k) {
-       
-       // Only store the filter label if the filter was used in the chosen path
-       if (!triggerEvent->filterInPath(filters[k],calo_full_name, false)) continue;
-       //std::cout << "--" << filters[k]->label() << std::endl;
-       
-       //       cout << "obj #" << j <<  "Filter label: " << filters[k]->label() << endl;
-       
-       if(filters[k]->label()=="hltDiCaloJet10"){isJet=true;}
-       if(filters[k]->label()=="hltMET65")      {isMET=true;}
-     }
-     
-     if(isMET){calo_met_pt  = pathObjects[j]->pt();}
-     if(isJet){hltCaloJets.push_back(TriggerJet(pathObjects[j]->pt(),pathObjects[j]->eta(),pathObjects[j]->phi(),pathObjects[j]->energy()));}
-   }
-   
-   // Here we check if the calo conditions are passed (on a CALO + PF trigger)
-   if(calo_met_pt>=90){
-     
-     // Running over all possible HLT dijets on this event
-     for(unsigned j0=0; j0<hltCaloJets.size() ; j0++){
-       for(unsigned j1=j0+1; j1<hltCaloJets.size() ; j1++){
-         
-         TriggerDijet dijet(&(hltCaloJets[j0]),&(hltCaloJets[j1]));
-         if(dijet.j0()->pt()>=40 && dijet.j1()->pt()>=40 && dijet.vbf()){
-           passTrigCalo = true;
-         }
-         
-       }
-     }
-   }
-   
-   // If event fails to pass calo conditions we stop processing the event
-   if(!passTrigCalo){return;}
-   
-   // PF Objects ###########################################################################################
-   // Getting all the HLT objects from the pf based HLT path
-   // ######################################################################################################
-   vector<TriggerJet>   hltJets;
-   vector<TriggerDijet> hltDijets;
-   double met_pt = 0;
-   
-  // Get a vector of the objects used in the chosen path
-  pathObjects = triggerEvent->pathObjects(full_name, false);
-  for (unsigned j = 0; j < pathObjects.size(); ++j) {
-
-    bool isMET = false;
-    bool isJet = false;
-    
-    // Get the filters this object was used in
-    pat::TriggerFilterRefVector filters = triggerEvent->objectFilters((pathObjects)[j], false);
-    for (unsigned k = 0; k < filters.size(); ++k) {
-      
-      // Only store the filter label if the filter was used in the chosen path
-      if (!triggerEvent->filterInPath(filters[k],full_name, false)) continue;
-      //std::cout << "--" << filters[k]->label() << std::endl;
-      
-      //cout << "obj #" << j <<  "Filter label: " << filters[k]->label() << endl;
-      
-      if(filters[k]->label()=="hltDiPFJet10")    {isJet=true;}
-      if(filters[k]->label()=="hltPFMET80Filter"){isMET=true;}
-    }
-
-    if(isMET){met_pt  = pathObjects[j]->pt();}
-    if(isJet){hltJets.push_back(TriggerJet(pathObjects[j]->pt(),pathObjects[j]->eta(),pathObjects[j]->phi(),pathObjects[j]->energy()));}
-  }
-  
-  // Creating list of all possible HLT dijets on this event
-  for(unsigned j0=0; j0<hltJets.size() ; j0++){
-    for(unsigned j1=j0+1; j1<hltJets.size() ; j1++){
-      
-      hltDijets.push_back(TriggerDijet(&(hltJets[j0]),&(hltJets[j1])));
-    }
-  }
-  
-  // ######################################################################################################
-  // Determining what L1 seeds (ETM70 and proposed) would have fired
-  // ######################################################################################################
-  
-  bool             passL1TDijet = false;
-  vector<L1TDijet> l1tDijets;
-  
-  // Looking at L1T dijet condition common to both proposed L1T Trigger DijetVBF30_DEta3p5
-  // Running over all possible jet pairs
-  for(unsigned j0=0; j0<(*l1tJets).size() ; j0++){
-    for(unsigned j1=j0+1; j1<(*l1tJets).size() ; j1++){
-      
-      L1TDijet dijet(&(*l1tJets)[j0],&(*l1tJets)[j1]);
-      
-      // Checking VBF condition
-      if(dijet.j0()->pt()>=30 && dijet.j1()->pt()>=30 && dijet.vbf() && dijet.deta()>=3.5){passL1TDijet = true; break;}
-      
-    }
-    if(passL1TDijet){break;}
-  }
-  
+  /*
   bool l1Seed_ETM70       = false;
   bool l1Seed_Dijet_ETM50 = false;
   bool l1Seed_Dijet_Jet96 = false;
   
-  if(evL1Extra.m_L1EtMissParticle_MET->begin()->et()>=70)                {l1Seed_ETM70       = true;}
-  if(passL1TDijet && evL1Extra.m_L1EtMissParticle_MET->begin()->et()>=50){l1Seed_Dijet_ETM50 = true;}
-  if(passL1TDijet && (*l1tJets)[0].pt()>=96)                             {l1Seed_Dijet_Jet96 = true;}
+  // WARNING: Plots are not being created yet when m_doL1TAnalysis is true
+  if(m_doL1TAnalysis){
+    
+    // Extracting L1Extra information
+    L1ExtraPayload evL1Extra(ps,iEvent);
+    l1extra::L1JetParticleCollection *l1tJets = evL1Extra.getL1TAllJets();
+    
+    // ######################################################################################################
+    // Determining what L1 seeds (ETM70 and proposed) would have fired
+    // ######################################################################################################
+    
+    bool             passL1TDijet = false;
+    vector<L1TDijet> l1tDijets;
+    
+    // Looking at L1T dijet condition common to both proposed L1T Trigger DijetVBF30_DEta3p5
+    // Running over all possible jet pairs
+    for(unsigned j0=0; j0<(*l1tJets).size() ; j0++){
+      for(unsigned j1=j0+1; j1<(*l1tJets).size() ; j1++){
+        
+        L1TDijet dijet(&(*l1tJets)[j0],&(*l1tJets)[j1]);
+        
+        // Checking VBF condition
+        if(dijet.j0()->pt()>=30 && dijet.j1()->pt()>=30 && dijet.vbf() && dijet.deta()>=3.5){passL1TDijet = true; break;}
+        
+      }
+      if(passL1TDijet){break;}
+    }
+    
+    if(evL1Extra.m_L1EtMissParticle_MET->begin()->et()>=70)                {l1Seed_ETM70       = true;}
+    if(passL1TDijet && evL1Extra.m_L1EtMissParticle_MET->begin()->et()>=50){l1Seed_Dijet_ETM50 = true;}
+    if(passL1TDijet && (*l1tJets)[0].pt()>=96)                             {l1Seed_Dijet_Jet96 = true;}
+    
+  }
+  */
   
+  // Getting HLT data
+  HLTEventData myHLTData(ps,iEvent);
+  if(m_verbose){myHLTData.print();}
   
-  // ######################################################################################################
-  // Now filling HLT NoCuts plots
-  // ######################################################################################################
-  fillPlots(l1Seed_ETM70,l1Seed_Dijet_ETM50,l1Seed_Dijet_Jet96,"NoCuts",met_pt);
-  
-  // ######################################################################################################
-  // Filling other plots
-  // ######################################################################################################
-  for(unsigned i=0; i<hltDijets.size(); i++){
-    TriggerDijet* dijet = &(hltDijets[i]);
-    if(dijet->j0()->pt()>=40 && dijet->j1()->pt()>=40 && dijet->vbf() && dijet->mjj()>=500){fillPlots(l1Seed_ETM70,l1Seed_Dijet_ETM50,l1Seed_Dijet_Jet96,"DiPFJet40_MJJ500VBF_AllJets",met_pt); break;}
+  HLTPlotsData evData;
+  if(myHLTData.getPathFired("HLT_PFMET_PFVBF_v1")){
+    hHLTPathCount->Fill(1);
+    evData.met.first = true; evData.met.second = myHLTData.getPathData("HLT_PFMET_PFVBF_v1")->getFilterObjects("hltPFMET80Filter").at(0)->pt();
   }
 
-  for(unsigned i=0; i<hltDijets.size(); i++){
-    TriggerDijet* dijet = &(hltDijets[i]);
-    if(dijet->j0()->pt()>=50 && dijet->j1()->pt()>=50 && dijet->vbf() && dijet->mjj()>=500){fillPlots(l1Seed_ETM70,l1Seed_Dijet_ETM50,l1Seed_Dijet_Jet96,"DiPFJet50_MJJ500VBF_AllJets",met_pt); break;}
+  if(myHLTData.getPathFired("HLT_CaloMET_CaloVBF_v1")){
+    hHLTPathCount->Fill(2);
   }
   
-  for(unsigned i=0; i<hltDijets.size(); i++){
-    TriggerDijet* dijet = &(hltDijets[i]);
-    if(dijet->j0()->pt()>=40 && dijet->j1()->pt()>=40 && dijet->vbf() && dijet->mjj()>=600){fillPlots(l1Seed_ETM70,l1Seed_Dijet_ETM50,l1Seed_Dijet_Jet96,"DiPFJet40_MJJ600VBF_AllJets",met_pt); break;}
-  }
-  
-  for(unsigned i=0; i<hltDijets.size(); i++){
-    TriggerDijet* dijet = &(hltDijets[i]);
-    if(dijet->j0()->pt()>=50 && dijet->j1()->pt()>=50 && dijet->vbf() && dijet->mjj()>=600){fillPlots(l1Seed_ETM70,l1Seed_Dijet_ETM50,l1Seed_Dijet_Jet96,"DiPFJet50_MJJ600VBF_AllJets",met_pt); break;}
-  }
-  
-  for(unsigned i=0; i<hltDijets.size(); i++){
-    TriggerDijet* dijet = &(hltDijets[i]);
-    if(dijet->j0()->pt()>=40 && dijet->j1()->pt()>=40 && dijet->vbf() && dijet->mjj()>=700){fillPlots(l1Seed_ETM70,l1Seed_Dijet_ETM50,l1Seed_Dijet_Jet96,"DiPFJet40_MJJ700VBF_AllJets",met_pt); break;}
-  }
-  
-  for(unsigned i=0; i<hltDijets.size(); i++){
-    TriggerDijet* dijet = &(hltDijets[i]);
-    if(dijet->j0()->pt()>=50 && dijet->j1()->pt()>=50 && dijet->vbf() && dijet->mjj()>=700){fillPlots(l1Seed_ETM70,l1Seed_Dijet_ETM50,l1Seed_Dijet_Jet96,"DiPFJet50_MJJ700VBF_AllJets",met_pt); break;}
-  }
+  for(auto i=m_algos.begin(); i<m_algos.end(); i++){
 
-  for(unsigned i=0; i<hltDijets.size(); i++){
-    TriggerDijet* dijet = &(hltDijets[i]);
-    if(dijet->j0()->pt()>=40 && dijet->j1()->pt()>=40 && dijet->vbf() && dijet->mjj()>=800){fillPlots(l1Seed_ETM70,l1Seed_Dijet_ETM50,l1Seed_Dijet_Jet96,"DiPFJet40_MJJ800VBF_AllJets",met_pt); break;}
-  }
-  
-  for(unsigned i=0; i<hltDijets.size(); i++){
-    TriggerDijet* dijet = &(hltDijets[i]);
-    if(dijet->j0()->pt()>=50 && dijet->j1()->pt()>=50 && dijet->vbf() && dijet->mjj()>=800){fillPlots(l1Seed_ETM70,l1Seed_Dijet_ETM50,l1Seed_Dijet_Jet96,"DiPFJet50_MJJ800VBF_AllJets",met_pt); break;}
-  }
-  
-  for(unsigned i=0; i<hltDijets.size(); i++){
-    TriggerDijet* dijet = &(hltDijets[i]);
-    if(dijet->j0()->pt()>=40 && dijet->j1()->pt()>=40 && dijet->vbf() && dijet->mjj()>=900){fillPlots(l1Seed_ETM70,l1Seed_Dijet_ETM50,l1Seed_Dijet_Jet96,"DiPFJet40_MJJ900VBF_AllJets",met_pt); break;}
-  }
-  
-  for(unsigned i=0; i<hltDijets.size(); i++){
-    TriggerDijet* dijet = &(hltDijets[i]);
-    if(dijet->j0()->pt()>=50 && dijet->j1()->pt()>=50 && dijet->vbf() && dijet->mjj()>=900){fillPlots(l1Seed_ETM70,l1Seed_Dijet_ETM50,l1Seed_Dijet_Jet96,"DiPFJet50_MJJ900VBF_AllJets",met_pt); break;}
-  }
-  
-  for(unsigned i=0; i<hltDijets.size(); i++){
-    TriggerDijet* dijet = &(hltDijets[i]);
-    if(dijet->j0()->pt()>=40 && dijet->j1()->pt()>=40 && dijet->vbf() && dijet->mjj()>=1000){fillPlots(l1Seed_ETM70,l1Seed_Dijet_ETM50,l1Seed_Dijet_Jet96,"DiPFJet40_MJJ1000VBF_AllJets",met_pt); break;}
-  }
-  
-  for(unsigned i=0; i<hltDijets.size(); i++){
-    TriggerDijet* dijet = &(hltDijets[i]);
-    if(dijet->j0()->pt()>=50 && dijet->j1()->pt()>=50 && dijet->vbf() && dijet->mjj()>=1000){fillPlots(l1Seed_ETM70,l1Seed_Dijet_ETM50,l1Seed_Dijet_Jet96,"DiPFJet50_MJJ1000VBF_AllJets",met_pt); break;}
-  }
-  
-  for(unsigned i=0; i<hltDijets.size(); i++){
-    TriggerDijet* dijet = &(hltDijets[i]);
-    if(dijet->j0()->pt()>=40 && dijet->j1()->pt()>=40 && dijet->vbf() && dijet->mjj()>=1100){fillPlots(l1Seed_ETM70,l1Seed_Dijet_ETM50,l1Seed_Dijet_Jet96,"DiPFJet40_MJJ1100VBF_AllJets",met_pt); break;}
-  }
-  
-  for(unsigned i=0; i<hltDijets.size(); i++){
-    TriggerDijet* dijet = &(hltDijets[i]);
-    if(dijet->j0()->pt()>=50 && dijet->j1()->pt()>=50 && dijet->vbf() && dijet->mjj()>=1100){fillPlots(l1Seed_ETM70,l1Seed_Dijet_ETM50,l1Seed_Dijet_Jet96,"DiPFJet50_MJJ1100VBF_AllJets",met_pt); break;}
-  }
-  
-    //######################################################################################################################################################
-  for(unsigned i=0; i<hltDijets.size(); i++){
-    TriggerDijet* dijet = &(hltDijets[i]);
-    if(dijet->j0()->pt()>=40 && dijet->j1()->pt()>=40 && dijet->vbf() && dijet->deta()>=3.5 && dijet->mjj()>=500){fillPlots(l1Seed_ETM70,l1Seed_Dijet_ETM50,l1Seed_Dijet_Jet96,"DiPFJet40_MJJ500VBF_DEta3p5_AllJets",met_pt); break;}
-  }
-
-  for(unsigned i=0; i<hltDijets.size(); i++){
-    TriggerDijet* dijet = &(hltDijets[i]);
-    if(dijet->j0()->pt()>=50 && dijet->j1()->pt()>=50 && dijet->vbf() && dijet->deta()>=3.5 && dijet->mjj()>=500){fillPlots(l1Seed_ETM70,l1Seed_Dijet_ETM50,l1Seed_Dijet_Jet96,"DiPFJet50_MJJ500VBF_DEta3p5_AllJets",met_pt); break;}
-  }
-  
-  for(unsigned i=0; i<hltDijets.size(); i++){
-    TriggerDijet* dijet = &(hltDijets[i]);
-    if(dijet->j0()->pt()>=40 && dijet->j1()->pt()>=40 && dijet->vbf() && dijet->deta()>=3.5 && dijet->mjj()>=600){fillPlots(l1Seed_ETM70,l1Seed_Dijet_ETM50,l1Seed_Dijet_Jet96,"DiPFJet40_MJJ600VBF_DEta3p5_AllJets",met_pt); break;}
-  }
-  
-  for(unsigned i=0; i<hltDijets.size(); i++){
-    TriggerDijet* dijet = &(hltDijets[i]);
-    if(dijet->j0()->pt()>=50 && dijet->j1()->pt()>=50 && dijet->vbf() && dijet->deta()>=3.5 && dijet->mjj()>=600){fillPlots(l1Seed_ETM70,l1Seed_Dijet_ETM50,l1Seed_Dijet_Jet96,"DiPFJet50_MJJ600VBF_DEta3p5_AllJets",met_pt); break;}
-  }
-  
-  for(unsigned i=0; i<hltDijets.size(); i++){
-    TriggerDijet* dijet = &(hltDijets[i]);
-    if(dijet->j0()->pt()>=40 && dijet->j1()->pt()>=40 && dijet->vbf() && dijet->deta()>=3.5 && dijet->mjj()>=700){fillPlots(l1Seed_ETM70,l1Seed_Dijet_ETM50,l1Seed_Dijet_Jet96,"DiPFJet40_MJJ700VBF_DEta3p5_AllJets",met_pt); break;}
-  }
-  
-  for(unsigned i=0; i<hltDijets.size(); i++){
-    TriggerDijet* dijet = &(hltDijets[i]);
-    if(dijet->j0()->pt()>=50 && dijet->j1()->pt()>=50 && dijet->vbf() && dijet->deta()>=3.5 && dijet->mjj()>=700){fillPlots(l1Seed_ETM70,l1Seed_Dijet_ETM50,l1Seed_Dijet_Jet96,"DiPFJet50_MJJ700VBF_DEta3p5_AllJets",met_pt); break;}
-  }
-
-  for(unsigned i=0; i<hltDijets.size(); i++){
-    TriggerDijet* dijet = &(hltDijets[i]);
-    if(dijet->j0()->pt()>=40 && dijet->j1()->pt()>=40 && dijet->vbf() && dijet->deta()>=3.5 && dijet->mjj()>=800){fillPlots(l1Seed_ETM70,l1Seed_Dijet_ETM50,l1Seed_Dijet_Jet96,"DiPFJet40_MJJ800VBF_DEta3p5_AllJets",met_pt); break;}
-  }
-  
-  for(unsigned i=0; i<hltDijets.size(); i++){
-    TriggerDijet* dijet = &(hltDijets[i]);
-    if(dijet->j0()->pt()>=50 && dijet->j1()->pt()>=50 && dijet->vbf() && dijet->deta()>=3.5 && dijet->mjj()>=800){fillPlots(l1Seed_ETM70,l1Seed_Dijet_ETM50,l1Seed_Dijet_Jet96,"DiPFJet50_MJJ800VBF_DEta3p5_AllJets",met_pt); break;}
-  }
-  
-  for(unsigned i=0; i<hltDijets.size(); i++){
-    TriggerDijet* dijet = &(hltDijets[i]);
-    if(dijet->j0()->pt()>=40 && dijet->j1()->pt()>=40 && dijet->vbf() && dijet->deta()>=3.5 && dijet->mjj()>=900){fillPlots(l1Seed_ETM70,l1Seed_Dijet_ETM50,l1Seed_Dijet_Jet96,"DiPFJet40_MJJ900VBF_DEta3p5_AllJets",met_pt); break;}
-  }
-  
-  for(unsigned i=0; i<hltDijets.size(); i++){
-    TriggerDijet* dijet = &(hltDijets[i]);
-    if(dijet->j0()->pt()>=50 && dijet->j1()->pt()>=50 && dijet->vbf() && dijet->deta()>=3.5 && dijet->mjj()>=900){fillPlots(l1Seed_ETM70,l1Seed_Dijet_ETM50,l1Seed_Dijet_Jet96,"DiPFJet50_MJJ900VBF_DEta3p5_AllJets",met_pt); break;}
-  }
-  
-  for(unsigned i=0; i<hltDijets.size(); i++){
-    TriggerDijet* dijet = &(hltDijets[i]);
-    if(dijet->j0()->pt()>=40 && dijet->j1()->pt()>=40 && dijet->vbf() && dijet->deta()>=3.5 && dijet->mjj()>=1000){fillPlots(l1Seed_ETM70,l1Seed_Dijet_ETM50,l1Seed_Dijet_Jet96,"DiPFJet40_MJJ1000VBF_DEta3p5_AllJets",met_pt); break;}
-  }
-  
-  for(unsigned i=0; i<hltDijets.size(); i++){
-    TriggerDijet* dijet = &(hltDijets[i]);
-    if(dijet->j0()->pt()>=50 && dijet->j1()->pt()>=50 && dijet->vbf() && dijet->deta()>=3.5 && dijet->mjj()>=1000){fillPlots(l1Seed_ETM70,l1Seed_Dijet_ETM50,l1Seed_Dijet_Jet96,"DiPFJet50_MJJ1000VBF_DEta3p5_AllJets",met_pt); break;}
-  }
-  
-  for(unsigned i=0; i<hltDijets.size(); i++){
-    TriggerDijet* dijet = &(hltDijets[i]);
-    if(dijet->j0()->pt()>=40 && dijet->j1()->pt()>=40 && dijet->vbf() && dijet->deta()>=3.5 && dijet->mjj()>=1100){fillPlots(l1Seed_ETM70,l1Seed_Dijet_ETM50,l1Seed_Dijet_Jet96,"DiPFJet40_MJJ1100VBF_DEta3p5_AllJets",met_pt); break;}
-  }
-  
-  for(unsigned i=0; i<hltDijets.size(); i++){
-    TriggerDijet* dijet = &(hltDijets[i]);
-    if(dijet->j0()->pt()>=50 && dijet->j1()->pt()>=50 && dijet->vbf() && dijet->deta()>=3.5 && dijet->mjj()>=1100){fillPlots(l1Seed_ETM70,l1Seed_Dijet_ETM50,l1Seed_Dijet_Jet96,"DiPFJet50_MJJ1100VBF_DEta3p5_AllJets",met_pt); break;}
-  }
-  
-  //######################################################################################################################################################
-  for(unsigned i=0; i<hltDijets.size(); i++){
-    TriggerDijet* dijet = &(hltDijets[i]);
-    if(dijet->j0()->pt()>=40 && dijet->j1()->pt()>=40 && dijet->vbf() && dijet->deta()>=3.7 && dijet->mjj()>=500){fillPlots(l1Seed_ETM70,l1Seed_Dijet_ETM50,l1Seed_Dijet_Jet96,"DiPFJet40_MJJ500VBF_DEta3p7_AllJets",met_pt); break;}
-  }
-  
-  for(unsigned i=0; i<hltDijets.size(); i++){
-    TriggerDijet* dijet = &(hltDijets[i]);
-    if(dijet->j0()->pt()>=50 && dijet->j1()->pt()>=50 && dijet->vbf() && dijet->deta()>=3.7 && dijet->mjj()>=500){fillPlots(l1Seed_ETM70,l1Seed_Dijet_ETM50,l1Seed_Dijet_Jet96,"DiPFJet50_MJJ500VBF_DEta3p7_AllJets",met_pt); break;}
-  }
-  
-  for(unsigned i=0; i<hltDijets.size(); i++){
-    TriggerDijet* dijet = &(hltDijets[i]);
-    if(dijet->j0()->pt()>=40 && dijet->j1()->pt()>=40 && dijet->vbf() && dijet->deta()>=3.7 && dijet->mjj()>=600){fillPlots(l1Seed_ETM70,l1Seed_Dijet_ETM50,l1Seed_Dijet_Jet96,"DiPFJet40_MJJ600VBF_DEta3p7_AllJets",met_pt); break;}
-  }
-  
-  for(unsigned i=0; i<hltDijets.size(); i++){
-    TriggerDijet* dijet = &(hltDijets[i]);
-    if(dijet->j0()->pt()>=50 && dijet->j1()->pt()>=50 && dijet->vbf() && dijet->deta()>=3.7 && dijet->mjj()>=600){fillPlots(l1Seed_ETM70,l1Seed_Dijet_ETM50,l1Seed_Dijet_Jet96,"DiPFJet50_MJJ600VBF_DEta3p7_AllJets",met_pt); break;}
-  }
-  
-  for(unsigned i=0; i<hltDijets.size(); i++){
-    TriggerDijet* dijet = &(hltDijets[i]);
-    if(dijet->j0()->pt()>=40 && dijet->j1()->pt()>=40 && dijet->vbf() && dijet->deta()>=3.7 && dijet->mjj()>=700){fillPlots(l1Seed_ETM70,l1Seed_Dijet_ETM50,l1Seed_Dijet_Jet96,"DiPFJet40_MJJ700VBF_DEta3p7_AllJets",met_pt); break;}
-  }
-  
-  for(unsigned i=0; i<hltDijets.size(); i++){
-    TriggerDijet* dijet = &(hltDijets[i]);
-    if(dijet->j0()->pt()>=50 && dijet->j1()->pt()>=50 && dijet->vbf() && dijet->deta()>=3.7 && dijet->mjj()>=700){fillPlots(l1Seed_ETM70,l1Seed_Dijet_ETM50,l1Seed_Dijet_Jet96,"DiPFJet50_MJJ700VBF_DEta3p7_AllJets",met_pt); break;}
-  }
-  
-  for(unsigned i=0; i<hltDijets.size(); i++){
-    TriggerDijet* dijet = &(hltDijets[i]);
-    if(dijet->j0()->pt()>=40 && dijet->j1()->pt()>=40 && dijet->vbf() && dijet->deta()>=3.7 && dijet->mjj()>=800){fillPlots(l1Seed_ETM70,l1Seed_Dijet_ETM50,l1Seed_Dijet_Jet96,"DiPFJet40_MJJ800VBF_DEta3p7_AllJets",met_pt); break;}
-  }
-  
-  for(unsigned i=0; i<hltDijets.size(); i++){
-    TriggerDijet* dijet = &(hltDijets[i]);
-    if(dijet->j0()->pt()>=50 && dijet->j1()->pt()>=50 && dijet->vbf() && dijet->deta()>=3.7 && dijet->mjj()>=800){fillPlots(l1Seed_ETM70,l1Seed_Dijet_ETM50,l1Seed_Dijet_Jet96,"DiPFJet50_MJJ800VBF_DEta3p7_AllJets",met_pt); break;}
-  }
-  
-  for(unsigned i=0; i<hltDijets.size(); i++){
-    TriggerDijet* dijet = &(hltDijets[i]);
-    if(dijet->j0()->pt()>=40 && dijet->j1()->pt()>=40 && dijet->vbf() && dijet->deta()>=3.7 && dijet->mjj()>=900){fillPlots(l1Seed_ETM70,l1Seed_Dijet_ETM50,l1Seed_Dijet_Jet96,"DiPFJet40_MJJ900VBF_DEta3p7_AllJets",met_pt); break;}
-  }
-  
-  for(unsigned i=0; i<hltDijets.size(); i++){
-    TriggerDijet* dijet = &(hltDijets[i]);
-    if(dijet->j0()->pt()>=50 && dijet->j1()->pt()>=50 && dijet->vbf() && dijet->deta()>=3.7 && dijet->mjj()>=900){fillPlots(l1Seed_ETM70,l1Seed_Dijet_ETM50,l1Seed_Dijet_Jet96,"DiPFJet50_MJJ900VBF_DEta3p7_AllJets",met_pt); break;}
-  }
-  
-  for(unsigned i=0; i<hltDijets.size(); i++){
-    TriggerDijet* dijet = &(hltDijets[i]);
-    if(dijet->j0()->pt()>=40 && dijet->j1()->pt()>=40 && dijet->vbf() && dijet->deta()>=3.7 && dijet->mjj()>=1000){fillPlots(l1Seed_ETM70,l1Seed_Dijet_ETM50,l1Seed_Dijet_Jet96,"DiPFJet40_MJJ1000VBF_DEta3p7_AllJets",met_pt); break;}
-  }
-  
-  for(unsigned i=0; i<hltDijets.size(); i++){
-    TriggerDijet* dijet = &(hltDijets[i]);
-    if(dijet->j0()->pt()>=50 && dijet->j1()->pt()>=50 && dijet->vbf() && dijet->deta()>=3.7 && dijet->mjj()>=1000){fillPlots(l1Seed_ETM70,l1Seed_Dijet_ETM50,l1Seed_Dijet_Jet96,"DiPFJet50_MJJ1000VBF_DEta3p7_AllJets",met_pt); break;}
-  }
-  
-  for(unsigned i=0; i<hltDijets.size(); i++){
-    TriggerDijet* dijet = &(hltDijets[i]);
-    if(dijet->j0()->pt()>=40 && dijet->j1()->pt()>=40 && dijet->vbf() && dijet->deta()>=3.7 && dijet->mjj()>=1100){fillPlots(l1Seed_ETM70,l1Seed_Dijet_ETM50,l1Seed_Dijet_Jet96,"DiPFJet40_MJJ1100VBF_DEta3p7_AllJets",met_pt); break;}
-  }
-  
-  for(unsigned i=0; i<hltDijets.size(); i++){
-    TriggerDijet* dijet = &(hltDijets[i]);
-    if(dijet->j0()->pt()>=50 && dijet->j1()->pt()>=50 && dijet->vbf() && dijet->deta()>=3.7 && dijet->mjj()>=1100){fillPlots(l1Seed_ETM70,l1Seed_Dijet_ETM50,l1Seed_Dijet_Jet96,"DiPFJet50_MJJ1100VBF_DEta3p7_AllJets",met_pt); break;}
-  }
-  
-  //######################################################################################################################################################
-  for(unsigned i=0; i<hltDijets.size(); i++){
-    TriggerDijet* dijet = &(hltDijets[i]);
-    if(dijet->j0()->pt()>=40 && dijet->j1()->pt()>=40 && dijet->vbf() && dijet->deta()>=3.9 && dijet->mjj()>=500){fillPlots(l1Seed_ETM70,l1Seed_Dijet_ETM50,l1Seed_Dijet_Jet96,"DiPFJet40_MJJ500VBF_DEta3p9_AllJets",met_pt); break;}
-  }
-  
-  for(unsigned i=0; i<hltDijets.size(); i++){
-    TriggerDijet* dijet = &(hltDijets[i]);
-    if(dijet->j0()->pt()>=50 && dijet->j1()->pt()>=50 && dijet->vbf() && dijet->deta()>=3.9 && dijet->mjj()>=500){fillPlots(l1Seed_ETM70,l1Seed_Dijet_ETM50,l1Seed_Dijet_Jet96,"DiPFJet50_MJJ500VBF_DEta3p9_AllJets",met_pt); break;}
-  }
-  
-  for(unsigned i=0; i<hltDijets.size(); i++){
-    TriggerDijet* dijet = &(hltDijets[i]);
-    if(dijet->j0()->pt()>=40 && dijet->j1()->pt()>=40 && dijet->vbf() && dijet->deta()>=3.9 && dijet->mjj()>=600){fillPlots(l1Seed_ETM70,l1Seed_Dijet_ETM50,l1Seed_Dijet_Jet96,"DiPFJet40_MJJ600VBF_DEta3p9_AllJets",met_pt); break;}
-  }
-  
-  for(unsigned i=0; i<hltDijets.size(); i++){
-    TriggerDijet* dijet = &(hltDijets[i]);
-    if(dijet->j0()->pt()>=50 && dijet->j1()->pt()>=50 && dijet->vbf() && dijet->deta()>=3.9 && dijet->mjj()>=600){fillPlots(l1Seed_ETM70,l1Seed_Dijet_ETM50,l1Seed_Dijet_Jet96,"DiPFJet50_MJJ600VBF_DEta3p9_AllJets",met_pt); break;}
-  }
-  
-  for(unsigned i=0; i<hltDijets.size(); i++){
-    TriggerDijet* dijet = &(hltDijets[i]);
-    if(dijet->j0()->pt()>=40 && dijet->j1()->pt()>=40 && dijet->vbf() && dijet->deta()>=3.9 && dijet->mjj()>=700){fillPlots(l1Seed_ETM70,l1Seed_Dijet_ETM50,l1Seed_Dijet_Jet96,"DiPFJet40_MJJ700VBF_DEta3p9_AllJets",met_pt); break;}
-  }
-  
-  for(unsigned i=0; i<hltDijets.size(); i++){
-    TriggerDijet* dijet = &(hltDijets[i]);
-    if(dijet->j0()->pt()>=50 && dijet->j1()->pt()>=50 && dijet->vbf() && dijet->deta()>=3.9 && dijet->mjj()>=700){fillPlots(l1Seed_ETM70,l1Seed_Dijet_ETM50,l1Seed_Dijet_Jet96,"DiPFJet50_MJJ700VBF_DEta3p9_AllJets",met_pt); break;}
-  }
-  
-  for(unsigned i=0; i<hltDijets.size(); i++){
-    TriggerDijet* dijet = &(hltDijets[i]);
-    if(dijet->j0()->pt()>=40 && dijet->j1()->pt()>=40 && dijet->vbf() && dijet->deta()>=3.9 && dijet->mjj()>=800){fillPlots(l1Seed_ETM70,l1Seed_Dijet_ETM50,l1Seed_Dijet_Jet96,"DiPFJet40_MJJ800VBF_DEta3p9_AllJets",met_pt); break;}
-  }
-  
-  for(unsigned i=0; i<hltDijets.size(); i++){
-    TriggerDijet* dijet = &(hltDijets[i]);
-    if(dijet->j0()->pt()>=50 && dijet->j1()->pt()>=50 && dijet->vbf() && dijet->deta()>=3.9 && dijet->mjj()>=800){fillPlots(l1Seed_ETM70,l1Seed_Dijet_ETM50,l1Seed_Dijet_Jet96,"DiPFJet50_MJJ800VBF_DEta3p9_AllJets",met_pt); break;}
-  }
-  
-  for(unsigned i=0; i<hltDijets.size(); i++){
-    TriggerDijet* dijet = &(hltDijets[i]);
-    if(dijet->j0()->pt()>=40 && dijet->j1()->pt()>=40 && dijet->vbf() && dijet->deta()>=3.9 && dijet->mjj()>=900){fillPlots(l1Seed_ETM70,l1Seed_Dijet_ETM50,l1Seed_Dijet_Jet96,"DiPFJet40_MJJ900VBF_DEta3p9_AllJets",met_pt); break;}
-  }
-  
-  for(unsigned i=0; i<hltDijets.size(); i++){
-    TriggerDijet* dijet = &(hltDijets[i]);
-    if(dijet->j0()->pt()>=50 && dijet->j1()->pt()>=50 && dijet->vbf() && dijet->deta()>=3.9 && dijet->mjj()>=900){fillPlots(l1Seed_ETM70,l1Seed_Dijet_ETM50,l1Seed_Dijet_Jet96,"DiPFJet50_MJJ900VBF_DEta3p9_AllJets",met_pt); break;}
-  }
-  
-  for(unsigned i=0; i<hltDijets.size(); i++){
-    TriggerDijet* dijet = &(hltDijets[i]);
-    if(dijet->j0()->pt()>=40 && dijet->j1()->pt()>=40 && dijet->vbf() && dijet->deta()>=3.9 && dijet->mjj()>=1000){fillPlots(l1Seed_ETM70,l1Seed_Dijet_ETM50,l1Seed_Dijet_Jet96,"DiPFJet40_MJJ1000VBF_DEta3p9_AllJets",met_pt); break;}
-  }
-  
-  for(unsigned i=0; i<hltDijets.size(); i++){
-    TriggerDijet* dijet = &(hltDijets[i]);
-    if(dijet->j0()->pt()>=50 && dijet->j1()->pt()>=50 && dijet->vbf() && dijet->deta()>=3.9 && dijet->mjj()>=1000){fillPlots(l1Seed_ETM70,l1Seed_Dijet_ETM50,l1Seed_Dijet_Jet96,"DiPFJet50_MJJ1000VBF_DEta3p9_AllJets",met_pt); break;}
-  }
-  
-  for(unsigned i=0; i<hltDijets.size(); i++){
-    TriggerDijet* dijet = &(hltDijets[i]);
-    if(dijet->j0()->pt()>=40 && dijet->j1()->pt()>=40 && dijet->vbf() && dijet->deta()>=3.9 && dijet->mjj()>=1100){fillPlots(l1Seed_ETM70,l1Seed_Dijet_ETM50,l1Seed_Dijet_Jet96,"DiPFJet40_MJJ1100VBF_DEta3p9_AllJets",met_pt); break;}
-  }
-  
-  for(unsigned i=0; i<hltDijets.size(); i++){
-    TriggerDijet* dijet = &(hltDijets[i]);
-    if(dijet->j0()->pt()>=50 && dijet->j1()->pt()>=50 && dijet->vbf() && dijet->deta()>=3.9 && dijet->mjj()>=1100){fillPlots(l1Seed_ETM70,l1Seed_Dijet_ETM50,l1Seed_Dijet_Jet96,"DiPFJet50_MJJ1100VBF_DEta3p9_AllJets",met_pt); break;}
-  }
-  
-  //######################################################################################################################################################
-  for(unsigned i=0; i<hltDijets.size(); i++){
-    TriggerDijet* dijet = &(hltDijets[i]);
-    if(dijet->j0()->pt()>=40 && dijet->j1()->pt()>=40 && dijet->vbf() && dijet->deta()>=4.1 && dijet->mjj()>=500){fillPlots(l1Seed_ETM70,l1Seed_Dijet_ETM50,l1Seed_Dijet_Jet96,"DiPFJet40_MJJ500VBF_DEta4p1_AllJets",met_pt); break;}
-  }
-  
-  for(unsigned i=0; i<hltDijets.size(); i++){
-    TriggerDijet* dijet = &(hltDijets[i]);
-    if(dijet->j0()->pt()>=50 && dijet->j1()->pt()>=50 && dijet->vbf() && dijet->deta()>=4.1 && dijet->mjj()>=500){fillPlots(l1Seed_ETM70,l1Seed_Dijet_ETM50,l1Seed_Dijet_Jet96,"DiPFJet50_MJJ500VBF_DEta4p1_AllJets",met_pt); break;}
-  }
-  
-  for(unsigned i=0; i<hltDijets.size(); i++){
-    TriggerDijet* dijet = &(hltDijets[i]);
-    if(dijet->j0()->pt()>=40 && dijet->j1()->pt()>=40 && dijet->vbf() && dijet->deta()>=4.1 && dijet->mjj()>=600){fillPlots(l1Seed_ETM70,l1Seed_Dijet_ETM50,l1Seed_Dijet_Jet96,"DiPFJet40_MJJ600VBF_DEta4p1_AllJets",met_pt); break;}
-  }
-  
-  for(unsigned i=0; i<hltDijets.size(); i++){
-    TriggerDijet* dijet = &(hltDijets[i]);
-    if(dijet->j0()->pt()>=50 && dijet->j1()->pt()>=50 && dijet->vbf() && dijet->deta()>=4.1 && dijet->mjj()>=600){fillPlots(l1Seed_ETM70,l1Seed_Dijet_ETM50,l1Seed_Dijet_Jet96,"DiPFJet50_MJJ600VBF_DEta4p1_AllJets",met_pt); break;}
-  }
-  
-  for(unsigned i=0; i<hltDijets.size(); i++){
-    TriggerDijet* dijet = &(hltDijets[i]);
-    if(dijet->j0()->pt()>=40 && dijet->j1()->pt()>=40 && dijet->vbf() && dijet->deta()>=4.1 && dijet->mjj()>=700){fillPlots(l1Seed_ETM70,l1Seed_Dijet_ETM50,l1Seed_Dijet_Jet96,"DiPFJet40_MJJ700VBF_DEta4p1_AllJets",met_pt); break;}
-  }
-  
-  for(unsigned i=0; i<hltDijets.size(); i++){
-    TriggerDijet* dijet = &(hltDijets[i]);
-    if(dijet->j0()->pt()>=50 && dijet->j1()->pt()>=50 && dijet->vbf() && dijet->deta()>=4.1 && dijet->mjj()>=700){fillPlots(l1Seed_ETM70,l1Seed_Dijet_ETM50,l1Seed_Dijet_Jet96,"DiPFJet50_MJJ700VBF_DEta4p1_AllJets",met_pt); break;}
-  }
-  
-  for(unsigned i=0; i<hltDijets.size(); i++){
-    TriggerDijet* dijet = &(hltDijets[i]);
-    if(dijet->j0()->pt()>=40 && dijet->j1()->pt()>=40 && dijet->vbf() && dijet->deta()>=4.1 && dijet->mjj()>=800){fillPlots(l1Seed_ETM70,l1Seed_Dijet_ETM50,l1Seed_Dijet_Jet96,"DiPFJet40_MJJ800VBF_DEta4p1_AllJets",met_pt); break;}
-  }
-  
-  for(unsigned i=0; i<hltDijets.size(); i++){
-    TriggerDijet* dijet = &(hltDijets[i]);
-    if(dijet->j0()->pt()>=50 && dijet->j1()->pt()>=50 && dijet->vbf() && dijet->deta()>=4.1 && dijet->mjj()>=800){fillPlots(l1Seed_ETM70,l1Seed_Dijet_ETM50,l1Seed_Dijet_Jet96,"DiPFJet50_MJJ800VBF_DEta4p1_AllJets",met_pt); break;}
-  }
-  
-  for(unsigned i=0; i<hltDijets.size(); i++){
-    TriggerDijet* dijet = &(hltDijets[i]);
-    if(dijet->j0()->pt()>=40 && dijet->j1()->pt()>=40 && dijet->vbf() && dijet->deta()>=4.1 && dijet->mjj()>=900){fillPlots(l1Seed_ETM70,l1Seed_Dijet_ETM50,l1Seed_Dijet_Jet96,"DiPFJet40_MJJ900VBF_DEta4p1_AllJets",met_pt); break;}
-  }
-  
-  for(unsigned i=0; i<hltDijets.size(); i++){
-    TriggerDijet* dijet = &(hltDijets[i]);
-    if(dijet->j0()->pt()>=50 && dijet->j1()->pt()>=50 && dijet->vbf() && dijet->deta()>=4.1 && dijet->mjj()>=900){fillPlots(l1Seed_ETM70,l1Seed_Dijet_ETM50,l1Seed_Dijet_Jet96,"DiPFJet50_MJJ900VBF_DEta4p1_AllJets",met_pt); break;}
-  }
-  
-  for(unsigned i=0; i<hltDijets.size(); i++){
-    TriggerDijet* dijet = &(hltDijets[i]);
-    if(dijet->j0()->pt()>=40 && dijet->j1()->pt()>=40 && dijet->vbf() && dijet->deta()>=4.1 && dijet->mjj()>=1000){fillPlots(l1Seed_ETM70,l1Seed_Dijet_ETM50,l1Seed_Dijet_Jet96,"DiPFJet40_MJJ1000VBF_DEta4p1_AllJets",met_pt); break;}
-  }
-  
-  for(unsigned i=0; i<hltDijets.size(); i++){
-    TriggerDijet* dijet = &(hltDijets[i]);
-    if(dijet->j0()->pt()>=50 && dijet->j1()->pt()>=50 && dijet->vbf() && dijet->deta()>=4.1 && dijet->mjj()>=1000){fillPlots(l1Seed_ETM70,l1Seed_Dijet_ETM50,l1Seed_Dijet_Jet96,"DiPFJet50_MJJ1000VBF_DEta4p1_AllJets",met_pt); break;}
-  }
-  
-  for(unsigned i=0; i<hltDijets.size(); i++){
-    TriggerDijet* dijet = &(hltDijets[i]);
-    if(dijet->j0()->pt()>=40 && dijet->j1()->pt()>=40 && dijet->vbf() && dijet->deta()>=4.1 && dijet->mjj()>=1100){fillPlots(l1Seed_ETM70,l1Seed_Dijet_ETM50,l1Seed_Dijet_Jet96,"DiPFJet40_MJJ1100VBF_DEta4p1_AllJets",met_pt); break;}
-  }
-  
-  for(unsigned i=0; i<hltDijets.size(); i++){
-    TriggerDijet* dijet = &(hltDijets[i]);
-    if(dijet->j0()->pt()>=50 && dijet->j1()->pt()>=50 && dijet->vbf() && dijet->deta()>=4.1 && dijet->mjj()>=1100){fillPlots(l1Seed_ETM70,l1Seed_Dijet_ETM50,l1Seed_Dijet_Jet96,"DiPFJet50_MJJ1100VBF_DEta4p1_AllJets",met_pt); break;}
+    if(i->first->evaluate(&myHLTData)){
+      i->second->fill(evData);
+    }
   }
 }
 
-void HLTPathStudies::beginJob(){
-  
-
-  
-}
+void HLTPathStudies::beginJob(){}
 
 void HLTPathStudies::endJob(){}
 
-void HLTPathStudies::beginRun(edm::Run const& iRun, edm::EventSetup const& iSetup){
-  
-  int currentRunNumber = iRun.run();
-  
-  TDirectory* runDir  = fOut  ->mkdir(Form("Run_%d",currentRunNumber));
-  hEventCount = new TH1I("EventCount",   "EventCount"   ,   1, 0.5,  1.5); hEventCount  ->SetDirectory(runDir);
-  
-  //################################################
-  // Creating plots
-  //################################################
-  
-  vector<string> cutsDijetPt;
-  cutsDijetPt.push_back("DiPFJet40_");
-  cutsDijetPt.push_back("DiPFJet50_");
-//   cutsDijetPt.push_back("DiPFJet60_");
-  
-  vector<string> cutsDijetMjj;
-  cutsDijetMjj.push_back("MJJ500VBF_");
-  cutsDijetMjj.push_back("MJJ600VBF_");
-  cutsDijetMjj.push_back("MJJ700VBF_");
-  cutsDijetMjj.push_back("MJJ800VBF_");
-  cutsDijetMjj.push_back("MJJ900VBF_");
-  cutsDijetMjj.push_back("MJJ1000VBF_");
-  cutsDijetMjj.push_back("MJJ1100VBF_");
-  
-  vector<string> cutsDijetDEta;
-  cutsDijetDEta.push_back("");
-  cutsDijetDEta.push_back("DEta3p5_");
-  cutsDijetDEta.push_back("DEta3p7_");
-  cutsDijetDEta.push_back("DEta3p9_");
-  cutsDijetDEta.push_back("DEta4p1_");
-  
-  vector<string> cutsDijetType;
-  cutsDijetType.push_back("AllJets");
-  
-  
-  //################################################
-  //################################################
-  TDirectory* dTopA = runDir->mkdir("NoCuts");
-  
-  TDirectory* d = dTopA->mkdir("NoCuts");
-  m_hNoCuts["NoCuts"] = new HLTPlots(d);
-  
-  //################################################
-  TDirectory* dTopB = runDir->mkdir("ETM70");
-  
-  d = dTopB->mkdir("NoCuts");
-  m_hETM70["NoCuts"] = new HLTPlots(d);
-  
-  //################################################
-  TDirectory* dTopC = runDir->mkdir("DijetVBF30_DEta3p5_ETM50");
-  
-  d = dTopC->mkdir("NoCuts");
-  m_hDijetVBF30_DEta3p5_ETM50["NoCuts"] = new HLTPlots(d);
-
-  //################################################
-  TDirectory* dTopD = runDir->mkdir("DijetVBF30_DEta3p5_Jet96");
-  
-  d = dTopD->mkdir("NoCuts");
-  m_hDijetVBF30_DEta3p5_Jet96["NoCuts"] = new HLTPlots(d);
-  
-
-  for(unsigned iDijetPt=0; iDijetPt<cutsDijetPt.size(); iDijetPt++){
-    for(unsigned iDijetMjj=0; iDijetMjj<cutsDijetMjj.size(); iDijetMjj++){
-      for(unsigned iDijetDEta=0; iDijetDEta<cutsDijetDEta.size(); iDijetDEta++){
-        for(unsigned iDijetType=0; iDijetType<cutsDijetType.size(); iDijetType++){
-          
-          string hName = Form("%s%s%s%s",
-                              cutsDijetPt[iDijetPt].c_str(),
-                              cutsDijetMjj[iDijetMjj].c_str(),
-                              cutsDijetDEta[iDijetDEta].c_str(),
-                              cutsDijetType[iDijetType].c_str()
-          );
-          
-//           cout << "Looking at: " << hName << endl;
-          
-          d = dTopA->mkdir(hName.c_str());
-          m_hNoCuts[hName] = new HLTPlots(d);
-          d = dTopB->mkdir(hName.c_str());
-          m_hETM70[hName] = new HLTPlots(d);
-          d = dTopC->mkdir(hName.c_str());
-          m_hDijetVBF30_DEta3p5_ETM50[hName] = new HLTPlots(d);
-          d = dTopD->mkdir(hName.c_str());
-          m_hDijetVBF30_DEta3p5_Jet96[hName] = new HLTPlots(d);
-        }
-      }
-    }
-  }
-  
-}
+void HLTPathStudies::beginRun(edm::Run const& iRun, edm::EventSetup const& iSetup){}
 
 void HLTPathStudies::endRun(edm::Run const&, edm::EventSetup const&){}
 
@@ -740,19 +239,6 @@ void HLTPathStudies::printFiredHLT(const edm::Event& iEvent, edm::Handle<edm::Tr
     
   }
   
-}
-
-void HLTPathStudies::fillPlots(bool seedA,bool seedB,bool seedC,string path,double met){
-  
-//   cout << "A: " << seedA << " B: " << seedB << "C: " << seedC << " path: " << path << " met: " << met << endl;
-  
-  HLTPlotsData evData;
-  evData.met.first = true; evData.met.second = met;
-  
-  m_hNoCuts[path]->fill(evData);
-  if(seedA){m_hETM70                   [path]->fill(evData);}
-  if(seedB){m_hDijetVBF30_DEta3p5_ETM50[path]->fill(evData);}
-  if(seedC){m_hDijetVBF30_DEta3p5_Jet96[path]->fill(evData);}
 }
 
 //define this as a plug-in
