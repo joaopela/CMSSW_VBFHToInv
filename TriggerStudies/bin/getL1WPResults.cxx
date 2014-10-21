@@ -97,6 +97,19 @@ TCanvas* doCanvas(TH1D* sig,TH1D* bkg,TH1D* notETM,const char* name,const char* 
   //draw an axis on the right side
   //c0->SaveAs("PU40bx50_rate_DijetVBF30_L1TETM_logScale.pdf");  
   
+  if(path==string("Run_1/DiffDijet/L1T_ETM60") && name==string("jets40_met_mindphi")){
+    int theBin = sig->FindBin(1.0);
+    iStream << "Run_1/DiffDijet/L1T_ETM60/jets40_met_mindphi sig eff:" << sig->GetBinContent(theBin) 
+    << " sig not etm70:" << notETM->GetBinContent(theBin) << " rate:" << rate->GetBinContent(theBin) << " border:" << sig->GetXaxis()->GetBinLowEdge(theBin) << endl;
+  }
+
+  if(path==string("Run_1/DiffDijet/L1T_HTT70") && name==string("MHToverHTT ")){
+    int theBin = sig->FindBin(0.7);
+    iStream << "Run_1/DiffDijet/HTT70/L1T_HTT70 sig eff:" << sig->GetBinContent(theBin) 
+    << " sig not etm70:" << notETM->GetBinContent(theBin) << " rate:" << rate->GetBinContent(theBin) << " border:" << sig->GetXaxis()->GetBinLowEdge(theBin) << endl;
+  }
+  
+  
   for(int i=0; i<=sig->GetNbinsX()+1; i++){
     if(sig->GetBinContent(i)>=0.2 && rate->GetBinContent(i)<=5000){
 
@@ -193,6 +206,18 @@ int main(){
           string nameSameDijet = Form("%s/%s",sigPath.c_str(),sigTitle.c_str());
           
           boost::replace_all(nameSameDijet,"SameDijet","SameDijetNotETM70");
+          pNoETM = (TH1D*) fSig->Get(nameSameDijet.c_str());
+          
+          if(pNoETM){
+            pNoETMEff = (TH1D*) pNoETM->Clone(Form("ETM_%s_eff",pBkg->GetName()));
+          }
+        }
+        
+        if(sigPath.find("DiffDijet")!=std::string::npos){
+          
+          string nameSameDijet = Form("%s/%s",sigPath.c_str(),sigTitle.c_str());
+          
+          boost::replace_all(nameSameDijet,"DiffDijet","SameDijetNotETM70");
           pNoETM = (TH1D*) fSig->Get(nameSameDijet.c_str());
           
           if(pNoETM){
