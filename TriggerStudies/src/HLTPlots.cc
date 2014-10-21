@@ -20,7 +20,7 @@ HLTPlots::HLTPlots(){
 HLTPlots::HLTPlots(TDirectory* d){
 
   // PF plots
-  pf_met = new TH1D("pf_met","HLT PF MET"  , 500,  0,500);
+  pf_met = new TH1D("pf_met","HLT PF MET",500,0,500);
   pf_met->GetXaxis()->SetTitle("MET [GeV]");
   pf_met->GetYaxis()->SetTitle("Entries");
   pf_met->SetDirectory(d);
