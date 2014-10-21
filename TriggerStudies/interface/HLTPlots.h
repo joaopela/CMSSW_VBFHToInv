@@ -33,6 +33,7 @@ public:
       pf_met.second = thePath->getFilterObjects("hltPFMET80Filter").at(0)->pt();
 
       std::vector<HLTDiobject*> myDijet = thePath->getFilterDiobjects("hltDiPFJet10");
+
       if(myDijet.size()>0){
         pf_dijet_maxDEta.first  = true;
         pf_dijet_maxDEta.second = myDijet[0]->deta();
@@ -44,7 +45,7 @@ public:
         
         HLTDiobject* dijet = myDijet[i];
         if(dijet->deta()>pf_dijet_maxDEta.second){pf_dijet_maxDEta.second=dijet->deta();}
-        if(dijet->mjj() >pf_dijet_maxMjj.second) {pf_dijet_maxMjj .second=dijet->mjj();}
+        if(dijet->mjj() >pf_dijet_maxMjj .second){pf_dijet_maxMjj .second=dijet->mjj();}
       }
     }
     
