@@ -46,7 +46,7 @@ HLTPathStudies::HLTPathStudies(const edm::ParameterSet& pset){
   hHLTPathCount->GetXaxis()->SetBinLabel(2,"HLT_CaloMET_CaloVBF_v1");
   hHLTPathCount->SetDirectory(fOut);
   
-  hHLT_jet_eta =  new TH1D("HLT_Jet_pT","HLT_Jet_pT",100,-5.0,5.0); hHLT_jet_eta->SetDirectory(fOut);;
+  hHLT_jet_eta =  new TH1D("HLT_jet_eta","HLT_Jet_eta",100,-5.0,5.0); hHLT_jet_eta->SetDirectory(fOut);
   
   // #################################################################
   // Initiating plots and algos for no L1T seeds
@@ -170,7 +170,7 @@ void HLTPathStudies::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
 
   // Filling HLT fire counts
   HLTPlotsData evData(&myHLTData);
-  if(myHLTData.getPathFired("HLT_PFMET_PFVBF_v1"))    {
+  if(myHLTData.getPathFired("HLT_PFMET_PFVBF_v1")){
     hHLTPathCount->Fill(1);
     
     vector<HLTObject*> jets = myHLTData.getPathData("HLT_PFMET_PFVBF_v1")->getFilterObjects("hltDiPFJet10");
@@ -180,7 +180,7 @@ void HLTPathStudies::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
     }
   }
   if(myHLTData.getPathFired("HLT_CaloMET_CaloVBF_v1")){hHLTPathCount->Fill(2);}
-  
+
   // Evaluating HLT algorithms
   for(auto i=m_algos.begin(); i<m_algos.end(); i++){
 
