@@ -46,22 +46,22 @@ L1TPlots::L1TPlots(){
 
 L1TPlots::L1TPlots(TDirectory* d){
   
-  l1t_ett = new TH1D("l1t_ett",   "L1T ETT"  , 500,-0.5,495.5);
+  l1t_ett = new TH1D("l1t_ett",   "L1T ETT"  , 500,0,500);
   l1t_ett->GetXaxis()->SetTitle("L1T ETT [GeV]");
   l1t_ett->GetYaxis()->SetTitle("Entries");
   l1t_ett->SetDirectory(d);
 
-  l1t_etm = new TH1D("l1t_etm",   "L1T ETM"  , 500,-0.5,495.5);
+  l1t_etm = new TH1D("l1t_etm",   "L1T ETM"  , 500,0,500);
   l1t_etm->GetXaxis()->SetTitle("L1T ETM [GeV]");
   l1t_etm->GetYaxis()->SetTitle("Entries");
   l1t_etm->SetDirectory(d);
   
-  l1t_htt = new TH1D("l1t_htt",   "L1T HTT"  , 500,-0.5,495.5);
+  l1t_htt = new TH1D("l1t_htt",   "L1T HTT"  , 500,0,500);
   l1t_htt->GetXaxis()->SetTitle("L1T HTT [GeV]");
   l1t_htt->GetYaxis()->SetTitle("Entries");
   l1t_htt->SetDirectory(d);
   
-  l1t_mht = new TH1D("l1t_mht",   "L1T MHT"  , 500,-0.5,495.5);
+  l1t_mht = new TH1D("l1t_mht",   "L1T MHT"  , 500,0,500);
   l1t_mht->GetXaxis()->SetTitle("L1T MHT [GeV]");
   l1t_mht->GetYaxis()->SetTitle("Entries");
   l1t_mht->SetDirectory(d);
@@ -81,12 +81,12 @@ L1TPlots::L1TPlots(TDirectory* d){
   nJets_forward->GetYaxis()->SetTitle("Entries");
   nJets_forward->SetDirectory(d);
   
-  dijet_pt0 = new TH1D("dijet_pt0 ","dijet_pt0", 500,-0.5,495.5);
+  dijet_pt0 = new TH1D("dijet_pt0 ","dijet_pt0", 500, 0,500);
   dijet_pt0->GetXaxis()->SetTitle("Dijet p_{#perp}^{Jet0}");  
   dijet_pt0->GetYaxis()->SetTitle("Entries");
   dijet_pt0->SetDirectory(d);
   
-  dijet_pt1 = new TH1D("dijet_pt1 ","dijet_pt1", 500,-0.5,495.5);
+  dijet_pt1 = new TH1D("dijet_pt1 ","dijet_pt1", 500,0,500);
   dijet_pt1->GetXaxis()->SetTitle("Dijet p_{#perp}^{Jet1}");  
   dijet_pt1->GetYaxis()->SetTitle("Entries");
   dijet_pt1->SetDirectory(d); 
