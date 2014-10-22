@@ -22,8 +22,20 @@ process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 
 process.hltPathStudies = cms.EDAnalyzer('HLTPathStudies',
 
-  verbose                    = cms.untracked.bool(True),  
+  verbose                    = cms.untracked.bool(False),  
   inputTag_HLTResults        = cms.untracked.InputTag("TriggerResults::TEST"),
+  
+  HLTPaths  = cms.vstring(
+    "HLT_PFHT350_PFMET120_NoiseCleaned_v1",
+    "HLT_PFHT900_v1",
+    "HLT_PFMET170_NoiseCleaned_v1",
+    "HLT_PFMET_PFVBF_Unseeded_v1",
+    "HLT_L1ETM70_PFMET_PFVBF_v1",
+    "HLT_CaloMET_CaloVBF_Unseeded_v1",
+    "HLT_L1ETM70_CaloMET_CaloVBF_v1",
+    #"HLT_CaloMET_CaloVBF_v1",
+    #"HLT_PFMET_PFVBF_v1",
+  ), 
 
   inputTag_L1EmParticle_Isolated    = cms.untracked.InputTag("l1ExtraLayer2","Isolated"   ),
   inputTag_L1EmParticle_NonIsolated = cms.untracked.InputTag("l1ExtraLayer2","NonIsolated"),
