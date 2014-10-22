@@ -41,9 +41,12 @@ HLTPathStudies::HLTPathStudies(const edm::ParameterSet& pset){
   hEventCount = new TH1I("EventCount","EventCount",1,0.5,1.5); hEventCount->SetDirectory(fOut);
 
   // Other histograms
-  hHLTPathCount = new TH1I("HLTPathCount","HLTPathCount",2,0.5,2.5); hEventCount->SetDirectory(fOut);
-  hHLTPathCount->GetXaxis()->SetBinLabel(1,"HLT_PFMET_PFVBF_v1");
-  hHLTPathCount->GetXaxis()->SetBinLabel(2,"HLT_CaloMET_CaloVBF_v1");
+  m_hltAlgos = pset.getParameter< vector<string> >("HLTPaths");
+  
+  hHLTPathCount = new TH1I("HLTPathCount","HLTPathCount",m_hltAlgos.size(),0.5,m_hltAlgos.size()+0.5); hEventCount->SetDirectory(fOut);
+  for(unsigned i=0; i<m_hltAlgos.size(); i++){
+    hHLTPathCount->GetXaxis()->SetBinLabel(i+1,m_hltAlgos[i].c_str());
+  }
   hHLTPathCount->SetDirectory(fOut);
   
   hHLT_jet_eta =  new TH1D("HLT_jet_eta","HLT_Jet_eta",100,-5.0,5.0); hHLT_jet_eta->SetDirectory(fOut);
@@ -166,20 +169,22 @@ void HLTPathStudies::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
   
   // Getting HLT data
   HLTEventData myHLTData(ps,iEvent);
+  HLTPlotsData evData(&myHLTData);
+
   if(m_verbose){myHLTData.print();}
 
+  // Global object plots
+  if(myHLTData.getPathFired("HLT_PFMET_PFVBF_Unseeded_v1")){
+    vector<HLTObject*> jets = myHLTData.getPathData("HLT_PFMET_PFVBF_Unseeded_v1")->getFilterObjects("hltDiPFJet20MJJ500AllJetsDEta2p5");
+    for(unsigned i=0; i<jets.size(); i++){hHLT_jet_eta->Fill(jets[i]->eta());}
+  }
+  
   // Filling HLT fire counts
-  HLTPlotsData evData(&myHLTData);
-  if(myHLTData.getPathFired("HLT_PFMET_PFVBF_v1")){
-    hHLTPathCount->Fill(1);
-    
-    vector<HLTObject*> jets = myHLTData.getPathData("HLT_PFMET_PFVBF_v1")->getFilterObjects("hltDiPFJet10");
-    
-    for(unsigned i=0; i<jets.size(); i++){
-      hHLT_jet_eta->Fill(jets[i]->eta());
+  for(unsigned i=0; i<m_hltAlgos.size(); i++){
+    if(myHLTData.getPathFired(m_hltAlgos[i])){
+      hHLTPathCount->Fill(i+1);
     }
   }
-  if(myHLTData.getPathFired("HLT_CaloMET_CaloVBF_v1")){hHLTPathCount->Fill(2);}
 
   // Evaluating HLT algorithms
   for(auto i=m_algos.begin(); i<m_algos.end(); i++){
