@@ -68,6 +68,7 @@ private:
   edm::InputTag m_InputTag_EcalTriggerPrimitives; 
   edm::InputTag m_InputTag_HcalTriggerPrimitives;
   
+  std::vector<std::string> m_hltAlgos;
   std::vector< std::pair<HLTAlgo*,HLTPlots*> > m_algos;
   
   TFile* fOut;
