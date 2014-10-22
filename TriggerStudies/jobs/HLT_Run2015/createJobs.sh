@@ -59,3 +59,8 @@ mkdir PU40bx25_QCD_Pt-800to1000
 cd PU40bx25_QCD_Pt-800to1000
 python $HEPFWSYS/bin/hepfwMakeBatchJobs.py --inputFileList ../../../../Samples/python/Chayanit_TrigStudies_Run2015_L1T_HLT_v2/PU40bx25_QCD_Pt-800to1000_Tune4C_13TeV_pythia8_cfi.py --inputConfigFile ../../..//test/HLTStudies_ForBatch_cfg.py --numberOfJobs 40
 cd ..
+
+mkdir PU40bx25_QCD_Pt-80to120
+cd PU40bx25_QCD_Pt-80to120
+python $HEPFWSYS/bin/hepfwMakeBatchJobs.py --inputFileList ../../../../Samples/python/Chayanit_TrigStudies_Run2015_L1T_HLT_v2/PU40bx25_QCD_Pt-80to120_Tune4C_13TeV_pythia8_cfi.py --inputConfigFile ../../../test/HLTStudies_ForBatch_cfg.py --numberOfJobs 40
+cd ..

@@ -47,3 +47,7 @@ cd ..
 cd PU40bx25_QCD_Pt-800to1000
 ./submitJobs.sh
 cd ..
+
+cd PU40bx25_QCD_Pt-80to120
+./submitJobs.sh
+cd ..
