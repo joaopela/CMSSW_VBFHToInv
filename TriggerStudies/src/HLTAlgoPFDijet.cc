@@ -29,12 +29,12 @@ HLTAlgoPFDijet::~HLTAlgoPFDijet(){}
 
 bool HLTAlgoPFDijet::evaluate(HLTEventData *hltData){
   
-  if(!hltData->getPathFired("HLT_PFMET_PFVBF_v1")){return false;}
+  if(!hltData->getPathFired("HLT_PFMET_PFVBF_Unseeded_v1")){return false;}
   
   bool out = false;
   
-  HLTPathData* thePath = hltData->getPathData("HLT_PFMET_PFVBF_v1");  
-  vector<HLTDiobject*> myDijet = thePath->getFilterDiobjects("hltDiPFJet10");
+  HLTPathData* thePath = hltData->getPathData("HLT_PFMET_PFVBF_Unseeded_v1");  
+  vector<HLTDiobject*> myDijet = thePath->getFilterDiobjects("hltDiPFJet20MJJ500AllJetsDEta2p5");
   
   for(unsigned i=0; i<myDijet.size(); i++){
     
