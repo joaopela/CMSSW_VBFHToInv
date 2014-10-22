@@ -47,7 +47,7 @@ bool HLTObject::isMET(){
 bool HLTObject::passedFilter(std::string filterName){
   
   bool out = false;
-  for(unsigned i=0; i<m_types.size(); i++){
+  for(unsigned i=0; i<m_filters.size(); i++){
     if(m_filters[i]==filterName){
       out = true;
       break;
