@@ -27,6 +27,9 @@ public:
   void setDijetMinDEta(double deta);
   void setDijetMaxDPhi(double dphi);
   
+  void setBasePathFilter(std::string basePathName);
+  void setBaseJetFilter (std::string baseJetFilter);
+  
 private:
   
   bool   m_vbf;
@@ -35,6 +38,9 @@ private:
   double m_mjj;
   double m_deta;
   double m_dphi;
+  
+  std::string m_basePathName;
+  std::string m_baseJetFilter;
   
 };
 

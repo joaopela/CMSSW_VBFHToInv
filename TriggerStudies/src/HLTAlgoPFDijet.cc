@@ -23,18 +23,22 @@ HLTAlgoPFDijet::HLTAlgoPFDijet(std::string algoName){
   m_mjj  = 0;
   m_deta = 0;
   m_dphi = 100;
+  
+  m_basePathName  = "HLT_PFMET_PFVBF_Unseeded_v1";
+  m_baseJetFilter = "hltDiPFJet20MJJ500AllJetsDEta2p5";
+  
 }
 
 HLTAlgoPFDijet::~HLTAlgoPFDijet(){}
 
 bool HLTAlgoPFDijet::evaluate(HLTEventData *hltData){
   
-  if(!hltData->getPathFired("HLT_PFMET_PFVBF_Unseeded_v1")){return false;}
+  if(!hltData->getPathFired(m_basePathName)){return false;}
   
   bool out = false;
   
-  HLTPathData* thePath = hltData->getPathData("HLT_PFMET_PFVBF_Unseeded_v1");  
-  vector<HLTDiobject*> myDijet = thePath->getFilterDiobjects("hltDiPFJet20MJJ500AllJetsDEta2p5");
+  HLTPathData* thePath = hltData->getPathData(m_basePathName);
+  vector<HLTDiobject*> myDijet = thePath->getFilterDiobjects(m_baseJetFilter);
   
   for(unsigned i=0; i<myDijet.size(); i++){
     
@@ -82,4 +86,12 @@ void HLTAlgoPFDijet::setDijetMinDEta(double deta){
 
 void HLTAlgoPFDijet::setDijetMaxDPhi(double dphi){
   m_dphi = dphi;
+}
+
+void HLTAlgoPFDijet::setBasePathFilter(std::string basePathName){
+  m_basePathName = basePathName;
+}
+
+void HLTAlgoPFDijet::setBaseJetFilter (std::string baseJetFilter){
+  m_baseJetFilter = baseJetFilter;
 }
