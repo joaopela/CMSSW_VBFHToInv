@@ -96,6 +96,7 @@ HLTCtrlPathStudies::HLTCtrlPathStudies(const edm::ParameterSet& pset){
       for(unsigned iDijetDEta=0; iDijetDEta<cutsDijetDEta.size(); iDijetDEta++){
 
         string algoName = Form("HLT_DijetVBF%.0f-%.0f_DEta%.1f_MJJ%.0f",cutsDijetPt[iDijetPt].first,cutsDijetPt[iDijetPt].second,cutsDijetDEta[iDijetDEta],cutsDijetMjj[iDijetMjj]);
+        cout << "Creating HLT algo: " << algoName.c_str() << endl;
         
         // New HLT algo declaration
         HLTAlgoPFDijet* myAlgo  = new HLTAlgoPFDijet(algoName);
@@ -184,10 +185,10 @@ void HLTCtrlPathStudies::analyze(const edm::Event& iEvent, const edm::EventSetup
 
   // This is added to make ETM70+HLT analysis
   HLTPlotsData evData;
-  evData.setBasePathNameCaloObjects("HLT_PFMET_PFVBF_Unseeded_v1");
+  evData.setBasePathNameCaloObjects("HLT_L1ETM70_PFMET_PFVBF_v1");
   evData.setBaseJetFilterCaloJets  ("hltDiCaloJet20MJJ500AllJetsDEta2p5");
   evData.setBaseJetFilterCaloMET   ("hltMETCleanUsingJetID80");
-  evData.setBasePathNamePFObjects  ("HLT_PFMET_PFVBF_Unseeded_v1");
+  evData.setBasePathNamePFObjects  ("HLT_L1ETM70_PFMET_PFVBF_v1");
   evData.setBaseJetFilterPFJets    ("hltDiPFJet20MJJ500AllJetsDEta2p5");
   evData.setBaseJetFilterPFMET     ("hltPFMET40");
   evData.getData(&myHLTData);
