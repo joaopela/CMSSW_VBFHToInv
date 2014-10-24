@@ -95,6 +95,11 @@ HLTPathStudies::HLTPathStudies(const edm::ParameterSet& pset){
         
         // New HLT algo declaration
         HLTAlgoPFDijet* myAlgo  = new HLTAlgoPFDijet(algoName);
+        
+        // This is added to make ETM70+HLT analysis
+        myAlgo->setBasePathFilter("HLT_L1ETM70_PFMET_PFVBF_v1");
+        myAlgo->setBaseJetFilter ("hltDiPFJet20MJJ500AllJetsDEta2p5");
+        
         myAlgo->setVBF         (true);
         myAlgo->setJetsMinPt   (cutsDijetPt[iDijetPt].first,cutsDijetPt[iDijetPt].second);
         myAlgo->setDijetMinDEta(cutsDijetDEta[iDijetDEta]);
@@ -169,13 +174,25 @@ void HLTPathStudies::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
   
   // Getting HLT data
   HLTEventData myHLTData(ps,iEvent);
-  HLTPlotsData evData(&myHLTData);
+  
+  // Commented for ETM70+HLT analysis
+  // HLTPlotsData evData(&myHLTData);
 
+  // This is added to make ETM70+HLT analysis
+  HLTPlotsData evData;
+  evData.setBasePathNameCaloObjects("HLT_L1ETM70_PFMET_PFVBF_v1");
+  evData.setBaseJetFilterCaloJets  ("hltDiCaloJet20MJJ500AllJetsDEta2p5");
+  evData.setBaseJetFilterCaloMET   ("hltMETCleanUsingJetID80");
+  evData.setBasePathNamePFObjects  ("HLT_L1ETM70_PFMET_PFVBF_v1");
+  evData.setBaseJetFilterPFJets    ("hltDiPFJet20MJJ500AllJetsDEta2p5");
+  evData.setBaseJetFilterPFMET     ("hltPFMET40");
+  evData.getData(&myHLTData);
+  
   if(m_verbose){myHLTData.print();}
 
   // Global object plots
-  if(myHLTData.getPathFired("HLT_PFMET_PFVBF_Unseeded_v1")){
-    vector<HLTObject*> jets = myHLTData.getPathData("HLT_PFMET_PFVBF_Unseeded_v1")->getFilterObjects("hltDiPFJet20MJJ500AllJetsDEta2p5");
+  if(myHLTData.getPathFired("HLT_L1ETM70_PFMET_PFVBF_v1")){
+    vector<HLTObject*> jets = myHLTData.getPathData("HLT_L1ETM70_PFMET_PFVBF_v1")->getFilterObjects("hltDiPFJet20MJJ500AllJetsDEta2p5");
     for(unsigned i=0; i<jets.size(); i++){hHLT_jet_eta->Fill(jets[i]->eta());}
   }
   
