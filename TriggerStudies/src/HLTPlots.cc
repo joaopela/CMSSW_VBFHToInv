@@ -10,18 +10,41 @@ HLTPlotsData::HLTPlotsData(){
 }
 
 HLTPlotsData::HLTPlotsData(HLTEventData* data){
-  
+ 
   this->init();
+  this->getData(data);
+}
+
+void HLTPlotsData::init(){
+  pf_met.first           = false;
+  pf_dijet_maxDEta.first = false;
+  pf_dijet_maxMjj.first  = false;
+  
+  calo_met.first            = false;
+  calo_dijet_maxDEta.first  = false;
+  calo_dijet_maxMjj.first   = false;
+  
+  m_BasePathNamePFObjects = "HLT_PFMET_PFVBF_Unseeded_v1";
+  m_BaseJetFilterPFJets   = "hltDiPFJet20MJJ500AllJetsDEta2p5";
+  m_BaseJetFilterPFMET    = "hltPFMET40";
+  
+  m_BasePathNameCaloObjects = "HLT_PFMET_PFVBF_Unseeded_v1";
+  m_BaseJetFilterCaloJets   = "hltDiCaloJet20MJJ500AllJetsDEta2p5";
+  m_BaseJetFilterCaloMET    = "hltMETCleanUsingJetID40";
+  
+}
+
+void HLTPlotsData::getData(HLTEventData* data){
   
   // Getting variables from loose pf trigger
-  if(data->getPathFired("HLT_PFMET_PFVBF_Unseeded_v1")){
+  if(data->getPathFired(m_BasePathNamePFObjects)){
     
-    HLTPathData* thePath = data->getPathData("HLT_PFMET_PFVBF_Unseeded_v1");
+    HLTPathData* thePath = data->getPathData(m_BasePathNamePFObjects);
     
     pf_met.first  = true;
-    pf_met.second = thePath->getFilterObjects("hltPFMET40").at(0)->pt();
+    pf_met.second = thePath->getFilterObjects(m_BaseJetFilterPFMET).at(0)->pt();
     
-    std::vector<HLTDiobject*> myDijet = thePath->getFilterDiobjects("hltDiPFJet20MJJ500AllJetsDEta2p5");
+    std::vector<HLTDiobject*> myDijet = thePath->getFilterDiobjects(m_BaseJetFilterPFJets);
     
     if(myDijet.size()>0){
       pf_dijet_maxDEta.first  = true;
@@ -39,14 +62,14 @@ HLTPlotsData::HLTPlotsData(HLTEventData* data){
   }
   
   // Getting variables from loose calo trigger
-  if(data->getPathFired("HLT_PFMET_PFVBF_Unseeded_v1")){
+  if(data->getPathFired(m_BasePathNameCaloObjects)){
     
-    HLTPathData* thePath = data->getPathData("HLT_PFMET_PFVBF_Unseeded_v1");
+    HLTPathData* thePath = data->getPathData(m_BasePathNameCaloObjects);
     
     calo_met.first  = true; 
-    calo_met.second = thePath->getFilterObjects("hltMETCleanUsingJetID40").at(0)->pt();
+    calo_met.second = thePath->getFilterObjects(m_BaseJetFilterCaloMET).at(0)->pt();
     
-    std::vector<HLTDiobject*> myDijet = thePath->getFilterDiobjects("hltDiCaloJet20MJJ500AllJetsDEta2p5");
+    std::vector<HLTDiobject*> myDijet = thePath->getFilterDiobjects(m_BaseJetFilterCaloJets);
     if(myDijet.size()>0){
       calo_dijet_maxDEta.first  = true;
       calo_dijet_maxDEta.second = myDijet[0]->deta();
@@ -63,14 +86,28 @@ HLTPlotsData::HLTPlotsData(HLTEventData* data){
   }
 }
 
-void HLTPlotsData::init(){
-  pf_met.first           = false;
-  pf_dijet_maxDEta.first = false;
-  pf_dijet_maxMjj.first  = false;
-  
-  calo_met.first            = false;
-  calo_dijet_maxDEta.first  = false;
-  calo_dijet_maxMjj.first   = false;
+void HLTPlotsData::setBasePathNamePFObjects(std::string pathName){
+  m_BasePathNamePFObjects = pathName;
+}
+
+void HLTPlotsData::setBaseJetFilterPFJets  (std::string filterName){
+  m_BaseJetFilterPFJets = filterName;
+}
+
+void HLTPlotsData::setBaseJetFilterPFMET   (std::string filterName){
+  m_BaseJetFilterPFMET = filterName;
+}
+
+void HLTPlotsData::setBasePathNameCaloObjects(std::string pathName){
+  m_BasePathNameCaloObjects = pathName;
+}
+
+void HLTPlotsData::setBaseJetFilterCaloJets  (std::string filterName){
+  m_BaseJetFilterCaloJets = filterName;
+}
+
+void HLTPlotsData::setBaseJetFilterCaloMET   (std::string filterName){
+  m_BaseJetFilterCaloMET = filterName;
 }
 
 //##########################################################

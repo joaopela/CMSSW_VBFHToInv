@@ -19,8 +19,16 @@ public:
   HLTPlotsData();
   HLTPlotsData(HLTEventData* data);
 
-  void init();
+  void getData(HLTEventData* data);
   
+  void setBasePathNamePFObjects(std::string pathName);
+  void setBaseJetFilterPFJets  (std::string filterName);
+  void setBaseJetFilterPFMET   (std::string filterName);
+
+  void setBasePathNameCaloObjects(std::string pathName);
+  void setBaseJetFilterCaloJets  (std::string filterName);
+  void setBaseJetFilterCaloMET   (std::string filterName);
+
   std::pair<bool,double> pf_met;
   std::pair<bool,double> pf_dijet_maxDEta;
   std::pair<bool,double> pf_dijet_maxMjj;
@@ -28,6 +36,18 @@ public:
   std::pair<bool,double> calo_met;
   std::pair<bool,double> calo_dijet_maxDEta;
   std::pair<bool,double> calo_dijet_maxMjj;
+  
+private:
+  
+  void init();
+  
+  std::string m_BasePathNamePFObjects;
+  std::string m_BaseJetFilterPFJets;
+  std::string m_BaseJetFilterPFMET;
+  
+  std::string m_BasePathNameCaloObjects;
+  std::string m_BaseJetFilterCaloJets;
+  std::string m_BaseJetFilterCaloMET;
   
 };
 
