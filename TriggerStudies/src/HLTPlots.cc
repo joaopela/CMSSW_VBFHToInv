@@ -40,9 +40,14 @@ void HLTPlotsData::getData(HLTEventData* data){
   if(data->getPathFired(m_BasePathNamePFObjects)){
     
     HLTPathData* thePath = data->getPathData(m_BasePathNamePFObjects);
+    vector<HLTObject*> met = thePath->getFilterObjects(m_BaseJetFilterPFMET);
     
-    pf_met.first  = true;
-    pf_met.second = thePath->getFilterObjects(m_BaseJetFilterPFMET).at(0)->pt();
+    if(met.size()==1){
+      pf_met.first  = true;
+      pf_met.second = met.at(0)->pt();
+    }else{
+      cout << "ERROR: Not filling PFMET. Found " << met.size() << " products for filter: " << m_BaseJetFilterPFMET << endl;
+    }
     
     std::vector<HLTDiobject*> myDijet = thePath->getFilterDiobjects(m_BaseJetFilterPFJets);
     
@@ -65,9 +70,14 @@ void HLTPlotsData::getData(HLTEventData* data){
   if(data->getPathFired(m_BasePathNameCaloObjects)){
     
     HLTPathData* thePath = data->getPathData(m_BasePathNameCaloObjects);
+    vector<HLTObject*> met = thePath->getFilterObjects(m_BaseJetFilterCaloMET);
     
-    calo_met.first  = true; 
-    calo_met.second = thePath->getFilterObjects(m_BaseJetFilterCaloMET).at(0)->pt();
+    if(met.size()==1){
+      calo_met.first  = true; 
+      calo_met.second = met.at(0)->pt();
+    }else{
+      cout << "ERROR: Not filling CaloMET. Found " << met.size() << " products for filter: " << m_BaseJetFilterCaloMET << endl;
+    }
     
     std::vector<HLTDiobject*> myDijet = thePath->getFilterDiobjects(m_BaseJetFilterCaloJets);
     if(myDijet.size()>0){
