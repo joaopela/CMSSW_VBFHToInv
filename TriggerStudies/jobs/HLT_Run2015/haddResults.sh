@@ -12,4 +12,5 @@ hadd PU40bx25_QCD_Pt-50to80.root PU40bx25_QCD_Pt-50to80/HLTPathStudiesResults*.r
 hadd PU40bx25_QCD_Pt-600to800.root PU40bx25_QCD_Pt-600to800/HLTPathStudiesResults*.root
 hadd PU40bx25_QCD_Pt-800to1000.root PU40bx25_QCD_Pt-800to1000/HLTPathStudiesResults*.root
 hadd PU40bx25_QCD_Pt-80to120.root PU40bx25_QCD_Pt-80to120/HLTPathStudiesResults*.root
+hadd PU40bx25_QCD_Pt-1800.root PU40bx25_QCD_Pt-1800/HLTPathStudiesResults*.root
 hadd PU40bx25_NeutrinoGun.root PU40bx25_NeutrinoGun/HLTPathStudiesResults*.root
