@@ -58,6 +58,8 @@ private:
   bool m_verbose;
   bool m_doL1TAnalysis;
   
+  double valMin_l1Seed_ETM;
+  
   edm::ParameterSet ps;
   
   edm::InputTag m_InputTag_L1GTReadoutRecord;
@@ -75,7 +77,9 @@ private:
   
   TH1I* hEventCount;
   TH1I* hHLTPathCount;
+  
   TH1D* hHLT_jet_eta;
+  TH1D* hHLT_L1TETM;
   
 };
 

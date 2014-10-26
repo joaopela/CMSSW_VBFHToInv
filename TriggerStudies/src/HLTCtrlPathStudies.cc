@@ -49,7 +49,11 @@ HLTCtrlPathStudies::HLTCtrlPathStudies(const edm::ParameterSet& pset){
   }
   hHLTPathCount->SetDirectory(fOut);
   
-  hHLT_jet_eta =  new TH1D("HLT_jet_eta","HLT_Jet_eta",100,-5.0,5.0); hHLT_jet_eta->SetDirectory(fOut);
+  hHLT_jet_eta = new TH1D("HLT_jet_eta","HLT_Jet_eta",100,-5.0,5.0); hHLT_jet_eta->SetDirectory(fOut);
+  hHLT_L1TETM  = new TH1D("HLT_L1TETM", "HLT_L1TETM", 500,   0,500); hHLT_L1TETM ->SetDirectory(fOut);
+  
+  // Other variables
+  valMin_l1Seed_ETM = pset.getUntrackedParameter<double>("valMin_l1Seed_ETM",50);
   
   // #################################################################
   // Initiating plots and algos for no L1T seeds
@@ -139,8 +143,28 @@ void HLTCtrlPathStudies::analyze(const edm::Event& iEvent, const edm::EventSetup
 
   // Counting the current event
   hEventCount->Fill(1);
+
+  // Evaluation of L1T conditions
+  bool l1Seed_ETM_X  = false;
+  L1ExtraPayload evL1Extra(ps,iEvent);
+  if(evL1Extra.m_L1EtMissParticle_MET->begin()->et()>=valMin_l1Seed_ETM){l1Seed_ETM_X = true;}
+
+  // Getting HLT data
+  HLTEventData myHLTData(ps,iEvent);
   
-  /*
+  // Filling HLT fire counts
+  for(unsigned i=0; i<m_hltAlgos.size(); i++){
+    if(myHLTData.getPathFired(m_hltAlgos[i])){
+      hHLTPathCount->Fill(i+1);
+    }
+  }
+  
+  // Veto processing/filling event if ETM50 did not file
+  if(!l1Seed_ETM_X){return;}
+  
+  hHLT_L1TETM->Fill(evL1Extra.m_L1EtMissParticle_MET->begin()->et());
+  
+  /*hHLT_L1TETM
   bool l1Seed_ETM70       = false;
   bool l1Seed_Dijet_ETM50 = false;
   bool l1Seed_Dijet_Jet96 = false;
@@ -149,8 +173,7 @@ void HLTCtrlPathStudies::analyze(const edm::Event& iEvent, const edm::EventSetup
   if(m_doL1TAnalysis){
     
     // Extracting L1Extra information
-    L1ExtraPayload evL1Extra(ps,iEvent);
-    l1extra::L1JetParticleCollection *l1tJets = evL1Extra.getL1TAllJets();
+
     
     // ######################################################################################################
     // Determining what L1 seeds (ETM70 and proposed) would have fired
@@ -180,48 +203,40 @@ void HLTCtrlPathStudies::analyze(const edm::Event& iEvent, const edm::EventSetup
   }
   */
   
-  // Getting HLT data
-  HLTEventData myHLTData(ps,iEvent);
+
   
   // Commented for ETM70+HLT analysis
   // HLTPlotsData evData(&myHLTData);
 
   // This is added to make ETM70+HLT analysis
   HLTPlotsData evData;
-  evData.setBasePathNameCaloObjects("HLT_L1ETM70_PFMET_PFVBF_v1");
-  evData.setBaseJetFilterCaloJets  ("hltDiCaloJet20MJJ500AllJetsDEta2p5");
-  evData.setBaseJetFilterCaloMET   ("hltMETCleanUsingJetID80");
-  evData.setBasePathNamePFObjects  ("HLT_L1ETM70_PFMET_PFVBF_v1");
-  evData.setBaseJetFilterPFJets    ("hltDiPFJet20MJJ500AllJetsDEta2p5");
-  evData.setBaseJetFilterPFMET     ("hltPFMET40");
-  evData.getData(&myHLTData);
-  // no L1 seeded
-  //evData.setBasePathNameCaloObjects("HLT_CaloMET_CaloVBF_Unseeded_v1");
+  //evData.setBasePathNameCaloObjects("HLT_L1ETM70_PFMET_PFVBF_v1");
   //evData.setBaseJetFilterCaloJets  ("hltDiCaloJet20MJJ500AllJetsDEta2p5");
-  //evData.setBaseJetFilterCaloMET   ("hltMETCleanUsingJetID40");
-  //evData.setBasePathNamePFObjects  ("HLT_PFMET_PFVBF_Unseeded_v1");
+  //evData.setBaseJetFilterCaloMET   ("hltMETCleanUsingJetID80");
+  //evData.setBasePathNamePFObjects  ("HLT_L1ETM70_PFMET_PFVBF_v1");
   //evData.setBaseJetFilterPFJets    ("hltDiPFJet20MJJ500AllJetsDEta2p5");
   //evData.setBaseJetFilterPFMET     ("hltPFMET40");
   //evData.getData(&myHLTData);
+  // no L1 seeded
+  evData.setBasePathNameCaloObjects("HLT_CaloMET_CaloVBF_Unseeded_v1");
+  evData.setBaseJetFilterCaloJets  ("hltDiCaloJet20MJJ500AllJetsDEta2p5");
+  evData.setBaseJetFilterCaloMET   ("hltMETCleanUsingJetID40");
+  evData.setBasePathNamePFObjects  ("HLT_PFMET_PFVBF_Unseeded_v1");
+  evData.setBaseJetFilterPFJets    ("hltDiPFJet20MJJ500AllJetsDEta2p5");
+  evData.setBaseJetFilterPFMET     ("hltPFMET40");
+  evData.getData(&myHLTData);
   
   if(m_verbose){myHLTData.print();}
 
   // Global object plots
-  if(myHLTData.getPathFired("HLT_L1ETM70_PFMET_PFVBF_v1")){
-    vector<HLTObject*> jets = myHLTData.getPathData("HLT_L1ETM70_PFMET_PFVBF_v1")->getFilterObjects("hltDiPFJet20MJJ500AllJetsDEta2p5");
-    for(unsigned i=0; i<jets.size(); i++){hHLT_jet_eta->Fill(jets[i]->eta());}
-  }
-  // no L1 seeded 
-  //if(myHLTData.getPathFired("HLT_PFMET_PFVBF_Unseeded_v1")){
-  //  vector<HLTObject*> jets = myHLTData.getPathData("HLT_PFMET_PFVBF_Unseeded_v1")->getFilterObjects("hltDiPFJet20MJJ500AllJetsDEta2p5");
+  //if(myHLTData.getPathFired("HLT_L1ETM70_PFMET_PFVBF_v1")){
+  //  vector<HLTObject*> jets = myHLTData.getPathData("HLT_L1ETM70_PFMET_PFVBF_v1")->getFilterObjects("hltDiPFJet20MJJ500AllJetsDEta2p5");
   //  for(unsigned i=0; i<jets.size(); i++){hHLT_jet_eta->Fill(jets[i]->eta());}
   //}
-  
-  // Filling HLT fire counts
-  for(unsigned i=0; i<m_hltAlgos.size(); i++){
-    if(myHLTData.getPathFired(m_hltAlgos[i])){
-      hHLTPathCount->Fill(i+1);
-    }
+  // no L1 seeded 
+  if(myHLTData.getPathFired("HLT_PFMET_PFVBF_Unseeded_v1")){
+   vector<HLTObject*> jets = myHLTData.getPathData("HLT_PFMET_PFVBF_Unseeded_v1")->getFilterObjects("hltDiPFJet20MJJ500AllJetsDEta2p5");
+   for(unsigned i=0; i<jets.size(); i++){hHLT_jet_eta->Fill(jets[i]->eta());}
   }
 
   // Evaluating HLT algorithms
