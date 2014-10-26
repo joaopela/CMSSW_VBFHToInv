@@ -31,7 +31,7 @@ process.hltCtrlPathStudies = cms.EDAnalyzer('HLTCtrlPathStudies',
 
   verbose                    = cms.untracked.bool(False),  
   inputTag_HLTResults        = cms.untracked.InputTag("TriggerResults::TEST"),
-  valMin_l1Seed_ETM          = cms.untracked.double(30),
+  valMin_l1Seed_ETM          = cms.untracked.double(50),
 
   HLTPaths  = cms.vstring(
     "HLT_PFHT350_PFMET120_NoiseCleaned_v1",
