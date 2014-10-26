@@ -65,10 +65,10 @@ HLTCtrlPathStudies::HLTCtrlPathStudies(const edm::ParameterSet& pset){
   cutsDijetPt.push_back(pair<double,double>( 60,60));
   cutsDijetPt.push_back(pair<double,double>( 50,40));
   cutsDijetPt.push_back(pair<double,double>( 60,40));
-  cutsDijetPt.push_back(pair<double,double>( 70,40));
-  cutsDijetPt.push_back(pair<double,double>( 80,40));
-  cutsDijetPt.push_back(pair<double,double>( 90,40));
-  cutsDijetPt.push_back(pair<double,double>(100,40));
+  //cutsDijetPt.push_back(pair<double,double>( 70,40));
+  //cutsDijetPt.push_back(pair<double,double>( 80,40));
+  //cutsDijetPt.push_back(pair<double,double>( 90,40));
+  //cutsDijetPt.push_back(pair<double,double>(100,40));
   
   vector<double> cutsDijetMjj;
   cutsDijetMjj.push_back(  0);
@@ -76,9 +76,9 @@ HLTCtrlPathStudies::HLTCtrlPathStudies(const edm::ParameterSet& pset){
   cutsDijetMjj.push_back(600);
   cutsDijetMjj.push_back(700);
   cutsDijetMjj.push_back(800);
-  cutsDijetMjj.push_back(900);
-  cutsDijetMjj.push_back(1000);
-  cutsDijetMjj.push_back(1100);
+  //cutsDijetMjj.push_back(900);
+  //cutsDijetMjj.push_back(1000);
+  //cutsDijetMjj.push_back(1100);
   
   vector<double> cutsDijetDEta;
   cutsDijetDEta.push_back(  0);
@@ -87,23 +87,26 @@ HLTCtrlPathStudies::HLTCtrlPathStudies(const edm::ParameterSet& pset){
   cutsDijetDEta.push_back(3.5);
   cutsDijetDEta.push_back(3.7);
   cutsDijetDEta.push_back(3.9);
-  cutsDijetDEta.push_back(4.1);
-  cutsDijetDEta.push_back(4.3);
-  cutsDijetDEta.push_back(4.5);
+  //cutsDijetDEta.push_back(4.1);
+  //cutsDijetDEta.push_back(4.3);
+  //cutsDijetDEta.push_back(4.5);
   
   for(unsigned iDijetPt=0; iDijetPt<cutsDijetPt.size(); iDijetPt++){
     for(unsigned iDijetMjj=0; iDijetMjj<cutsDijetMjj.size(); iDijetMjj++){
       for(unsigned iDijetDEta=0; iDijetDEta<cutsDijetDEta.size(); iDijetDEta++){
 
         string algoName = Form("HLT_DijetVBF%.0f-%.0f_DEta%.1f_MJJ%.0f",cutsDijetPt[iDijetPt].first,cutsDijetPt[iDijetPt].second,cutsDijetDEta[iDijetDEta],cutsDijetMjj[iDijetMjj]);
-        cout << "Creating HLT algo: " << algoName.c_str() << endl;
+        //cout << "Creating HLT algo: " << algoName.c_str() << endl;
         
         // New HLT algo declaration
         HLTAlgoPFDijet* myAlgo  = new HLTAlgoPFDijet(algoName);
         
         // This is added to make ETM70+HLT analysis
-        myAlgo->setBasePathFilter("HLT_PFMET_PFVBF_Unseeded_v1");
-        myAlgo->setBaseJetFilter ("hltDiPFJet20MJJ500AllJetsDEta2p5");
+	myAlgo->setBasePathFilter("HLT_L1ETM70_PFMET_PFVBF_v1");
+	myAlgo->setBaseJetFilter ("hltDiPFJet20MJJ500AllJetsDEta2p5");
+	// no L1 seeded
+        //myAlgo->setBasePathFilter("HLT_PFMET_PFVBF_Unseeded_v1");
+        //myAlgo->setBaseJetFilter ("hltDiPFJet20MJJ500AllJetsDEta2p5");
         
         myAlgo->setVBF         (true);
         myAlgo->setJetsMinPt   (cutsDijetPt[iDijetPt].first,cutsDijetPt[iDijetPt].second);
@@ -192,14 +195,27 @@ void HLTCtrlPathStudies::analyze(const edm::Event& iEvent, const edm::EventSetup
   evData.setBaseJetFilterPFJets    ("hltDiPFJet20MJJ500AllJetsDEta2p5");
   evData.setBaseJetFilterPFMET     ("hltPFMET40");
   evData.getData(&myHLTData);
+  // no L1 seeded
+  //evData.setBasePathNameCaloObjects("HLT_CaloMET_CaloVBF_Unseeded_v1");
+  //evData.setBaseJetFilterCaloJets  ("hltDiCaloJet20MJJ500AllJetsDEta2p5");
+  //evData.setBaseJetFilterCaloMET   ("hltMETCleanUsingJetID40");
+  //evData.setBasePathNamePFObjects  ("HLT_PFMET_PFVBF_Unseeded_v1");
+  //evData.setBaseJetFilterPFJets    ("hltDiPFJet20MJJ500AllJetsDEta2p5");
+  //evData.setBaseJetFilterPFMET     ("hltPFMET40");
+  //evData.getData(&myHLTData);
   
   if(m_verbose){myHLTData.print();}
 
   // Global object plots
-  if(myHLTData.getPathFired("HLT_PFMET_PFVBF_Unseeded_v1")){
-    vector<HLTObject*> jets = myHLTData.getPathData("HLT_PFMET_PFVBF_Unseeded_v1")->getFilterObjects("hltDiPFJet20MJJ500AllJetsDEta2p5");
+  if(myHLTData.getPathFired("HLT_L1ETM70_PFMET_PFVBF_v1")){
+    vector<HLTObject*> jets = myHLTData.getPathData("HLT_L1ETM70_PFMET_PFVBF_v1")->getFilterObjects("hltDiPFJet20MJJ500AllJetsDEta2p5");
     for(unsigned i=0; i<jets.size(); i++){hHLT_jet_eta->Fill(jets[i]->eta());}
   }
+  // no L1 seeded 
+  //if(myHLTData.getPathFired("HLT_PFMET_PFVBF_Unseeded_v1")){
+  //  vector<HLTObject*> jets = myHLTData.getPathData("HLT_PFMET_PFVBF_Unseeded_v1")->getFilterObjects("hltDiPFJet20MJJ500AllJetsDEta2p5");
+  //  for(unsigned i=0; i<jets.size(); i++){hHLT_jet_eta->Fill(jets[i]->eta());}
+  //}
   
   // Filling HLT fire counts
   for(unsigned i=0; i<m_hltAlgos.size(); i++){
