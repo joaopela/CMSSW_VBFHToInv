@@ -106,11 +106,11 @@ HLTCtrlPathStudies::HLTCtrlPathStudies(const edm::ParameterSet& pset){
         HLTAlgoPFDijet* myAlgo  = new HLTAlgoPFDijet(algoName);
         
         // This is added to make ETM70+HLT analysis
-	myAlgo->setBasePathFilter("HLT_L1ETM70_PFMET_PFVBF_v1");
-	myAlgo->setBaseJetFilter ("hltDiPFJet20MJJ500AllJetsDEta2p5");
+	//myAlgo->setBasePathFilter("HLT_L1ETM70_PFMET_PFVBF_v1");
+	//myAlgo->setBaseJetFilter ("hltDiPFJet20MJJ500AllJetsDEta2p5");
 	// no L1 seeded
-        //myAlgo->setBasePathFilter("HLT_PFMET_PFVBF_Unseeded_v1");
-        //myAlgo->setBaseJetFilter ("hltDiPFJet20MJJ500AllJetsDEta2p5");
+        myAlgo->setBasePathFilter("HLT_PFMET_PFVBF_Unseeded_v1");
+        myAlgo->setBaseJetFilter ("hltDiPFJet20MJJ500AllJetsDEta2p5");
         
         myAlgo->setVBF         (true);
         myAlgo->setJetsMinPt   (cutsDijetPt[iDijetPt].first,cutsDijetPt[iDijetPt].second);
@@ -159,7 +159,7 @@ void HLTCtrlPathStudies::analyze(const edm::Event& iEvent, const edm::EventSetup
     }
   }
   
-  // Veto processing/filling event if ETM50 did not file
+  // Veto processing/filling event if L1_MET > X did not fire
   if(!l1Seed_ETM_X){return;}
   
   hHLT_L1TETM->Fill(evL1Extra.m_L1EtMissParticle_MET->begin()->et());
@@ -202,8 +202,6 @@ void HLTCtrlPathStudies::analyze(const edm::Event& iEvent, const edm::EventSetup
     
   }
   */
-  
-
   
   // Commented for ETM70+HLT analysis
   // HLTPlotsData evData(&myHLTData);
