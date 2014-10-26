@@ -174,6 +174,16 @@ void HLTPathStudies::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
   
   // Getting HLT data
   HLTEventData myHLTData(ps,iEvent);
+
+  // Filling HLT fire counts
+  for(unsigned i=0; i<m_hltAlgos.size(); i++){
+    if(myHLTData.getPathFired(m_hltAlgos[i])){
+      hHLTPathCount->Fill(i+1);
+    }
+  }
+
+  // Veto on HLT_PFMET170
+  if(myHLTData.getPathFired("HLT_PFMET170_NoiseCleaned_v1")){return;}
   
   // Commented for ETM70+HLT analysis
   // HLTPlotsData evData(&myHLTData);
@@ -194,13 +204,6 @@ void HLTPathStudies::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
   if(myHLTData.getPathFired("HLT_L1ETM70_PFMET_PFVBF_v1")){
     vector<HLTObject*> jets = myHLTData.getPathData("HLT_L1ETM70_PFMET_PFVBF_v1")->getFilterObjects("hltDiPFJet20MJJ500AllJetsDEta2p5");
     for(unsigned i=0; i<jets.size(); i++){hHLT_jet_eta->Fill(jets[i]->eta());}
-  }
-  
-  // Filling HLT fire counts
-  for(unsigned i=0; i<m_hltAlgos.size(); i++){
-    if(myHLTData.getPathFired(m_hltAlgos[i])){
-      hHLTPathCount->Fill(i+1);
-    }
   }
 
   // Evaluating HLT algorithms
