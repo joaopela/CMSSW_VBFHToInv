@@ -57,6 +57,7 @@ private:
   
   bool m_verbose;
   bool m_doL1TAnalysis;
+  bool m_vetoHLTPFMET170;
   
   edm::ParameterSet ps;
   
@@ -76,6 +77,7 @@ private:
   TH1I* hEventCount;
   TH1I* hHLTPathCount;
   TH1D* hHLT_jet_eta;
+  TH1D* hHLT_L1TETM;
   
 };
 
