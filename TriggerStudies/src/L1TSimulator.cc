@@ -29,12 +29,12 @@ L1TSimulator::L1TSimulator(){
   m_menuPrescales["L1_SingleMu25er"] =      1;
   m_menuPrescales["L1_SingleMu30er"] =      1;
   
-  m_menuPrescales["L1_DoubleMu0er16_HighQ_WdEta18_OS"] =    1;
-  m_menuPrescales["L1_DoubleMu0er16_HighQ_WdEta18"]    = 2000;
-  m_menuPrescales["L1_DoubleMu_10_0_HighQ"]            =    1;
-  m_menuPrescales["L1_DoubleMu_10_Open"]               = 2000;
-  m_menuPrescales["L1_DoubleMu_10_3p5"]                = 1000;
-  m_menuPrescales["L1_DoubleMu_12_5"]                  =    1;
+  m_menuPrescales["L1_DoubleMu0_Eta1p6_HighQ_WdEta18_OS"] =    1;
+  m_menuPrescales["L1_DoubleMu0_Eta1p6_HighQ_WdEta18"]    = 2000;
+  m_menuPrescales["L1_DoubleMu_10_0_HighQ_WdEta18"]       =    1;
+  m_menuPrescales["L1_DoubleMu_10_Open"]                  = 2000;
+  m_menuPrescales["L1_DoubleMu_10_3p5"]                   = 1000;
+  m_menuPrescales["L1_DoubleMu_12_5"]                     =    1;
   
   m_menuPrescales["L1_TripleMu0_HighQ"]      =  100;
   m_menuPrescales["L1_TripleMu_5_5_3_HighQ"] =    1;
@@ -75,9 +75,9 @@ L1TSimulator::L1TSimulator(){
   m_menuPrescales["L1_DoubleJetC112"] =     1;
   m_menuPrescales["L1_DoubleJetC120"] =     1;
   
-  m_menuPrescales["L1_DoubleTauJetC36er"] = 1000;
-  m_menuPrescales["L1_DoubleTauJet52er"]  =  200;
-  m_menuPrescales["L1_DoubleTauJet68er"]  =    1;
+  m_menuPrescales["L1_DoubleTauJet36er"] = 1000;
+  m_menuPrescales["L1_DoubleTauJet52er"] =  200;
+  m_menuPrescales["L1_DoubleTauJet68er"] =    1;
 
   m_menuPrescales["L1_TripleJet_92_76_64_VBF"] = 1;
   
@@ -86,14 +86,14 @@ L1TSimulator::L1TSimulator(){
   m_menuPrescales["L1_QuadJetC84"] =    1;
 
   // Sum seeds
-  m_menuPrescales["L1_ETM30"]               = 40000;
-  m_menuPrescales["L1_ETM40"]               =  8000;
-  m_menuPrescales["L1_ETM50"]               =  1000;
-  m_menuPrescales["L1_ETM60"]               =   900;
-  m_menuPrescales["L1_ETM70"]               =     1;
-  m_menuPrescales["L1_ETM100"]              =     1;
-  m_menuPrescales["L1_ETM60_NoJet52Wdphi2"] =     1;
-  m_menuPrescales["L1_ETM70_NoJet52Wdphi2"] =     1;
+  m_menuPrescales["L1_ETM30"]                = 40000;
+  m_menuPrescales["L1_ETM40"]                =  8000;
+  m_menuPrescales["L1_ETM50"]                =  1000;
+  m_menuPrescales["L1_ETM60"]                =   900;
+  m_menuPrescales["L1_ETM70"]                =     1;
+  m_menuPrescales["L1_ETM100"]               =     1;
+  m_menuPrescales["L1_ETM60_NotJet52WdPhi2"] =     1;
+  m_menuPrescales["L1_ETM70_NotJet52WdPhi2"] =     1;
   
   m_menuPrescales["L1_HTT125"] = 1000;
   m_menuPrescales["L1_HTT150"] =  800;
@@ -126,17 +126,16 @@ L1TSimulator::L1TSimulator(){
   m_menuPrescales["L1_Mu3_JetC52_WdEtaPhi2"] =    200;
   m_menuPrescales["L1_Mu3_JetC92_WdEtaPhi2"] = 262139;
   
-  m_menuPrescales["L1_DoubJetC32_Wdphi7_HTT125"] = 100;
+  m_menuPrescales["L1_DoubJetC32_WdPhi7_HTT125"] = 100;
   m_menuPrescales["L1_DoubleJetC56_ETM60"]       =   1;
   m_menuPrescales["L1_DoubleJetC60_ETM60"]       =   1;
   
-  m_menuPrescales["L1_QuadJetC36_Tau52"] = 20;
+  m_menuPrescales["L1_QuadJetC36_TauJet52"] = 20;
 
   for(unsigned i=0; i<128; i++){
     m_prescales.     push_back(0);
     m_prescalesCount.push_back(0);
   }
-  
 
 }
 
@@ -157,10 +156,32 @@ void L1TSimulator::getMenu(const edm::EventSetup& iSetup){
   for (auto iAlgo = theAlgoMap->begin(); iAlgo!=theAlgoMap->end(); ++iAlgo){
     
     if(m_menuPrescales.find(iAlgo->first) == m_menuPrescales.end()){cout << "NOT!!!=> ";}
-    else                                                           {cout << "FOUND => ";}
+    else{
+      cout << "FOUND => ";
+
+      const L1GtAlgorithm *pAlgo = &(iAlgo->second);
+      m_prescales[pAlgo->algoBitNumber()] = m_menuPrescales[iAlgo->first];
+    }
     
     const L1GtAlgorithm *pAlgo = &(iAlgo->second);
     cout << "Algo: " << iAlgo->first << " bit: " << pAlgo->algoBitNumber() << endl;
   }
+}
+
+bool L1TSimulator::l1tResult(DecisionWord &dw){
   
+  bool out = false;
+  
+  for(unsigned i=0; i<dw.size(); i++){
+    
+    if(dw[i]){
+      m_prescalesCount[i]++;
+      if(m_prescalesCount[i]==m_prescales[i]){
+        m_prescalesCount[i]=0;
+        out=true;
+      }
+    }
+  }
+  
+  return out;
 }

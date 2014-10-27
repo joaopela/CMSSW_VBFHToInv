@@ -3,6 +3,7 @@
 #define VBFHiggsToInvisible_TriggerStudies_L1TSimulator_H
 
 #include "FWCore/Framework/interface/Event.h"
+#include "DataFormats/L1GlobalTrigger/interface/L1GlobalTriggerReadoutRecord.h"
 
 // System include files
 #include <string>
@@ -16,6 +17,7 @@ public:
   ~L1TSimulator();
   
   void getMenu(const edm::EventSetup& iSetup);
+  bool l1tResult(DecisionWord &dw);
   
 private:
   
