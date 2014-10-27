@@ -1,7 +1,7 @@
 #!/bin/bash
 
 hadd PU40bx25_VBFInv.root PU40bx25_VBFInv/HLTPathStudiesResults*.root
-hadd PU40bx25_QCD_Pt-1000to1400.root PU40bx25_QCD_Pt-1000to140/HLTPathStudiesResults*.root
+hadd PU40bx25_QCD_Pt-1000to1400.root PU40bx25_QCD_Pt-1000to1400/HLTPathStudiesResults*.root
 hadd PU40bx25_QCD_Pt-120to170.root PU40bx25_QCD_Pt-120to170/HLTPathStudiesResults*.root
 hadd PU40bx25_QCD_Pt-1400to1800.root PU40bx25_QCD_Pt-1400to1800/HLTPathStudiesResults*.root
 hadd PU40bx25_QCD_Pt-170to300.root PU40bx25_QCD_Pt-170to300/HLTPathStudiesResults*.root
@@ -13,4 +13,4 @@ hadd PU40bx25_QCD_Pt-600to800.root PU40bx25_QCD_Pt-600to800/HLTPathStudiesResult
 hadd PU40bx25_QCD_Pt-800to1000.root PU40bx25_QCD_Pt-800to1000/HLTPathStudiesResults*.root
 hadd PU40bx25_QCD_Pt-80to120.root PU40bx25_QCD_Pt-80to120/HLTPathStudiesResults*.root
 hadd PU40bx25_QCD_Pt-1800.root PU40bx25_QCD_Pt-1800/HLTPathStudiesResults*.root
-hadd PU40bx25_NeutrinoGun.root PU40bx25_NeutrinoGun/HLTPathStudiesResults*.root
+# hadd PU40bx25_NeutrinoGun.root PU40bx25_NeutrinoGun/HLTPathStudiesResults*.root
