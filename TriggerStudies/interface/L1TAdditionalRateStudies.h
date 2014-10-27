@@ -57,6 +57,7 @@ private:
   
   TFile *fOut;
   TH1I  *hEventCount;
+  TH1I  *hMenu;
   
   L1TSimulator* myL1TSim;
   
