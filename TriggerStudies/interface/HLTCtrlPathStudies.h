@@ -1,6 +1,6 @@
 // -*- C++ -*-
-#ifndef VBFHiggsToInvisible_TrigStudies_HLTPathStudies
-#define VBFHiggsToInvisible_TrigStudies_HLTPathStudies
+#ifndef VBFHiggsToInvisible_TrigStudies_HLTCtrlPathStudies
+#define VBFHiggsToInvisible_TrigStudies_HLTCtrlPathStudies
 
 // CMSSW includes
 #include "FWCore/Framework/interface/Frameworkfwd.h"
@@ -32,11 +32,11 @@
 #include <vector>
 #include <map>
 
-class HLTPathStudies : public edm::EDAnalyzer {
+class HLTCtrlPathStudies : public edm::EDAnalyzer {
 public:
   
-  HLTPathStudies(const edm::ParameterSet&);
-  ~HLTPathStudies();
+  HLTCtrlPathStudies(const edm::ParameterSet&);
+  ~HLTCtrlPathStudies();
   
 private:
   void beginJob() ;
@@ -57,7 +57,8 @@ private:
   
   bool m_verbose;
   bool m_doL1TAnalysis;
-  bool m_vetoHLTPFMET170;
+  
+  double valMin_l1Seed_ETM;
   
   edm::ParameterSet ps;
   
@@ -76,6 +77,7 @@ private:
   
   TH1I* hEventCount;
   TH1I* hHLTPathCount;
+  
   TH1D* hHLT_jet_eta;
   TH1D* hHLT_L1TETM;
   

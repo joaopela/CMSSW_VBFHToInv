@@ -4,7 +4,7 @@ process = cms.Process('PAT')
 
 ################################################################
 process.load("FWCore.MessageService.MessageLogger_cfi")
-process.MessageLogger.cerr.FwkReport.reportEvery = 1000
+process.MessageLogger.cerr.FwkReport.reportEvery = 10000
 
 process.options = cms.untracked.PSet(
     wantSummary = cms.untracked.bool( True )
@@ -20,28 +20,36 @@ process.load('Configuration.StandardSequences.MagneticField_38T_PostLS1_cff')
 #process.load('Configuration.StandardSequences.EndOfProcess_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 
-# Input source
-process.source = cms.Source("PoolSource",
-  fileNames = cms.untracked.vstring(
-    '/store/user/pela/VBF_HToInv_M-125_13TeV_powheg-pythia6/TrigStudies_Run2015_L1EmulatorStage1_HLT_v2_PU40bx25_VBF_HToInv_M-125_13TeV_powheg-pythia6/740729526d0c0f1eb16eda620a6cff9a/outputA_10_1_RPA.root',
-  ),
-)
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
-
 process.hltPathStudies = cms.EDAnalyzer('HLTPathStudies',
 
-  verbose                    = cms.untracked.bool(True),  
-  inputTag_HLTResults        = cms.untracked.InputTag("TriggerResults::TEST"),
+  verbose         = cms.untracked.bool(False),
+  vetoHLTPFMET170 = cms.untracked.bool(False),
+  
+  inputTag_HLTResults = cms.untracked.InputTag("TriggerResults::TEST"),
+  
+  HLTPaths  = cms.vstring(
+    "HLT_PFHT350_PFMET120_NoiseCleaned_v1",
+    "HLT_PFHT900_v1",
+    "HLT_PFMET170_NoiseCleaned_v1",
+    "HLT_PFMET_PFVBF_Unseeded_v1",
+    "HLT_L1ETM70_PFMET_PFVBF_v1",
+    "HLT_CaloMET_CaloVBF_Unseeded_v1",
+    "HLT_L1ETM70_CaloMET_CaloVBF_v1",
+    #"HLT_CaloMET_CaloVBF_v1",
+    #"HLT_PFMET_PFVBF_v1",
+  ), 
 
-  inputTag_L1EmParticle_Isolated    = cms.untracked.InputTag("l1ExtraLayer2","Isolated"   ),
-  inputTag_L1EmParticle_NonIsolated = cms.untracked.InputTag("l1ExtraLayer2","NonIsolated"),
-  inputTag_L1EtMissParticle_MET     = cms.untracked.InputTag("l1ExtraLayer2","MET"        ),
-  inputTag_L1EtMissParticle_MHT     = cms.untracked.InputTag("l1ExtraLayer2","MHT"        ),
-  inputTag_L1HFRings                = cms.untracked.InputTag("l1ExtraLayer2",""           ),
-  inputTag_L1JetParticle_Central    = cms.untracked.InputTag("l1ExtraLayer2","Central"    ),
-  inputTag_L1JetParticle_Forward    = cms.untracked.InputTag("l1ExtraLayer2","Forward"    ),
-  inputTag_L1JetParticle_Tau        = cms.untracked.InputTag("l1ExtraLayer2","Tau"        ),
-  inputTag_L1MuonParticle           = cms.untracked.InputTag("l1ExtraLayer2",""           ),
+  inputTag_L1EmParticle_Isolated    = cms.untracked.InputTag("hltL1extraParticles","Isolated"   ),
+  inputTag_L1EmParticle_NonIsolated = cms.untracked.InputTag("hltL1extraParticles","NonIsolated"),
+  inputTag_L1EtMissParticle_MET     = cms.untracked.InputTag("hltL1extraParticles","MET"        ),
+  inputTag_L1EtMissParticle_MHT     = cms.untracked.InputTag("hltL1extraParticles","MHT"        ),
+  inputTag_L1HFRings                = cms.untracked.InputTag("hltL1extraParticles",""           ),
+  inputTag_L1JetParticle_Central    = cms.untracked.InputTag("hltL1extraParticles","Central"    ),
+  inputTag_L1JetParticle_Forward    = cms.untracked.InputTag("hltL1extraParticles","Forward"    ),
+  inputTag_L1JetParticle_Tau        = cms.untracked.InputTag("hltL1extraParticles","Tau"        ),
+  inputTag_L1MuonParticle           = cms.untracked.InputTag("hltL1extraParticles",""           ),
+
+  outputFilename = cms.untracked.string("HLTPathStudiesResults.root"),
 
 )
 

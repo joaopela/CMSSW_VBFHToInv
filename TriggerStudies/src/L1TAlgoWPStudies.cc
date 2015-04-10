@@ -185,11 +185,21 @@ void L1AlgoWPStudies::analyze(const edm::Event& iEvent, const edm::EventSetup& i
   // MET based triggers
   if(evL1Extra.m_L1EtMissParticle_MET->begin()->et()>=40){m_wpPlots["L1T_ETM40"]->fill(evData);}
   if(evL1Extra.m_L1EtMissParticle_MET->begin()->et()>=50){m_wpPlots["L1T_ETM50"]->fill(evData);}
-  if(evL1Extra.m_L1EtMissParticle_MET->begin()->et()>=60){m_wpPlots["L1T_ETM60"]->fill(evData);}
+  if(evL1Extra.m_L1EtMissParticle_MET->begin()->et()>=60){
+    m_wpPlots["L1T_ETM60"]->fill(evData);
+    if(evL1Extra.m_L1EtMissParticle_MET->begin()->et()<70){
+      m_wpSameDijetNotETM70Plots["L1T_ETM60"]->fill(evData);
+    }
+  }
   if(evL1Extra.m_L1EtMissParticle_MET->begin()->et()>=70){m_wpPlots["L1T_ETM70"]->fill(evData);}
 
   // HTT based triggers
-  if(evL1Extra.m_L1EtMissParticle_MHT->begin()->etTotal()>= 70){m_wpPlots["L1T_HTT70"] ->fill(evData);}
+  if(evL1Extra.m_L1EtMissParticle_MHT->begin()->etTotal()>= 70){
+    m_wpPlots["L1T_HTT70"] ->fill(evData);
+    if(evL1Extra.m_L1EtMissParticle_MET->begin()->et()<70){
+      m_wpSameDijetNotETM70Plots["L1T_HTT70"]->fill(evData);
+    }
+  }
   if(evL1Extra.m_L1EtMissParticle_MHT->begin()->etTotal()>=125){m_wpPlots["L1T_HTT125"]->fill(evData);}
 
   // MHT based triggers
@@ -442,6 +452,12 @@ void L1AlgoWPStudies::beginRun(edm::Run const& iRun, edm::EventSetup const& iSet
   //####################################
   
   TDirectory* dirSameDijetNotETM70 = runDir->mkdir("SameDijetNotETM70");
+  
+  d = dirSameDijetNotETM70->mkdir("L1T_ETM60");
+  m_wpSameDijetNotETM70Plots["L1T_ETM60"] = new L1TPlots(d);
+  
+  d = dirSameDijetNotETM70->mkdir("L1T_HTT70");
+  m_wpSameDijetNotETM70Plots["L1T_HTT70"] = new L1TPlots(d);
   
   d = dirSameDijetNotETM70->mkdir("DijetVBF30_DEta3p0");
   m_wpSameDijetNotETM70Plots["DijetVBF30_DEta3p0"] = new L1TPlots(d);
