@@ -40,7 +40,7 @@
 #include "TH1D.h"
 
 //
-// class decleration
+// class declaration
 //
 
 class MCDijetFilter : public edm::EDFilter {
@@ -83,6 +83,20 @@ private:
 
   TFile* outFile;
   std::map<std::string,TH1D*> m_plots;
-       
+
+  TH1D*  preFilter_Jets_Multiplicity;
+  TH1D*  preFilter_Jet0_Pt;
+  TH1D*  preFilter_Jet1_Pt;
+  TH1D*  preFilter_Dijet_MaxMjj;
+  TH1D*  preFilter_Dijet_MaxDEta;
+  TH1D*  preFilter_Dijet_MinDPhi;
+  
+  TH1D*  posFilter_Jets_Multiplicity;
+  TH1D*  posFilter_Jet0_Pt;
+  TH1D*  posFilter_Jet1_Pt;
+  TH1D*  posFilter_Dijet_Mjj;
+  TH1D*  posFilter_Dijet_DEta;
+  TH1D*  posFilter_Dijet_DPhi;
+
 };
 #endif
