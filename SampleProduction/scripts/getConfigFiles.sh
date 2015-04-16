@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd ../../../;
+cd $CMSSW_BASE/src/
 
 # Getting files
 curl -s --insecure https://cms-pdmv.cern.ch/mcm/public/restapi/requests/get_fragment/BTV-Fall13-00042 --retry 2 --create-dirs -o Configuration/GenProduction/python/BTV-Fall13-00042-fragment.py 
