@@ -9,5 +9,5 @@ eval `scram runtime -sh`
 cat /proc/cpuinfo
 cat /proc/meminfo
 
-cmsRun QCD_Pt-470to600_step1_cfg.py | tee QCD_Pt-470to600_step1.log
-cmsRun QCD_Pt-470to600_step2_cfg.py | tee QCD_Pt-470to600_step2.log
+cmsRun QCD_Pt-600to800_step1_cfg.py | tee QCD_Pt-600to800_step1.log
+cmsRun QCD_Pt-600to800_step2_cfg.py | tee QCD_Pt-600to800_step2.log
