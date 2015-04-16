@@ -37,7 +37,7 @@
 #include "TH1D.h"
 
 //
-// class decleration
+// class declaration
 //
 
 class MCMETFilter : public edm::EDFilter {

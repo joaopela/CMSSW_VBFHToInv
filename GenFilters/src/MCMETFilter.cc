@@ -88,3 +88,6 @@ double MCMETFilter::neutrinosMET(const HepMC::GenEvent* vGen){
   }
   else{return 0.;}
 }
+
+//define this as a plug-in
+DEFINE_FWK_MODULE(MCMETFilter);
