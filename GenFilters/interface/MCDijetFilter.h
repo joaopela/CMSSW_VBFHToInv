@@ -1,43 +1,25 @@
 #ifndef MCDijetFilter_h
 #define MCDijetFilter_h
-// -*- C++ -*-
-//
-// Package:    MCDijetFilter
-// Class:      MCDijetFilter
-// 
-/* 
 
- Description: filter events based on the Pythia particle information
-
- Implementation: inherits from generic EDFilter
-     
-*/
-//
-// Original Author:  Fabian Stoeckli
-//         Created:  Mon Sept 11 10:57:54 CET 2006
-// $Id: MCDijetFilter.h,v 1.3 2010/07/21 04:23:23 wmtan Exp $
-//
-//
-
-
-// system include files
-#include <memory>
-#include <map>
-
-// user include files
+// CMSSW include files
 #include "FWCore/Framework/interface/Frameworkfwd.h"
 #include "FWCore/Framework/interface/EDFilter.h"
-
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/Framework/interface/MakerMacros.h"
-
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
+#include "FWCore/ServiceRegistry/interface/Service.h"
+
 #include "SimDataFormats/GeneratorProducts/interface/HepMCProduct.h"
 
 #include "DataFormats/JetReco/interface/GenJetCollection.h"
 
+// ROOT includes
 #include "TFile.h"
 #include "TH1D.h"
+
+// C++ include files
+#include <memory>
+#include <map>
 
 //
 // class declaration
@@ -61,8 +43,11 @@ private:
   
   std::vector<const reco::GenJet*> filterGenJets(const std::vector<reco::GenJet>* jets);
 //   std::vector<const reco::GenJet*> filterGenJets(const std::vector<reco::GenJet>* jets);
+
+//**************************
+// Private Member data *****
+private:
   
-  // ----------member data ---------------------------
   std::string label_;
   std::vector<int> particleID1;
   std::vector<int> particleID2;
@@ -81,9 +66,14 @@ private:
   double maxDeltaR;
   std::string outFile_;
 
+  
+  // Input tags
+  edm::EDGetTokenT< reco::GenJetCollection > m_inputTag_GenJetCollection;
+  
+  // Declaring Files
   TFile* outFile;
-  std::map<std::string,TH1D*> m_plots;
-
+  
+  // Declaring histograms
   TH1D*  preFilter_Jets_Multiplicity;
   TH1D*  preFilter_Jet0_Pt;
   TH1D*  preFilter_Jet1_Pt;

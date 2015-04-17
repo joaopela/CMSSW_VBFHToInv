@@ -26,6 +26,9 @@ minDeltaR     (iConfig.getUntrackedParameter("MinDeltaR",     0.)),
 maxDeltaR     (iConfig.getUntrackedParameter("MaxDeltaR",     10000.)),
 outFile_(iConfig.getUntrackedParameter("outFile",std::string("dijetFilter.root")))
 {
+
+  m_inputTag_GenJetCollection = consumes<reco::GenJetCollection>(iConfig.getUntrackedParameter<edm::InputTag>("inputTag_GenJetCollection",edm::InputTag("ak5GenJetsNoNu")));
+
   //here do whatever other initialization is needed
   ptMin  = iConfig.getUntrackedParameter<double>("MinPt",    20);
   etaMin = iConfig.getUntrackedParameter<double>("MinEta", -5.0);
@@ -51,15 +54,7 @@ outFile_(iConfig.getUntrackedParameter("outFile",std::string("dijetFilter.root")
   
 }
 
-MCDijetFilter::~MCDijetFilter()
-{
- 
-   // do anything here that needs to be done at desctruction time
-   // (e.g. close files, deallocate resources etc.)
-  
-  for(map<string,TH1D*>::iterator it = m_plots.begin(); it != m_plots.end(); it++){
-    outFile->WriteTObject((it->second));  
-  }
+MCDijetFilter::~MCDijetFilter(){
 
   outFile->Write();
   outFile->Close();
@@ -177,7 +172,7 @@ bool MCDijetFilter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup)
   //const HepMC::GenEvent* myGenEvent = evt->GetEvent();
 
   Handle< vector<reco::GenJet> > handleGenJets;          
-  iEvent.getByLabel("ak5GenJetsNoNu", handleGenJets);
+  iEvent.getByToken(m_inputTag_GenJetCollection, handleGenJets);
   const vector<reco::GenJet>* genJets = handleGenJets.product();  
   
   vector<const reco::GenJet*> filGenJets = filterGenJets(genJets);
