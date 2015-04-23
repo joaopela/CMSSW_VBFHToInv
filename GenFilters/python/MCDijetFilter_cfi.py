@@ -1,6 +1,6 @@
 import FWCore.ParameterSet.Config as cms
 
-mcDijetFilter_RunI = cms.EDFilter("MCDijetFilter",
+mcDijetFilter_Pt20_Eta5p0_DEta3p2_Mjj700 = cms.EDFilter("MCDijetFilter",
   MinPt = cms.untracked.double(20.0),
   MaxEta = cms.untracked.double(5.0),
   MinEta = cms.untracked.double(-5.0),
@@ -70,7 +70,7 @@ mcDijetFilter_Pt50_Eta4p75_DEta3p5_Mjj1000 = cms.EDFilter("MCDijetFilter",
 )
 
 # Tight cuts but with Pt cut relaxed to 40
-mcDijetFilter_Pt50_Eta4p75_DEta3p5_Dphi1p5_Mjj1000 = cms.EDFilter("MCDijetFilter",
+mcDijetFilter_Pt40_Eta4p75_DEta3p5_Dphi1p5_Mjj1000 = cms.EDFilter("MCDijetFilter",
   MinPt = cms.untracked.double(40.0),
   MaxEta = cms.untracked.double(4.75),
   MinEta = cms.untracked.double(-4.75),
@@ -112,4 +112,8 @@ mcDijetFilter_Pt40_Eta4p75_DEta3p5_Dphi1p5_Mjj600 = cms.EDFilter("MCDijetFilter"
   MaxInvMass = cms.untracked.double(50000.0),
   outFile = cms.untracked.string('mcDijetFilter.root')
 )
+
+# Alias
+mcDijetFilter_RunI = mcDijetFilter_Pt20_Eta5p0_DEta3p2_Mjj700
+
 
