@@ -51,11 +51,15 @@ private:
   std::string label_;
   std::vector<int> particleID1;
   std::vector<int> particleID2;
-  double ptMin;
-  double etaMin;  
-  double etaMax;
   std::vector<int> status;
+  
   int particleCharge;
+  
+  // Dijet cut
+  bool   oppositeHemisphere;
+  double ptMin;
+  double etaMin;
+  double etaMax;
   double minInvMass;
   double maxInvMass;
   double minDeltaPhi;
@@ -77,6 +81,7 @@ private:
   TH1D*  preFilter_Jets_Multiplicity;
   TH1D*  preFilter_Jet0_Pt;
   TH1D*  preFilter_Jet1_Pt;
+  TH1D*  preFilter_Dijet_EtaProduct;
   TH1D*  preFilter_Dijet_MaxMjj;
   TH1D*  preFilter_Dijet_MaxDEta;
   TH1D*  preFilter_Dijet_MinDPhi;
@@ -84,9 +89,11 @@ private:
   TH1D*  posFilter_Jets_Multiplicity;
   TH1D*  posFilter_Jet0_Pt;
   TH1D*  posFilter_Jet1_Pt;
+  TH1D*  posFilter_Dijet_EtaProduct;
   TH1D*  posFilter_Dijet_Mjj;
   TH1D*  posFilter_Dijet_DEta;
   TH1D*  posFilter_Dijet_DPhi;
 
 };
+
 #endif

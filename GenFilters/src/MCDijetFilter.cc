@@ -30,25 +30,28 @@ outFile_(iConfig.getUntrackedParameter("outFile",std::string("dijetFilter.root")
   m_inputTag_GenJetCollection = consumes<reco::GenJetCollection>(iConfig.getUntrackedParameter<edm::InputTag>("inputTag_GenJetCollection",edm::InputTag("ak5GenJetsNoNu")));
 
   //here do whatever other initialization is needed
-  ptMin  = iConfig.getUntrackedParameter<double>("MinPt",    20);
-  etaMin = iConfig.getUntrackedParameter<double>("MinEta", -5.0);
-  etaMax = iConfig.getUntrackedParameter<double>("MaxEta",  5.0);
-
+  ptMin               = iConfig.getUntrackedParameter<double>("MinPt",    20);
+  etaMin              = iConfig.getUntrackedParameter<double>("MinEta", -5.0);
+  etaMax              = iConfig.getUntrackedParameter<double>("MaxEta",  5.0);
+  oppositeHemisphere  = iConfig.getUntrackedParameter<bool>  ("bool",   true);
+  
   outFile = new TFile(outFile_.c_str(),"RECREATE");
   TDirectory* dirPre = outFile->mkdir("preFilter");
   TDirectory* dirPos = outFile->mkdir("posFilter");
   
   preFilter_Jets_Multiplicity = new TH1D("Jets_Multiplicity","Jets_Multiplicity", 50,-0.5,       49.5); preFilter_Jets_Multiplicity->SetDirectory(dirPre);
-  preFilter_Jet0_Pt           = new TH1D("Jet0_Pt",          "Jet0_Pt",          200,   0,        200); preFilter_Jet0_Pt          ->SetDirectory(dirPre);
-  preFilter_Jet1_Pt           = new TH1D("Jet1_Pt",          "Jet1_Pt",          200,   0,        200); preFilter_Jet1_Pt          ->SetDirectory(dirPre);
-  preFilter_Dijet_MaxMjj      = new TH1D("Dijet_MaxMjj",     "Dijet_MaxMjj",     200,   0,       2000); preFilter_Dijet_MaxMjj     ->SetDirectory(dirPre);
+  preFilter_Jet0_Pt           = new TH1D("Jet0_Pt",          "Jet0_Pt",          500,   0,       2500); preFilter_Jet0_Pt          ->SetDirectory(dirPre);
+  preFilter_Jet1_Pt           = new TH1D("Jet1_Pt",          "Jet1_Pt",          500,   0,       2500); preFilter_Jet1_Pt          ->SetDirectory(dirPre);
+  preFilter_Dijet_EtaProduct  = new TH1D("Dijet_EtaProduct", "Dijet_EtaProduct",  50, -25,         25); preFilter_Dijet_EtaProduct ->SetDirectory(dirPre);
+  preFilter_Dijet_MaxMjj      = new TH1D("Dijet_MaxMjj",     "Dijet_MaxMjj",     500,   0,       2500); preFilter_Dijet_MaxMjj     ->SetDirectory(dirPre);
   preFilter_Dijet_MaxDEta     = new TH1D("Dijet_MaxDEta",    "Dijet_MaxDEta",    100,   0,         10); preFilter_Dijet_MaxDEta    ->SetDirectory(dirPre);
   preFilter_Dijet_MinDPhi     = new TH1D("Dijet_MinDPhi",    "Dijet_MinDPhi",     32,   0,TMath::Pi()); preFilter_Dijet_MinDPhi    ->SetDirectory(dirPre);
 
   posFilter_Jets_Multiplicity = new TH1D("Jets_Multiplicity","Jets_Multiplicity", 50,-0.5,       49.5); posFilter_Jets_Multiplicity->SetDirectory(dirPos);
-  posFilter_Jet0_Pt           = new TH1D("Jet0_Pt",          "Jet0_Pt",          200,   0,        200); posFilter_Jet0_Pt          ->SetDirectory(dirPos);
-  posFilter_Jet1_Pt           = new TH1D("Jet1_Pt",          "Jet1_Pt",          200,   0,        200); posFilter_Jet1_Pt          ->SetDirectory(dirPos);
-  posFilter_Dijet_Mjj         = new TH1D("Dijet_Mjj",        "Dijet_Mjj",        200,   0,       2000); posFilter_Dijet_Mjj        ->SetDirectory(dirPos);
+  posFilter_Jet0_Pt           = new TH1D("Jet0_Pt",          "Jet0_Pt",          500,   0,       2500); posFilter_Jet0_Pt          ->SetDirectory(dirPos);
+  posFilter_Jet1_Pt           = new TH1D("Jet1_Pt",          "Jet1_Pt",          500,   0,       2500); posFilter_Jet1_Pt          ->SetDirectory(dirPos);
+  posFilter_Dijet_EtaProduct  = new TH1D("Dijet_EtaProduct", "Dijet_EtaProduct",  50, -25,         25); posFilter_Dijet_EtaProduct ->SetDirectory(dirPos);
+  posFilter_Dijet_Mjj         = new TH1D("Dijet_Mjj",        "Dijet_Mjj",        500,   0,       2500); posFilter_Dijet_Mjj        ->SetDirectory(dirPos);
   posFilter_Dijet_DEta        = new TH1D("Dijet_DEta",       "Dijet_DEta",       100,   0,         10); posFilter_Dijet_DEta       ->SetDirectory(dirPos);
   posFilter_Dijet_DPhi        = new TH1D("Dijet_DPhi",       "Dijet_DPhi",        32,   0,TMath::Pi()); posFilter_Dijet_DPhi       ->SetDirectory(dirPos);
   
@@ -181,9 +184,10 @@ bool MCDijetFilter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup)
   //vector<HepMC::GenParticle*> colNu  = getNu (myGenEvent);
   //double met = nuMET(colNu);
  
-  double minDPhi = 999;
-  double maxDEta =   0;
-  double maxMjj  =   0;
+  double maxdijetProd = -999;
+  double minDPhi      =  999;
+  double maxDEta      =    0;
+  double maxMjj       =    0;
   
   for(unsigned a=0; a<filGenJets.size(); a++){
     for(unsigned b=a+1; b<filGenJets.size(); b++){    
@@ -195,23 +199,32 @@ bool MCDijetFilter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup)
       math::XYZTLorentzVector diJet = pA->p4() + pB->p4();
 
       // Calculating quantities
-      double dPhi    = fabs(pA->p4().phi()-pB->p4().phi());
-      double dEta    = fabs(pA->p4().eta()-pB->p4().eta());
-      double invMass = diJet.mass();
+      double dijetProd = pA->p4().eta()*pB->p4().eta();
+      double dPhi      = fabs(pA->p4().phi()-pB->p4().phi());
+      double dEta      = fabs(pA->p4().eta()-pB->p4().eta());
+      double invMass   = diJet.mass();
 
       // Updating max/min variables
-      if(dPhi<minDPhi)  {minDPhi=dPhi;}
-      if(dEta>maxDEta)  {maxDEta=dEta;}
-      if(invMass>maxMjj){maxMjj=invMass;}
       
-      if(pass || pA->p4().eta()*pB->p4().eta()>=0)          {continue;}
-      if(pass || dPhi<=minDeltaPhi || dPhi>=maxDeltaPhi)    {continue;}
-      if(pass || dEta<=minDeltaEta || dEta>=maxDeltaEta)    {continue;}
-      if(pass || invMass<=minInvMass || invMass>=maxInvMass){continue;}
+      if(dijetProd>maxdijetProd){maxdijetProd=dijetProd;}
+      if(dPhi     <minDPhi)     {minDPhi=dPhi;}
+      if(dEta     >maxDEta)     {maxDEta=dEta;}
+      if(invMass  >maxMjj)      {maxMjj=invMass;}
+      
+      // If this event has passed cuts already... continue
+      if(pass){continue;}
+      
+      // Testing cuts
+      if(oppositeHemisphere && dijetProd>=0){continue;}
+      if(dPhi<=minDeltaPhi || dPhi>=maxDeltaPhi)                {continue;}
+      if(dEta<=minDeltaEta || dEta>=maxDeltaEta)                {continue;}
+      if(invMass<=minInvMass || invMass>=maxInvMass)            {continue;}
 
+      // If we passed all cuts fill plots
       posFilter_Jets_Multiplicity->Fill(filGenJets.size());
       posFilter_Jet0_Pt          ->Fill(pA->pt());
       posFilter_Jet1_Pt          ->Fill(pB->pt());
+      posFilter_Dijet_EtaProduct ->Fill(dijetProd);
       posFilter_Dijet_Mjj        ->Fill(invMass);
       posFilter_Dijet_DEta       ->Fill(dEta);
       posFilter_Dijet_DPhi       ->Fill(dPhi);
@@ -221,12 +234,13 @@ bool MCDijetFilter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup)
   }
   
   preFilter_Jets_Multiplicity->Fill(genJets->size());
-  if(filGenJets.size()>1){
-    preFilter_Jet0_Pt          ->Fill(filGenJets[0]->pt());
-    preFilter_Jet1_Pt          ->Fill(filGenJets[1]->pt());
-    preFilter_Dijet_MaxMjj     ->Fill(maxMjj);
-    preFilter_Dijet_MaxDEta    ->Fill(maxDEta);
-    preFilter_Dijet_MinDPhi    ->Fill(minDPhi);
+  if(genJets->size()>=2){
+    preFilter_Jet0_Pt         ->Fill((*genJets)[0].pt());
+    preFilter_Jet1_Pt         ->Fill((*genJets)[1].pt());
+    preFilter_Dijet_EtaProduct->Fill(maxdijetProd);
+    preFilter_Dijet_MaxMjj    ->Fill(maxMjj);
+    preFilter_Dijet_MaxDEta   ->Fill(maxDEta);
+    preFilter_Dijet_MinDPhi   ->Fill(minDPhi);
   }
   
   return pass;
