@@ -1,0 +1,6 @@
+<use name="root"/>
+<use name="rootgraphics"/>
+<use name="VBFHiggsToInvisible/Plots"/>
+
+<bin name="vbfinv_qcdSamplesRunII_extractResults" file="vbfinv_qcdSamplesRunII_extractResults.cxx"/>
+<flags CXXFLAGS="-g"/>
