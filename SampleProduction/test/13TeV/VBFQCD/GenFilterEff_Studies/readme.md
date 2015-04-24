@@ -13,9 +13,11 @@ Quick receipt (in bash command line):
 
 #Wait a few hours
 ./haddJobs.sh
+vbfinv_qcdSamplesRunII_extractResults
 ```
 
 Description of commands
-* createJobs.sh: Create all jobs for all QCD pT hats
-* submitJobs.sh: Submit all jobs to CERN lxbatch
-* haddJobs.sh: Add all histogram together for each QCD pT hat
+* **createJobs.sh**: Create all jobs for all QCD pT hats
+* **submitJobs.sh**: Submit all jobs to CERN lxbatch
+* **haddJobs.sh**: Add all histogram together for each QCD pT hat
+* **vbfinv_qcdSamplesRunII_extractResults**: C++ code to extract plots and tables
