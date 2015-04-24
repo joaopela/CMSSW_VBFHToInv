@@ -39,12 +39,12 @@ GenFilterAnalyzer::GenFilterAnalyzer(const edm::ParameterSet& iConfig){
   }
   m_EventCount->SetDirectory(m_fileOutput);
 
-  m_Jets_Multiplicity = new TH1D("Jets_Multiplicity","Jets_Multiplicity", 50,-0.5,       49.5); m_Jets_Multiplicity->SetDirectory(plots);
-  m_Jet0_Pt           = new TH1D("Jet0_Pt",          "Jet0_Pt",          200,   0,        200); m_Jet0_Pt          ->SetDirectory(plots);
-  m_Jet1_Pt           = new TH1D("Jet1_Pt",          "Jet1_Pt",          200,   0,        200); m_Jet1_Pt          ->SetDirectory(plots);
-  m_Dijet_MaxMjj      = new TH1D("Dijet_MaxMjj",     "Dijet_MaxMjj",     200,   0,       2000); m_Dijet_MaxMjj     ->SetDirectory(plots);
-  m_Dijet_MaxDEta     = new TH1D("Dijet_MaxDEta",    "Dijet_MaxDEta",    100,   0,         10); m_Dijet_MaxDEta    ->SetDirectory(plots);
-  m_Dijet_MinDPhi     = new TH1D("Dijet_MinDPhi",    "Dijet_MinDPhi",     32,   0,TMath::Pi()); m_Dijet_MinDPhi    ->SetDirectory(plots);
+  m_Jets_Multiplicity = new TH1D("Jets_Multiplicity","Jets_Multiplicity",  50,-0.5,       49.5); m_Jets_Multiplicity->SetDirectory(plots);
+  m_Jet0_Pt           = new TH1D("Jet0_Pt",          "Jet0_Pt",          1000,   0,       2000); m_Jet0_Pt          ->SetDirectory(plots);
+  m_Jet1_Pt           = new TH1D("Jet1_Pt",          "Jet1_Pt",          1000,   0,       2000); m_Jet1_Pt          ->SetDirectory(plots);
+  m_Dijet_MaxMjj      = new TH1D("Dijet_MaxMjj",     "Dijet_MaxMjj",      500,   0,       5000); m_Dijet_MaxMjj     ->SetDirectory(plots);
+  m_Dijet_MaxDEta     = new TH1D("Dijet_MaxDEta",    "Dijet_MaxDEta",     200,   0,         10); m_Dijet_MaxDEta    ->SetDirectory(plots);
+  m_Dijet_MinDPhi     = new TH1D("Dijet_MinDPhi",    "Dijet_MinDPhi",     128,   0,TMath::Pi()); m_Dijet_MinDPhi    ->SetDirectory(plots);
   
 }
 
