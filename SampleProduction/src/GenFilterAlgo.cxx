@@ -48,13 +48,13 @@ void GenFilterAlgo::buildPlots(TDirectory* dir){
   
   m_doPlots = true;
   
-  m_Jets_Multiplicity = new TH1D("Jets_Multiplicity","Jets_Multiplicity", 50,-0.5,       49.5); m_Jets_Multiplicity->SetDirectory(dir);
-  m_Jet0_Pt           = new TH1D("Jet0_Pt"          ,"Jet0_Pt"          ,500,   0,       2500); m_Jet0_Pt          ->SetDirectory(dir);
-  m_Jet1_Pt           = new TH1D("Jet1_Pt"          ,"Jet1_Pt"          ,500,   0,       2500); m_Jet1_Pt          ->SetDirectory(dir);
-  m_Dijet_EtaProduct  = new TH1D("Dijet_EtaProduct" ,"Dijet_EtaProduct" , 50, -25,         25); m_Dijet_EtaProduct ->SetDirectory(dir);
-  m_Dijet_MaxMjj      = new TH1D("Dijet_MaxMjj"     ,"Dijet_MaxMjj"     ,500,   0,       2500); m_Dijet_MaxMjj     ->SetDirectory(dir);
-  m_Dijet_MaxDEta     = new TH1D("Dijet_MaxDEta"    ,"Dijet_MaxDEta"    ,100,   0,         10); m_Dijet_MaxDEta    ->SetDirectory(dir);
-  m_Dijet_MinDPhi     = new TH1D("Dijet_MinDPhi"    ,"Dijet_MinDPhi"    , 32,   0,TMath::Pi()); m_Dijet_MinDPhi    ->SetDirectory(dir);
+  m_Jets_Multiplicity = new TH1D("Jets_Multiplicity","Jets_Multiplicity",  50,-0.5,       49.5); m_Jets_Multiplicity->SetDirectory(dir);
+  m_Jet0_Pt           = new TH1D("Jet0_Pt"          ,"Jet0_Pt"          ,1000,   0,       2000); m_Jet0_Pt          ->SetDirectory(dir);
+  m_Jet1_Pt           = new TH1D("Jet1_Pt"          ,"Jet1_Pt"          ,1000,   0,       2000); m_Jet1_Pt          ->SetDirectory(dir);
+  m_Dijet_EtaProduct  = new TH1D("Dijet_EtaProduct" ,"Dijet_EtaProduct" ,  50, -25,         25); m_Dijet_EtaProduct ->SetDirectory(dir);
+  m_Dijet_MaxMjj      = new TH1D("Dijet_MaxMjj"     ,"Dijet_MaxMjj"     , 500,   0,       5000); m_Dijet_MaxMjj     ->SetDirectory(dir);
+  m_Dijet_MaxDEta     = new TH1D("Dijet_MaxDEta"    ,"Dijet_MaxDEta"    , 200,   0,         10); m_Dijet_MaxDEta    ->SetDirectory(dir);
+  m_Dijet_MinDPhi     = new TH1D("Dijet_MinDPhi"    ,"Dijet_MinDPhi"    , 128,   0,TMath::Pi()); m_Dijet_MinDPhi    ->SetDirectory(dir);
   
 }
 
@@ -116,10 +116,10 @@ bool GenFilterAlgo::evaluate(const vector<reco::GenJet>* genJets){
         m_Jets_Multiplicity->Fill(filGenJets.size());
         m_Jet0_Pt          ->Fill(pA->pt());
         m_Jet1_Pt          ->Fill(pB->pt());
-        if(m_doOppositeHemisphere){m_Dijet_EtaProduct ->Fill(etaProd);}
-        if(m_doDijetMinDeltaEta)  {m_Dijet_MaxDEta    ->Fill(dEta);}
-        if(m_doDijetMaxDeltaPhi)  {m_Dijet_MinDPhi    ->Fill(dPhi);}
-        if(m_doDijetMinMjj)       {m_Dijet_MaxMjj     ->Fill(invMass);}
+        m_Dijet_EtaProduct ->Fill(etaProd);
+        m_Dijet_MaxDEta    ->Fill(dEta);
+        m_Dijet_MinDPhi    ->Fill(dPhi);
+        m_Dijet_MaxMjj     ->Fill(invMass);
       }
       
       return true;
