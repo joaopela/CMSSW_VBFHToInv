@@ -1,4 +1,4 @@
 ICCMSSW
 =======
 
-This is my CMSSW modules folder
+This is my CMSSW modules repository
