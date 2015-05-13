@@ -1,4 +1,4 @@
-#include "VBFHiggsToInvisible/TriggerStudies/interface/TriggerStudies.h"
+#include "CMSSW-VBFHToInv/TriggerStudies/interface/TriggerStudies.h"
 
 #include <stdio.h>
 #include <math.h>

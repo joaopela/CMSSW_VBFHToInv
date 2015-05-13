@@ -1,4 +1,4 @@
-#include "VBFHiggsToInvisible/TriggerStudies/interface/HLTPlots.h"
+#include "CMSSW-VBFHToInv/TriggerStudies/interface/HLTPlots.h"
 
 #include "TDirectory.h"
 #include "TMath.h"

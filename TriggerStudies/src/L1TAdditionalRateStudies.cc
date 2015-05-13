@@ -1,9 +1,9 @@
-#include "VBFHiggsToInvisible/TriggerStudies/interface/L1TAdditionalRateStudies.h"
+#include "CMSSW-VBFHToInv/TriggerStudies/interface/L1TAdditionalRateStudies.h"
 
 #include "DataFormats/L1GlobalTrigger/interface/L1GlobalTriggerReadoutRecord.h"
 
-#include "VBFHiggsToInvisible/TriggerStudies/interface/L1ExtraPayload.h"
-#include "VBFHiggsToInvisible/TriggerStudies/interface/L1TDijet.h"
+#include "CMSSW-VBFHToInv/TriggerStudies/interface/L1ExtraPayload.h"
+#include "CMSSW-VBFHToInv/TriggerStudies/interface/L1TDijet.h"
 
 #include <stdio.h>
 #include <math.h>

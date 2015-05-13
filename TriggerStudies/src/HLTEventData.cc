@@ -1,10 +1,10 @@
-#include "VBFHiggsToInvisible/TriggerStudies/interface/HLTEventData.h"
+#include "CMSSW-VBFHToInv/TriggerStudies/interface/HLTEventData.h"
 
 #include "PhysicsTools/PatUtils/interface/TriggerHelper.h"
 #include "DataFormats/PatCandidates/interface/TriggerEvent.h"
 #include "DataFormats/PatCandidates/interface/TriggerObject.h"
 
-#include "VBFHiggsToInvisible/TriggerStudies/interface/HLTObject.h"
+#include "CMSSW-VBFHToInv/TriggerStudies/interface/HLTObject.h"
 
 using namespace std;
 

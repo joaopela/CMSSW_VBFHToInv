@@ -20,7 +20,7 @@
 #include "TMath.h"
 
 // My includes
-#include "VBFHiggsToInvisible/TriggerStudies/interface/L1TSimulator.h"
+#include "CMSSW-VBFHToInv/TriggerStudies/interface/L1TSimulator.h"
 
 // System include files
 #include <memory>

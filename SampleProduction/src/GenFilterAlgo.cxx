@@ -1,4 +1,4 @@
-#include "VBFHiggsToInvisible/SampleProduction/interface/GenFilterAlgo.h"
+#include "CMSSW-VBFHToInv/SampleProduction/interface/GenFilterAlgo.h"
 
 using namespace std;
 

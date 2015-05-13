@@ -2,7 +2,7 @@
 #ifndef VBFHiggsToInvisible_TriggerStudies_HLTDiobject_H
 #define VBFHiggsToInvisible_TriggerStudies_HLTDiobject_H
 
-#include "VBFHiggsToInvisible/TriggerStudies/interface/HLTObject.h"
+#include "CMSSW-VBFHToInv/TriggerStudies/interface/HLTObject.h"
 
 #include "DataFormats/Math/interface/deltaPhi.h"
 

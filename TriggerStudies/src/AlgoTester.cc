@@ -1,4 +1,4 @@
-#include "VBFHiggsToInvisible/TriggerStudies/interface/AlgoTester.h"
+#include "CMSSW-VBFHToInv/TriggerStudies/interface/AlgoTester.h"
 
 #include "DataFormats/L1Trigger/interface/L1JetParticle.h"
 #include "DataFormats/L1Trigger/interface/L1JetParticleFwd.h"

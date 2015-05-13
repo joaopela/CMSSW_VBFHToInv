@@ -1,4 +1,4 @@
-#include "VBFHiggsToInvisible/TriggerStudies/interface/HLTAlgoPFDijet.h"
+#include "CMSSW-VBFHToInv/TriggerStudies/interface/HLTAlgoPFDijet.h"
 
 using namespace std;
 

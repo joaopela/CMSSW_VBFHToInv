@@ -1,4 +1,4 @@
-#include "VBFHiggsToInvisible/Plots/interface/Style.h"
+#include "CMSSW-VBFHToInv/Plots/interface/Style.h"
 
 hepfw::Style::Style(){}
 

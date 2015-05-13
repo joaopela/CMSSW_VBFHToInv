@@ -12,7 +12,7 @@
 #include "DataFormats/JetReco/interface/GenJetCollection.h"
 
 // My code
-#include "VBFHiggsToInvisible/SampleProduction/interface/GenFilterAlgo.h"
+#include "CMSSW-VBFHToInv/SampleProduction/interface/GenFilterAlgo.h"
 
 // ROOT includes
 #include "TFile.h"
