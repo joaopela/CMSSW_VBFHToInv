@@ -84,16 +84,70 @@ map<string,TH1D*> getHist1D(map<string,TFile*> files,string path){
 
 void doFilterYields(map<string,TFile*> files){
   
+  vector<string> order;
+  order.push_back("30to50");
+  order.push_back("50to80");
+  order.push_back("80to120");
+  order.push_back("120to170");
+  order.push_back("170to300");
+  order.push_back("300to470");
+  order.push_back("470to600");
+  order.push_back("600to800");
+  
   map<string,TH1D*> hEventCount = getHist1D(files,"EventCount");
   
   FILE *fEv,*fEf;
   fEv = fopen ("FilterYields.tex","w");
   fEf = fopen ("FilterEfficiencies.tex","w");
   
-  int      nbins   = hEventCount["30to50"]->GetNbinsX();
-  double   evTotal = hEventCount["30to50"]->GetBinContent(1);
-  unsigned counter = 0;
+  unsigned  nbins   = hEventCount["30to50"]->GetNbinsX();
+//   double   evTotal = hEventCount["30to50"]->GetBinContent(1);
+//   unsigned counter = 0;
   
+  fprintf(fEv,"\\begin{tabular}{|l|");
+
+  
+  fprintf(fEf,"\\begin{tabular}{|l|");
+  for(unsigned i=0; i<order.size(); i++){
+    fprintf(fEv,"c|");
+  }
+  fprintf(fEv,"}\n");
+  
+  fprintf(fEv,"\\hline\n");
+  fprintf(fEv," %10s &","pT Hat");
+  
+  for(unsigned i=1; i<nbins+1; i++){
+  
+    fprintf(fEv," %-35s ",hEventCount["30to50"]->GetXaxis()->GetBinLabel(i));
+    if(i<nbins-1){fprintf(fEv,"&");}
+  }
+  fprintf(fEv,"\\\\ \n");
+  
+  for(unsigned i=0; i<order.size(); i++){
+  
+    string index = order[i];
+    TH1D* h      = hEventCount[index];
+    
+    fprintf(fEv," %10s &",index.c_str());
+    for(unsigned b=1; b<nbins+1; b++){
+      
+      fprintf(fEv," %35.0f ",h->GetBinContent(b));
+      
+      if(b<nbins){fprintf(fEv,"&");}
+    }
+    
+    fprintf(fEv,"\\\\ \n");
+  }
+  fprintf(fEv,"\\hline\n");
+  fprintf(fEv,"\\end{tabular}\n");
+  
+  
+  
+  
+  
+  
+  
+  /*
   fprintf(fEv,"\\begin{tabular}{|l|");
   fprintf(fEf,"\\begin{tabular}{|l|");
   for(unsigned i=0; i<hEventCount.size(); i++){
@@ -143,7 +197,7 @@ void doFilterYields(map<string,TFile*> files){
   fprintf(fEv,"\\hline\n");
   fprintf(fEf,"\\hline\n");
   fprintf(fEv,"\\end{tabular}\n");
-  fprintf(fEf,"\\end{tabular}\n");
+  fprintf(fEf,"\\end{tabular}\n");*/
 }
 
 bool checkFiles(map<string,string> files){
