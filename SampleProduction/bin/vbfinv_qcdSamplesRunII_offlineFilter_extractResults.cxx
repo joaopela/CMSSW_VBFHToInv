@@ -1,7 +1,7 @@
 #include <iostream>
 
 // My includes
-#include "CMSSW-VBFHToInv/Plots/interface/Style.h"
+#include "VBFHiggsToInvisible/Plots/interface/Style.h"
 
 // ROOT includes
 #include "TFile.h"
@@ -18,6 +18,36 @@
 #include <vector>
 
 using namespace std;
+
+
+void tresholdAnalysis(map<string,TH1D*> hist,double threshold){
+  
+  vector<string> order;
+  order.push_back("30to50");
+  order.push_back("50to80");
+  order.push_back("80to120");
+  order.push_back("120to170");
+  order.push_back("170to300");
+  order.push_back("300to470");
+  order.push_back("470to600");
+  order.push_back("600to800");
+  
+  for(unsigned i=0; i<order.size(); i++){
+    
+    string index = order[i];
+    TH1D* h      = hist [index];
+    
+    
+    int    bin          = h->FindBin      (threshold);
+    double value        = h->GetBinLowEdge(bin);
+    double fullIntegral = h->Integral(  0,h->GetNbinsX()+1);
+    double relIntegral  = h->Integral(bin,h->GetNbinsX()+1);
+    double fraction     = relIntegral/fullIntegral;
+    
+    printf("Bin: %15s hBin: %5d Cut: %10.1f Total: %10.1f Pass: %10.1f Frac: %10.8f\n",index.c_str(),bin,value,fullIntegral,relIntegral,fraction);
+
+  }
+}
 
 void drawPlots(map<string,TH1D*> hist,string filename){
   
@@ -57,6 +87,8 @@ void drawPlots(map<string,TH1D*> hist,string filename){
     h->Scale(1/fullIntegral);
     h->GetYaxis()->SetTitle("Scaled to 1");
     
+    h->Rebin(4);
+    
     if(i==0){h->Draw();}
     else    {h->Draw("same");}
     
@@ -91,7 +123,7 @@ void doFilterYields(map<string,TFile*> files){
   fEf = fopen ("FilterEfficiencies.tex","w");
   
   int      nbins   = hEventCount["30to50"]->GetNbinsX();
-  double   evTotal = hEventCount["30to50"]->GetBinContent(1);
+//   double   evTotal = hEventCount["30to50"]->GetBinContent(1);
   unsigned counter = 0;
   
   fprintf(fEv,"\\begin{tabular}{|l|");
@@ -108,7 +140,7 @@ void doFilterYields(map<string,TFile*> files){
   fprintf(fEv," %40s &","Algorithm");
   fprintf(fEf," %40s &","Algorithm");
   for(auto iHist=hEventCount.begin(); iHist!=hEventCount.end(); iHist++){
-
+    
     fprintf(fEv," %8s ",iHist->first.c_str());
     fprintf(fEf," %8s ",iHist->first.c_str());
     if(counter<hEventCount.size()-1){
@@ -130,7 +162,7 @@ void doFilterYields(map<string,TFile*> files){
     counter = 0;
     for(auto iHist=hEventCount.begin(); iHist!=hEventCount.end(); iHist++){
       fprintf(fEv," %8.0f ",iHist->second->GetBinContent(iBin));
-      fprintf(fEf," %8.6f ",iHist->second->GetBinContent(iBin)/evTotal);
+      fprintf(fEf," %8.6f ",iHist->second->GetBinContent(iBin)/iHist->second->GetBinContent(1));
       if(counter<hEventCount.size()-1){
         fprintf(fEv,"&");
         fprintf(fEf,"&");
@@ -170,33 +202,34 @@ int main(){
   
   // Defining all alias for the input filenames
   map<string,string> fileNames;
-  fileNames["30to50"]   = "GenFilterAnalyzer_QCD_Pt-30to50.root";
-  fileNames["50to80"]   = "GenFilterAnalyzer_QCD_Pt-50to80.root";
-  fileNames["80to120"]  = "GenFilterAnalyzer_QCD_Pt-80to120.root";
-  fileNames["120to170"] = "GenFilterAnalyzer_QCD_Pt-120to170.root";
-  fileNames["170to300"] = "GenFilterAnalyzer_QCD_Pt-170to300.root";
-  fileNames["300to470"] = "GenFilterAnalyzer_QCD_Pt-300to470.root";
-  fileNames["470to600"] = "GenFilterAnalyzer_QCD_Pt-470to600.root";
-  fileNames["600to800"] = "GenFilterAnalyzer_QCD_Pt-600to800.root";
-
+  fileNames["30to50"]   = "OfflineFilterAnalyzer_QCD_Pt-30to50.root";
+  fileNames["50to80"]   = "OfflineFilterAnalyzer_QCD_Pt-50to80.root";
+  fileNames["80to120"]  = "OfflineFilterAnalyzer_QCD_Pt-80to120.root";
+  fileNames["120to170"] = "OfflineFilterAnalyzer_QCD_Pt-120to170.root";
+  fileNames["170to300"] = "OfflineFilterAnalyzer_QCD_Pt-170to300.root";
+  fileNames["300to470"] = "OfflineFilterAnalyzer_QCD_Pt-300to470.root";
+  fileNames["470to600"] = "OfflineFilterAnalyzer_QCD_Pt-470to600.root";
+  fileNames["600to800"] = "OfflineFilterAnalyzer_QCD_Pt-600to800.root";
+  
   if(!checkFiles(fileNames)){
     cout << "FATAL ERROR: One or more files missing!" << endl;
     return 1;
   }
-
+  
   map<string,TFile*> files;
   for(auto i=fileNames.begin(); i!=fileNames.end(); i++){
     files[i->first] = new TFile(i->second.c_str(),"READ");
   }
   
   doFilterYields(files);
-
-  drawPlots(getHist1D(files,"plots/Jets_Multiplicity"),"Jets_Multiplicity");
-  drawPlots(getHist1D(files,"plots/Jet0_Pt"),          "Jet0_Pt");
-  drawPlots(getHist1D(files,"plots/Jet1_Pt"),          "Jet1_Pt");
-  drawPlots(getHist1D(files,"plots/Dijet_MaxMjj"),     "Dijet_MaxMjj");
-  drawPlots(getHist1D(files,"plots/Dijet_MaxDEta"),    "Dijet_MaxDEta");
-  drawPlots(getHist1D(files,"plots/Dijet_MinDPhi"),    "Dijet_MinDPhi");
+  
+  map<string,TH1D*> hL1MET = getHist1D(files,"L1Extra_MET");
+  
+  tresholdAnalysis(hL1MET,40);
+  tresholdAnalysis(hL1MET,60);
+  tresholdAnalysis(hL1MET,70);
+  
+  drawPlots(hL1MET,"L1Extra_MET");
   
   return 0;
 }
