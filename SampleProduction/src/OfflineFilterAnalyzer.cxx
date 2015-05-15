@@ -10,12 +10,16 @@ OfflineFilterAnalyzer::OfflineFilterAnalyzer(const edm::ParameterSet& pset){
   ps = pset;
   
   // Getting input tags
-  edm::InputTag inputTag_HLTResults   = pset.getUntrackedParameter("inputTag_HLTResults",  edm::InputTag("TriggerResults",  "HLT"));
-  edm::InputTag inputTag_L1Extra_mets = pset.getUntrackedParameter("inputTag_L1Extra_mets",edm::InputTag("l1extraParticles","MET"));
+  edm::InputTag inputTag_HepMCProduct     = pset.getUntrackedParameter("inputTag_HepMCProduct",    edm::InputTag("generator"));
+  edm::InputTag inputTag_HLTResults       = pset.getUntrackedParameter("inputTag_HLTResults",      edm::InputTag("TriggerResults",  "HLT"));
+  edm::InputTag inputTag_L1Extra_mets     = pset.getUntrackedParameter("inputTag_L1Extra_mets",    edm::InputTag("l1extraParticles","MET"));
+  edm::InputTag inputTag_GenJetCollection = pset.getUntrackedParameter("inputTag_GenJetCollection",edm::InputTag("ak5GenJetsNoNu"));
   
   // Creating tokens
-  m_InputTag_HLTResults   = consumes<edm::TriggerResults>                (inputTag_HLTResults);
-  m_InputTag_L1Extra_mets = consumes<l1extra::L1EtMissParticleCollection>(inputTag_L1Extra_mets);
+  m_InputTag_HepMCProduct     = consumes<edm::HepMCProduct>                       (inputTag_HepMCProduct);
+  m_InputTag_GenJetCollection = consumes<reco::GenJetCollection>             (inputTag_GenJetCollection);
+  m_InputTag_L1Extra_mets     = consumes<l1extra::L1EtMissParticleCollection>(inputTag_L1Extra_mets);
+  m_InputTag_HLTResults       = consumes<edm::TriggerResults>                (inputTag_HLTResults);
   
   // Creating output file
   string outputFilename = pset.getUntrackedParameter<string>("outputFilename","OfflineFilterAnalyzer_Results.root");
@@ -24,6 +28,13 @@ OfflineFilterAnalyzer::OfflineFilterAnalyzer(const edm::ParameterSet& pset){
   // This histogram will be used to count our events (for normalisation later)
   m_EventCount  = new TH1D("EventCount", "EventCount",   4,-0.5,3.5); m_EventCount ->SetDirectory(fOut);
   m_L1Extra_MET = new TH1D("L1Extra_MET","L1Extra_MET",500,   0,500); m_L1Extra_MET->SetDirectory(fOut);
+  
+  m_GenNeutrinoMET         = new TH1D("m_GenNeutrinoMET",      "m_GenNeutrinoMET",      1000,0,1000);            m_GenNeutrinoMET        ->SetDirectory(fOut);
+  m_GenNeutrinoMET_L1MET40 = new TH1D("GenNeutrinoMET_L1MET40","GenNeutrinoMET_L1MET40",1000,0,1000);            m_GenNeutrinoMET_L1MET40->SetDirectory(fOut);
+  m_GenNeutrinoMET_L1MET60 = new TH1D("GenNeutrinoMET_L1MET60","GenNeutrinoMET_L1MET60",1000,0,1000);            m_GenNeutrinoMET_L1MET60->SetDirectory(fOut);
+  m_GenNeutrinoMET_L1MET70 = new TH1D("GenNeutrinoMET_L1MET70","GenNeutrinoMET_L1MET70",1000,0,1000);            m_GenNeutrinoMET_L1MET70->SetDirectory(fOut);
+  m_GenNeutrinoMET_L1MET   = new TH2D("GenNeutrinoMET_L1MET","  GenNeutrinoMET_L1MET",   500,0,1000,500,0,1000); m_GenNeutrinoMET_L1MET  ->SetDirectory(fOut);
+  
 }
 
 OfflineFilterAnalyzer::~OfflineFilterAnalyzer(){
@@ -31,6 +42,10 @@ OfflineFilterAnalyzer::~OfflineFilterAnalyzer(){
   fOut->Write();
   delete m_EventCount;
   delete m_L1Extra_MET;
+  delete m_GenNeutrinoMET_L1MET40;
+  delete m_GenNeutrinoMET_L1MET60;
+  delete m_GenNeutrinoMET_L1MET70;
+  delete m_GenNeutrinoMET_L1MET;
 }
 
 void OfflineFilterAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup){
@@ -44,6 +59,8 @@ void OfflineFilterAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSe
   edm::Handle<l1extra::L1EtMissParticleCollection> mets;
   iEvent.getByToken(m_InputTag_L1Extra_mets,mets);
   
+  double genNeutrinoMET = getGenNeutrinoMET(iEvent);
+  
   //printHLTMenu (iEvent,handleTriggerResults);
   //printFiredHLT(iEvent,handleTriggerResults);
   
@@ -54,8 +71,14 @@ void OfflineFilterAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSe
   if(mets.isValid()){
     if (mets->size()!=0){
 
-      m_L1Extra_MET->Fill(mets->begin()->et());
+      double l1MET = mets->begin()->et();
       
+      m_L1Extra_MET         ->Fill(l1MET);
+      m_GenNeutrinoMET      ->Fill(genNeutrinoMET);
+      m_GenNeutrinoMET_L1MET->Fill(genNeutrinoMET,l1MET);
+      if(l1MET>=40){m_GenNeutrinoMET_L1MET40->Fill(genNeutrinoMET);}
+      if(l1MET>=60){m_GenNeutrinoMET_L1MET60->Fill(genNeutrinoMET);}
+      if(l1MET>=60){m_GenNeutrinoMET_L1MET70->Fill(genNeutrinoMET);}
     }//else{cout << "[OfflineFilterAnalyzer] ERROR: l1extraParticles MET has size zero." << endl;}
   }//else{cout << "[OfflineFilterAnalyzer] ERROR: l1extraParticles MET is not valid." << endl;}
   
@@ -140,6 +163,35 @@ void OfflineFilterAnalyzer::printHLTMenu(const edm::Event& iEvent, edm::Handle<e
   }
   
 }
+
+double OfflineFilterAnalyzer::getGenNeutrinoMET(const edm::Event& iEvent){
+  
+  edm::Handle<edm::HepMCProduct> handle_genEvent;
+  iEvent.getByToken(m_InputTag_HepMCProduct, handle_genEvent);
+  const HepMC::GenEvent* genEvent = handle_genEvent->GetEvent();
+  
+  vector<HepMC::GenParticle*> vecNeutrino;
+  
+  for ( HepMC::GenEvent::particle_const_iterator p = genEvent->particles_begin(); p != genEvent->particles_end(); ++p ) {
+    if     ((*p)->status()==1 && abs((*p)->pdg_id()) == 12){vecNeutrino.push_back(*p);}
+    else if((*p)->status()==1 && abs((*p)->pdg_id()) == 14){vecNeutrino.push_back(*p);}
+    else if((*p)->status()==1 && abs((*p)->pdg_id()) == 16){vecNeutrino.push_back(*p);}      
+  }
+  
+  if(vecNeutrino.size()==0){return 0.;}
+  if(vecNeutrino.size()==1){return vecNeutrino[0]->momentum().perp();}
+  
+  double nuPx=0.;
+  double nuPy=0.;
+  
+  for(unsigned i=0; i<vecNeutrino.size(); i++) {
+    nuPx += vecNeutrino[i]->momentum().px();
+    nuPy += vecNeutrino[i]->momentum().py();
+  }
+
+  return sqrt(pow(nuPx,2)+pow(nuPy,2));
+}
+
 
 //define this as a plug-in
 DEFINE_FWK_MODULE(OfflineFilterAnalyzer);
