@@ -1,4 +1,4 @@
-#include "VBFHiggsToInvisible/SampleProduction/interface/GenFilterAnalyzer.h"
+#include "CMSSW-VBFHToInv/SampleProduction/interface/GenFilterAnalyzer.h"
 
 #include <HepMC/GenVertex.h>
 

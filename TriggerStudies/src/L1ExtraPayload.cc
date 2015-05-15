@@ -1,4 +1,4 @@
-#include "VBFHiggsToInvisible/TriggerStudies/interface/L1ExtraPayload.h"
+#include "CMSSW-VBFHToInv/TriggerStudies/interface/L1ExtraPayload.h"
  
 #include "FWCore/Utilities/interface/InputTag.h"
 

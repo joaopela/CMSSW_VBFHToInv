@@ -1,4 +1,4 @@
-#include "VBFHiggsToInvisible/GenFilters/interface/MCDijetFilter.h"
+#include "CMSSW-VBFHToInv/GenFilters/interface/MCDijetFilter.h"
 
 
 #include <HepMC/GenVertex.h>

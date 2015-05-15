@@ -52,8 +52,8 @@
 #include "TFile.h"
 
 // My includes
-#include "VBFHiggsToInvisible/TriggerStudies/interface/L1ExtraPayload.h"
-#include "VBFHiggsToInvisible/TriggerStudies/interface/AlgoTester.h"
+#include "CMSSW-VBFHToInv/TriggerStudies/interface/L1ExtraPayload.h"
+#include "CMSSW-VBFHToInv/TriggerStudies/interface/AlgoTester.h"
 
 // System include files
 #include <memory>

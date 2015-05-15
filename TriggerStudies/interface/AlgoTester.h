@@ -6,7 +6,7 @@
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 
 // My includes
-#include "VBFHiggsToInvisible/TriggerStudies/interface/L1ExtraPayload.h"
+#include "CMSSW-VBFHToInv/TriggerStudies/interface/L1ExtraPayload.h"
 
 // system include files
 #include <memory>

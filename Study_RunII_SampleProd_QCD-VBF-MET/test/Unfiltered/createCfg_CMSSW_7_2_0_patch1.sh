@@ -1,14 +1,22 @@
 #!/bin/bash
 
-# Getting files
-# curl -s --insecure https://cms-pdmv.cern.ch/mcm/public/restapi/requests/get_fragment/BTV-Fall13-00042 --retry 2 --create-dirs -o BTV-Fall13-00042-fragment.py 
-# curl -s --insecure https://cms-pdmv.cern.ch/mcm/public/restapi/requests/get_fragment/BTV-Fall13-00043 --retry 2 --create-dirs -o BTV-Fall13-00043-fragment.py 
-# curl -s --insecure https://cms-pdmv.cern.ch/mcm/public/restapi/requests/get_fragment/BTV-Fall13-00044 --retry 2 --create-dirs -o BTV-Fall13-00044-fragment.py
-# curl -s --insecure https://cms-pdmv.cern.ch/mcm/public/restapi/requests/get_fragment/BTV-Fall13-00045 --retry 2 --create-dirs -o BTV-Fall13-00045-fragment.py 
-# curl -s --insecure https://cms-pdmv.cern.ch/mcm/public/restapi/requests/get_fragment/BTV-Fall13-00046 --retry 2 --create-dirs -o BTV-Fall13-00046-fragment.py
-# curl -s --insecure https://cms-pdmv.cern.ch/mcm/public/restapi/requests/get_fragment/BTV-Fall13-00047 --retry 2 --create-dirs -o BTV-Fall13-00047-fragment.py
-# curl -s --insecure https://cms-pdmv.cern.ch/mcm/public/restapi/requests/get_fragment/BTV-Fall13-00048 --retry 2 --create-dirs -o BTV-Fall13-00048-fragment.py
-# curl -s --insecure https://cms-pdmv.cern.ch/mcm/public/restapi/requests/get_fragment/BTV-Fall13-00049 --retry 2 --create-dirs -o BTV-Fall13-00049-fragment.py
+CURRENTDIR=$PWD
+echo "Getting necessary configuration files..."
+cd $CMSSW_BASE/src/
+curl -s --insecure https://cms-pdmv.cern.ch/mcm/public/restapi/requests/get_fragment/BTV-Fall13-00042 --retry 2 --create-dirs -o BTV-Fall13-00042-fragment.py 
+curl -s --insecure https://cms-pdmv.cern.ch/mcm/public/restapi/requests/get_fragment/BTV-Fall13-00043 --retry 2 --create-dirs -o BTV-Fall13-00043-fragment.py 
+curl -s --insecure https://cms-pdmv.cern.ch/mcm/public/restapi/requests/get_fragment/BTV-Fall13-00044 --retry 2 --create-dirs -o BTV-Fall13-00044-fragment.py
+curl -s --insecure https://cms-pdmv.cern.ch/mcm/public/restapi/requests/get_fragment/BTV-Fall13-00045 --retry 2 --create-dirs -o BTV-Fall13-00045-fragment.py 
+curl -s --insecure https://cms-pdmv.cern.ch/mcm/public/restapi/requests/get_fragment/BTV-Fall13-00046 --retry 2 --create-dirs -o BTV-Fall13-00046-fragment.py
+curl -s --insecure https://cms-pdmv.cern.ch/mcm/public/restapi/requests/get_fragment/BTV-Fall13-00047 --retry 2 --create-dirs -o BTV-Fall13-00047-fragment.py
+curl -s --insecure https://cms-pdmv.cern.ch/mcm/public/restapi/requests/get_fragment/BTV-Fall13-00048 --retry 2 --create-dirs -o BTV-Fall13-00048-fragment.py
+curl -s --insecure https://cms-pdmv.cern.ch/mcm/public/restapi/requests/get_fragment/BTV-Fall13-00049 --retry 2 --create-dirs -o BTV-Fall13-00049-fragment.py
+
+echo "Recompiling CMSSW to update references..."
+scramv1 b
+
+echo "Creating configuration files..."
+cd $CURRENTDIR
 
 # QCD_Pt-30to50
 #cmsDriver.py step1 --filein "dbs:/QCD_Pt-30to50_Tune4C_13TeV_pythia8/Fall13-POSTLS162_V1_castor-v1/GEN-SIM" --fileout file:QCD_Pt-30to50_step1.root --pileup_input "dbs:/MinBias_TuneA2MB_13TeV-pythia8/Fall13-POSTLS162_V1-v1/GEN-SIM" --mc --eventcontent RAWSIM --inputEventContent REGEN --pileup 'AVE_35_BX_50ns,{"N":30}' --customise SLHCUpgradeSimulations/Configuration/postLS1Customs.customisePostLS1,Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-RAW --conditions PHYS14_ST_V1 --step GEN:fixGenInfo,DIGI,L1,DIGI2RAW,HLT:GRun --magField 38T_PostLS1 --python_filename QCD_Pt-30to50_step1_cfg.py --no_exec -n 100

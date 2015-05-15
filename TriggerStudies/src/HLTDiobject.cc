@@ -1,4 +1,4 @@
-#include "VBFHiggsToInvisible/TriggerStudies/interface/HLTDiobject.h"
+#include "CMSSW-VBFHToInv/TriggerStudies/interface/HLTDiobject.h"
 
 using namespace std;
 

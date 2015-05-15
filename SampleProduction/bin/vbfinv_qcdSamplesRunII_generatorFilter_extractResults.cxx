@@ -1,7 +1,7 @@
 #include <iostream>
 
 // My includes
-#include "VBFHiggsToInvisible/Plots/interface/Style.h"
+#include "CMSSW-VBFHToInv/Plots/interface/Style.h"
 
 // ROOT includes
 #include "TFile.h"

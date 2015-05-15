@@ -2,7 +2,7 @@
 #ifndef VBFHiggsToInvisible_TriggerStudies_TriggerDijet_H
 #define VBFHiggsToInvisible_TriggerStudies_TriggerDijet_H
 
-#include "VBFHiggsToInvisible/TriggerStudies/interface/TriggerJet.h"
+#include "CMSSW-VBFHToInv/TriggerStudies/interface/TriggerJet.h"
 
 #include "DataFormats/Math/interface/deltaPhi.h"
 

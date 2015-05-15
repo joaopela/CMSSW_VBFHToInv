@@ -1,6 +1,6 @@
 <use name="root"/>
 <use name="rootgraphics"/>
-<use name="VBFHiggsToInvisible/Plots"/>
+<use name="HEPFWCommon/Style"/>
 
 <bin name="vbfinv_qcdSamplesRunII_generatorFilter_extractResults" file="vbfinv_qcdSamplesRunII_generatorFilter_extractResults.cxx"/>
 <bin name="vbfinv_qcdSamplesRunII_offlineFilter_extractResults"   file="vbfinv_qcdSamplesRunII_offlineFilter_extractResults.cxx"/>
