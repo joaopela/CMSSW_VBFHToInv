@@ -106,9 +106,9 @@ for jobNumber in range(1,numberOfJobs+1):
     new_file.close()
     os.chmod(jobPostOutFilePath, stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP | stat.S_IROTH | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
     
-    submitCmd += " -Ep "+jobPostFileBasename
+    submitCmd += " -Ep \""+jobPostOutFilePath+"\""
   
-  submitCmd += " \""+jobPostOutFilePath+"\"\n"
+  submitCmd += " "+jobOutFileBasename+"\n"
   fSubmit.write(submitCmd)
   
 fSubmit.close()
