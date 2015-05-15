@@ -1,5 +1,5 @@
-#ifndef VBFHiggsToInvisible_SampleProduction_OfflineFilterAnalyzer
-#define VBFHiggsToInvisible_SampleProduction_OfflineFilterAnalyzer
+#ifndef VBFHiggsToInvisible_Study_RunII_SampleProd_QCD_VBF_MET_OfflineFilterAnalyzer
+#define VBFHiggsToInvisible_Study_RunII_SampleProd_QCD_VBF_MET_OfflineFilterAnalyzer
 
 // CMSSW includes
 #include "FWCore/Framework/interface/Frameworkfwd.h"
