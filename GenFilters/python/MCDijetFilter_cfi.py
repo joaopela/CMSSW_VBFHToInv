@@ -113,7 +113,24 @@ mcDijetFilter_Pt40_Eta4p75_DEta3p5_Dphi1p5_Mjj600 = cms.EDFilter("MCDijetFilter"
   outFile = cms.untracked.string('mcDijetFilter.root')
 )
 
-# Alias
-mcDijetFilter_RunI = mcDijetFilter_Pt20_Eta5p0_DEta3p2_Mjj700
+# Working Point B
+mcDijetFilter_Pt50_Eta4p75_DEta3p0_Dphi2p0_Mjj1000 = cms.EDFilter("MCDijetFilter",
+  MinPt       = cms.untracked.double(40.0),
+  MaxEta      = cms.untracked.double(4.75),
+  MinEta      = cms.untracked.double(-4.75),
+  MinDeltaEta = cms.untracked.double(3.0),
+  MaxDeltaEta = cms.untracked.double(10.0),
+  MinDeltaPhi = cms.untracked.double(0),
+  MaxDeltaPhi = cms.untracked.double(2.0),
+  MinInvMass  = cms.untracked.double(1000.0),
+  MaxInvMass  = cms.untracked.double(50000.0),
+  outFile     = cms.untracked.string('mcDijetFilter.root')
+)
 
+
+
+# Alias
+mcDijetFilter_RunI      = mcDijetFilter_Pt20_Eta5p0_DEta3p2_Mjj700
+mcDijetFilter_RunII_WPA = mcDijetFilter_Pt50_Eta4p75_DEta3p5_Dphi1p5_Mjj1000
+mcDijetFilter_RunII_WPB = mcDijetFilter_Pt50_Eta4p75_DEta3p0_Dphi2p0_Mjj1000
 
