@@ -1,4 +1,4 @@
 LSFJOB_*
 *.root
 *.log
-*.py
+*.pyc
