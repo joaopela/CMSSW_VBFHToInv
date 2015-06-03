@@ -1,34 +1,34 @@
 #!/bin/bash
 
-cd QCD_30to50
+cd QCD_Pt-30to50_step1
 ./submitJobs.sh
 cd ..
 
-cd QCD_50to80
+cd QCD_Pt-50to80_step1
 ./submitJobs.sh
 cd ..
 
-cd QCD_80to120 
+cd QCD_Pt-80to120_step1
 ./submitJobs.sh
 cd ..
 
-cd QCD_120to170
+cd QCD_Pt-120to170_step1
 ./submitJobs.sh
 cd ..
 
-cd QCD_170to300
+cd QCD_Pt-170to300_step1
 ./submitJobs.sh
 cd ..
 
-cd QCD_300to470
+cd QCD_Pt-300to470_step1
 ./submitJobs.sh
 cd ..
 
-cd QCD_470to600
+cd QCD_Pt-470to600_step1
 ./submitJobs.sh
 cd ..
 
-cd QCD_600to800
+cd QCD_Pt-600to800_step1
 ./submitJobs.sh
 cd ..
 
