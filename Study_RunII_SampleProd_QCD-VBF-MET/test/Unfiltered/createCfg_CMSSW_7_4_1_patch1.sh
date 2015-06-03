@@ -29,7 +29,7 @@ cd $CURRENTDIR
 # 
 # Our cfg
 cmsDriver.py Configuration/GenProduction/python/ThirteenTeV/QCD_Pt_30to50_TuneCUETP8M1_13TeV_pythia8_cff.py --fileout file:QCD_Pt-30to50_step1.root --pileup_input "dbs:/MinBias_TuneCUETP8M1_13TeV-pythia8/RunIIWinter15GS-MCRUN2_71_V1-v1/GEN-SIM" --pileup 2015_25ns_Startup_PoissonOOTPU --mc --eventcontent RAWSIM --customise SLHCUpgradeSimulations/Configuration/postLS1Customs.customisePostLS1,Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-RAW --conditions MCRUN2_74_V9 --beamspot NominalCollision2015 --step GEN,SIM,DIGI,L1,DIGI2RAW,HLT:@frozen25ns --magField 38T_PostLS1 --python_filename QCD_Pt-30to50_step1_CMSSW_7_4_1_patch1_cfg.py --no_exec -n 100
-cmsDriver.py step2 --filein file:QCD_Pt-30to50_step1.root --fileout file:QCD_Pt-30to50_step2.root --mc --eventcontent AODSIM --customise SLHCUpgradeSimulations/Configuration/postLS1Customs.customisePostLS1,Configuration/DataProcessing/Utils.addMonitoring --datatier AODSIM --conditions MCRUN2_74_V9 --step RAW2DIGI,L1Reco,RECO --magField 38T_PostLS1 --python_filename QCD_Pt-30to50_step2_CMSSW_7_4_1_patch1_cfg.py --no_exec -n 100
+cmsDriver.py step2 --filein file:../QCD_Pt-30to50_step1/QCD_Pt-30to50_step1.root --fileout file:QCD_Pt-30to50_step2.root --mc --eventcontent AODSIM --customise SLHCUpgradeSimulations/Configuration/postLS1Customs.customisePostLS1,Configuration/DataProcessing/Utils.addMonitoring --datatier AODSIM --conditions MCRUN2_74_V9 --step RAW2DIGI,L1Reco,RECO --magField 38T_PostLS1 --python_filename QCD_Pt-30to50_step2_CMSSW_7_4_1_patch1_cfg.py --no_exec -n 100
 
 # QCD_Pt-50to80
 #
@@ -42,7 +42,7 @@ cmsDriver.py step2 --filein file:QCD_Pt-30to50_step1.root --fileout file:QCD_Pt-
 # 
 # Our cfg
 cmsDriver.py Configuration/GenProduction/python/ThirteenTeV/QCD_Pt_50to80_TuneCUETP8M1_13TeV_pythia8_cff.py --fileout file:QCD_Pt-50to80_step1.root --pileup_input "dbs:/MinBias_TuneCUETP8M1_13TeV-pythia8/RunIIWinter15GS-MCRUN2_71_V1-v1/GEN-SIM" --pileup 2015_25ns_Startup_PoissonOOTPU --mc --eventcontent RAWSIM --customise SLHCUpgradeSimulations/Configuration/postLS1Customs.customisePostLS1,Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-RAW --conditions MCRUN2_74_V9 --beamspot NominalCollision2015 --step GEN,SIM,DIGI,L1,DIGI2RAW,HLT:@frozen25ns --magField 38T_PostLS1 --python_filename QCD_Pt-50to80_step1_CMSSW_7_4_1_patch1_cfg.py --no_exec -n 100
-cmsDriver.py step2 --filein file:QCD_Pt-50to80_step1.root --fileout file:QCD_Pt-50to80_step2.root --mc --eventcontent AODSIM --customise SLHCUpgradeSimulations/Configuration/postLS1Customs.customisePostLS1,Configuration/DataProcessing/Utils.addMonitoring --datatier AODSIM --conditions MCRUN2_74_V9 --step RAW2DIGI,L1Reco,RECO --magField 38T_PostLS1 --python_filename QCD_Pt-50to80_step2_CMSSW_7_4_1_patch1_cfg.py --no_exec -n 100
+cmsDriver.py step2 --filein file:../QCD_Pt-50to80_step1/QCD_Pt-50to80_step1.root --fileout file:QCD_Pt-50to80_step2.root --mc --eventcontent AODSIM --customise SLHCUpgradeSimulations/Configuration/postLS1Customs.customisePostLS1,Configuration/DataProcessing/Utils.addMonitoring --datatier AODSIM --conditions MCRUN2_74_V9 --step RAW2DIGI,L1Reco,RECO --magField 38T_PostLS1 --python_filename QCD_Pt-50to80_step2_CMSSW_7_4_1_patch1_cfg.py --no_exec -n 100
 
 # QCD_Pt-80to120
 #
@@ -55,7 +55,7 @@ cmsDriver.py step2 --filein file:QCD_Pt-50to80_step1.root --fileout file:QCD_Pt-
 # 
 # Our cfg
 cmsDriver.py Configuration/GenProduction/python/ThirteenTeV/QCD_Pt_80to120_TuneCUETP8M1_13TeV_pythia8_cff.py --fileout file:QCD_Pt-80to120_step1.root --pileup_input "dbs:/MinBias_TuneCUETP8M1_13TeV-pythia8/RunIIWinter15GS-MCRUN2_71_V1-v1/GEN-SIM" --pileup 2015_25ns_Startup_PoissonOOTPU --mc --eventcontent RAWSIM --customise SLHCUpgradeSimulations/Configuration/postLS1Customs.customisePostLS1,Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-RAW --conditions MCRUN2_74_V9 --beamspot NominalCollision2015 --step GEN,SIM,DIGI,L1,DIGI2RAW,HLT:@frozen25ns --magField 38T_PostLS1 --python_filename QCD_Pt-80to120_step1_CMSSW_7_4_1_patch1_cfg.py --no_exec -n 100
-cmsDriver.py step2 --filein file:QCD_Pt-80to120_step1.root --fileout file:QCD_Pt-80to120_step2.root --mc --eventcontent AODSIM --customise SLHCUpgradeSimulations/Configuration/postLS1Customs.customisePostLS1,Configuration/DataProcessing/Utils.addMonitoring --datatier AODSIM --conditions MCRUN2_74_V9 --step RAW2DIGI,L1Reco,RECO --magField 38T_PostLS1 --python_filename QCD_Pt-80to120_step2_CMSSW_7_4_1_patch1_cfg.py --no_exec -n 100
+cmsDriver.py step2 --filein file:../QCD_Pt-80to120_step1/QCD_Pt-80to120_step1.root --fileout file:QCD_Pt-80to120_step2.root --mc --eventcontent AODSIM --customise SLHCUpgradeSimulations/Configuration/postLS1Customs.customisePostLS1,Configuration/DataProcessing/Utils.addMonitoring --datatier AODSIM --conditions MCRUN2_74_V9 --step RAW2DIGI,L1Reco,RECO --magField 38T_PostLS1 --python_filename QCD_Pt-80to120_step2_CMSSW_7_4_1_patch1_cfg.py --no_exec -n 100
 
 # QCD_Pt-120to170
 #
@@ -68,7 +68,7 @@ cmsDriver.py step2 --filein file:QCD_Pt-80to120_step1.root --fileout file:QCD_Pt
 # 
 # Our cfg
 cmsDriver.py Configuration/GenProduction/python/ThirteenTeV/QCD_Pt_120to170_TuneCUETP8M1_13TeV_pythia8_cff.py --fileout file:QCD_Pt-120to170_step1.root --pileup_input "dbs:/MinBias_TuneCUETP8M1_13TeV-pythia8/RunIIWinter15GS-MCRUN2_71_V1-v1/GEN-SIM" --pileup 2015_25ns_Startup_PoissonOOTPU --mc --eventcontent RAWSIM --customise SLHCUpgradeSimulations/Configuration/postLS1Customs.customisePostLS1,Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-RAW --conditions MCRUN2_74_V9 --beamspot NominalCollision2015 --step GEN,SIM,DIGI,L1,DIGI2RAW,HLT:@frozen25ns --magField 38T_PostLS1 --python_filename QCD_Pt-120to170_step1_CMSSW_7_4_1_patch1_cfg.py --no_exec -n 100
-cmsDriver.py step2 --filein file:QCD_Pt-120to170_step1.root --fileout file:QCD_Pt-120to170_step2.root --mc --eventcontent AODSIM --customise SLHCUpgradeSimulations/Configuration/postLS1Customs.customisePostLS1,Configuration/DataProcessing/Utils.addMonitoring --datatier AODSIM --conditions MCRUN2_74_V9 --step RAW2DIGI,L1Reco,RECO --magField 38T_PostLS1 --python_filename QCD_Pt-120to170_step2_CMSSW_7_4_1_patch1_cfg.py --no_exec -n 100
+cmsDriver.py step2 --filein file:../QCD_Pt-120to170_step1/QCD_Pt-120to170_step1.root --fileout file:QCD_Pt-120to170_step2.root --mc --eventcontent AODSIM --customise SLHCUpgradeSimulations/Configuration/postLS1Customs.customisePostLS1,Configuration/DataProcessing/Utils.addMonitoring --datatier AODSIM --conditions MCRUN2_74_V9 --step RAW2DIGI,L1Reco,RECO --magField 38T_PostLS1 --python_filename QCD_Pt-120to170_step2_CMSSW_7_4_1_patch1_cfg.py --no_exec -n 100
 
 # QCD_Pt-170to300
 #
@@ -81,7 +81,7 @@ cmsDriver.py step2 --filein file:QCD_Pt-120to170_step1.root --fileout file:QCD_P
 # 
 # Our cfg
 cmsDriver.py Configuration/GenProduction/python/ThirteenTeV/QCD_Pt_170to300_TuneCUETP8M1_13TeV_pythia8_cff.py --fileout file:QCD_Pt-170to300_step1.root --pileup_input "dbs:/MinBias_TuneCUETP8M1_13TeV-pythia8/RunIIWinter15GS-MCRUN2_71_V1-v1/GEN-SIM" --pileup 2015_25ns_Startup_PoissonOOTPU --mc --eventcontent RAWSIM --customise SLHCUpgradeSimulations/Configuration/postLS1Customs.customisePostLS1,Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-RAW --conditions MCRUN2_74_V9 --beamspot NominalCollision2015 --step GEN,SIM,DIGI,L1,DIGI2RAW,HLT:@frozen25ns --magField 38T_PostLS1 --python_filename QCD_Pt-170to300_step1_CMSSW_7_4_1_patch1_cfg.py --no_exec -n 100
-cmsDriver.py step2 --filein file:QCD_Pt-170to300_step1.root --fileout file:QCD_Pt-170to300_step2.root --mc --eventcontent AODSIM --customise SLHCUpgradeSimulations/Configuration/postLS1Customs.customisePostLS1,Configuration/DataProcessing/Utils.addMonitoring --datatier AODSIM --conditions MCRUN2_74_V9 --step RAW2DIGI,L1Reco,RECO --magField 38T_PostLS1 --python_filename QCD_Pt-170to300_step2_CMSSW_7_4_1_patch1_cfg.py --no_exec -n 100
+cmsDriver.py step2 --filein file:../QCD_Pt-170to300_step1/QCD_Pt-170to300_step1.root --fileout file:QCD_Pt-170to300_step2.root --mc --eventcontent AODSIM --customise SLHCUpgradeSimulations/Configuration/postLS1Customs.customisePostLS1,Configuration/DataProcessing/Utils.addMonitoring --datatier AODSIM --conditions MCRUN2_74_V9 --step RAW2DIGI,L1Reco,RECO --magField 38T_PostLS1 --python_filename QCD_Pt-170to300_step2_CMSSW_7_4_1_patch1_cfg.py --no_exec -n 100
 
 # QCD_Pt-300to470
 #
@@ -94,7 +94,7 @@ cmsDriver.py step2 --filein file:QCD_Pt-170to300_step1.root --fileout file:QCD_P
 # 
 # Our cfg
 cmsDriver.py Configuration/GenProduction/python/ThirteenTeV/QCD_Pt_300to470_TuneCUETP8M1_13TeV_pythia8_cff.py --fileout file:QCD_Pt-300to470_step1.root --pileup_input "dbs:/MinBias_TuneCUETP8M1_13TeV-pythia8/RunIIWinter15GS-MCRUN2_71_V1-v1/GEN-SIM" --pileup 2015_25ns_Startup_PoissonOOTPU --mc --eventcontent RAWSIM --customise SLHCUpgradeSimulations/Configuration/postLS1Customs.customisePostLS1,Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-RAW --conditions MCRUN2_74_V9 --beamspot NominalCollision2015 --step GEN,SIM,DIGI,L1,DIGI2RAW,HLT:@frozen25ns --magField 38T_PostLS1 --python_filename QCD_Pt-300to470_step1_CMSSW_7_4_1_patch1_cfg.py --no_exec -n 100
-cmsDriver.py step2 --filein file:QCD_Pt-300to470_step1.root --fileout file:QCD_Pt-300to470_step2.root --mc --eventcontent AODSIM --customise SLHCUpgradeSimulations/Configuration/postLS1Customs.customisePostLS1,Configuration/DataProcessing/Utils.addMonitoring --datatier AODSIM --conditions MCRUN2_74_V9 --step RAW2DIGI,L1Reco,RECO --magField 38T_PostLS1 --python_filename QCD_Pt-300to470_step2_CMSSW_7_4_1_patch1_cfg.py --no_exec -n 100
+cmsDriver.py step2 --filein file:../QCD_Pt-300to470_step1/QCD_Pt-300to470_step1.root --fileout file:QCD_Pt-300to470_step2.root --mc --eventcontent AODSIM --customise SLHCUpgradeSimulations/Configuration/postLS1Customs.customisePostLS1,Configuration/DataProcessing/Utils.addMonitoring --datatier AODSIM --conditions MCRUN2_74_V9 --step RAW2DIGI,L1Reco,RECO --magField 38T_PostLS1 --python_filename QCD_Pt-300to470_step2_CMSSW_7_4_1_patch1_cfg.py --no_exec -n 100
 
 # QCD_Pt-470to600
 #
@@ -107,7 +107,7 @@ cmsDriver.py step2 --filein file:QCD_Pt-300to470_step1.root --fileout file:QCD_P
 # 
 # Our cfg
 cmsDriver.py Configuration/GenProduction/python/ThirteenTeV/QCD_Pt_470to600_TuneCUETP8M1_13TeV_pythia8_cff.py --fileout file:QCD_Pt-470to600_step1.root --pileup_input "dbs:/MinBias_TuneCUETP8M1_13TeV-pythia8/RunIIWinter15GS-MCRUN2_71_V1-v1/GEN-SIM" --pileup 2015_25ns_Startup_PoissonOOTPU --mc --eventcontent RAWSIM --customise SLHCUpgradeSimulations/Configuration/postLS1Customs.customisePostLS1,Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-RAW --conditions MCRUN2_74_V9 --beamspot NominalCollision2015 --step GEN,SIM,DIGI,L1,DIGI2RAW,HLT:@frozen25ns --magField 38T_PostLS1 --python_filename QCD_Pt-470to600_step1_CMSSW_7_4_1_patch1_cfg.py --no_exec -n 100
-cmsDriver.py step2 --filein file:QCD_Pt-470to600_step1.root --fileout file:QCD_Pt-470to600_step2.root --mc --eventcontent AODSIM --customise SLHCUpgradeSimulations/Configuration/postLS1Customs.customisePostLS1,Configuration/DataProcessing/Utils.addMonitoring --datatier AODSIM --conditions MCRUN2_74_V9 --step RAW2DIGI,L1Reco,RECO --magField 38T_PostLS1 --python_filename QCD_Pt-470to600_step2_CMSSW_7_4_1_patch1_cfg.py --no_exec -n 100
+cmsDriver.py step2 --filein file:../QCD_Pt-470to600_step1/QCD_Pt-470to600_step1.root --fileout file:QCD_Pt-470to600_step2.root --mc --eventcontent AODSIM --customise SLHCUpgradeSimulations/Configuration/postLS1Customs.customisePostLS1,Configuration/DataProcessing/Utils.addMonitoring --datatier AODSIM --conditions MCRUN2_74_V9 --step RAW2DIGI,L1Reco,RECO --magField 38T_PostLS1 --python_filename QCD_Pt-470to600_step2_CMSSW_7_4_1_patch1_cfg.py --no_exec -n 100
 
 # QCD_Pt-600to800
 #
@@ -120,4 +120,4 @@ cmsDriver.py step2 --filein file:QCD_Pt-470to600_step1.root --fileout file:QCD_P
 # 
 # Our cfg
 cmsDriver.py Configuration/GenProduction/python/ThirteenTeV/QCD_Pt_600to800_TuneCUETP8M1_13TeV_pythia8_cff.py --fileout file:QCD_Pt-600to800_step1.root --pileup_input "dbs:/MinBias_TuneCUETP8M1_13TeV-pythia8/RunIIWinter15GS-MCRUN2_71_V1-v1/GEN-SIM" --pileup 2015_25ns_Startup_PoissonOOTPU --mc --eventcontent RAWSIM --customise SLHCUpgradeSimulations/Configuration/postLS1Customs.customisePostLS1,Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-RAW --conditions MCRUN2_74_V9 --beamspot NominalCollision2015 --step GEN,SIM,DIGI,L1,DIGI2RAW,HLT:@frozen25ns --magField 38T_PostLS1 --python_filename QCD_Pt-600to800_step1_CMSSW_7_4_1_patch1_cfg.py --no_exec -n 100
-cmsDriver.py step2 --filein file:QCD_Pt-600to800_step1.root --fileout file:QCD_Pt-600to800_step2.root --mc --eventcontent AODSIM --customise SLHCUpgradeSimulations/Configuration/postLS1Customs.customisePostLS1,Configuration/DataProcessing/Utils.addMonitoring --datatier AODSIM --conditions MCRUN2_74_V9 --step RAW2DIGI,L1Reco,RECO --magField 38T_PostLS1 --python_filename QCD_Pt-600to800_step2_CMSSW_7_4_1_patch1_cfg.py --no_exec -n 100
+cmsDriver.py step2 --filein file:../QCD_Pt-600to800_step1/QCD_Pt-600to800_step1.root --fileout file:QCD_Pt-600to800_step2.root --mc --eventcontent AODSIM --customise SLHCUpgradeSimulations/Configuration/postLS1Customs.customisePostLS1,Configuration/DataProcessing/Utils.addMonitoring --datatier AODSIM --conditions MCRUN2_74_V9 --step RAW2DIGI,L1Reco,RECO --magField 38T_PostLS1 --python_filename QCD_Pt-600to800_step2_CMSSW_7_4_1_patch1_cfg.py --no_exec -n 100
