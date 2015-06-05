@@ -1,4 +1,4 @@
-#include "CMSSW-VBFHToInv/Study_RunII_SampleProd_QCD-VBF-MET/interface/GenFilterAnalyzer.h"
+#include "CMSSW-VBFHToInv/Study_RunII_SampleProd_QCD_VBFMET/interface/GenFilterAnalyzer.h"
 
 #include <HepMC/GenVertex.h>
 

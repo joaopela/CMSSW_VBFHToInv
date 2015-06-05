@@ -107,7 +107,7 @@ process.generator = cms.EDFilter("Pythia8GeneratorFilter",
     )
 )
 
-from Study_RunII_SampleProd_QCD-VBF-MET.SampleProduction.GenFilterAnalyzer_cfi import *
+from Study_RunII_SampleProd_QCD_VBFMET.SampleProduction.GenFilterAnalyzer_cfi import *
 process.genFilterAnalyzer                           = genFilterAnalyzer
 process.genFilterAnalyzer.outFile                   = cms.untracked.string('GenFilterAnalyzer_QCD_Pt-300to470_'+str(JOBNUMBER)+'.root')
 process.genFilterAnalyzer.inputTag_GenJetCollection = cms.untracked.InputTag('ak4GenJetsNoNu')
