@@ -1,4 +1,4 @@
-#include "CMSSW-VBFHToInv/TriggerStudies/interface/HLTPathData.h"
+#include "CMSSW_VBFHToInv/TriggerStudies/interface/HLTPathData.h"
 
 #include <iostream>
 

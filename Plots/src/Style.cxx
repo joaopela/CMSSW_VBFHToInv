@@ -1,4 +1,4 @@
-#include "CMSSW-VBFHToInv/Plots/interface/Style.h"
+#include "CMSSW_VBFHToInv/Plots/interface/Style.h"
 
 hepfw::Style::Style(){}
 

@@ -17,8 +17,8 @@
 #include "DataFormats/Common/interface/TriggerResults.h"
 #include "FWCore/Common/interface/TriggerNames.h"
 
-#include "CMSSW-VBFHToInv/TriggerStudies/interface/HLTPlots.h"
-#include "CMSSW-VBFHToInv/TriggerStudies/interface/HLTAlgoPFDijet.h"
+#include "CMSSW_VBFHToInv/TriggerStudies/interface/HLTPlots.h"
+#include "CMSSW_VBFHToInv/TriggerStudies/interface/HLTAlgoPFDijet.h"
 
 // ROOT includes
 #include "TH1I.h"

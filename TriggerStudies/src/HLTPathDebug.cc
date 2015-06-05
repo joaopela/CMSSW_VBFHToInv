@@ -1,4 +1,4 @@
-#include "CMSSW-VBFHToInv/TriggerStudies/interface/HLTPathDebug.h"
+#include "CMSSW_VBFHToInv/TriggerStudies/interface/HLTPathDebug.h"
 
 #include "PhysicsTools/PatUtils/interface/TriggerHelper.h"
 #include "DataFormats/PatCandidates/interface/TriggerEvent.h"

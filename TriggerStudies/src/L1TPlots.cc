@@ -1,4 +1,4 @@
-#include "CMSSW-VBFHToInv/TriggerStudies/interface/L1TPlots.h"
+#include "CMSSW_VBFHToInv/TriggerStudies/interface/L1TPlots.h"
 
 #include "TDirectory.h"
 #include "TMath.h"

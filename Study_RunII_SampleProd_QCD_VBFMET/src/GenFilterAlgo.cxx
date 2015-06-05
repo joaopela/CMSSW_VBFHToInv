@@ -1,4 +1,4 @@
-#include "CMSSW-VBFHToInv/Study_RunII_SampleProd_QCD_VBFMET/interface/GenFilterAlgo.h"
+#include "CMSSW_VBFHToInv/Study_RunII_SampleProd_QCD_VBFMET/interface/GenFilterAlgo.h"
 
 using namespace std;
 

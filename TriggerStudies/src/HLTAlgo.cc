@@ -1,4 +1,4 @@
-#include "CMSSW-VBFHToInv/TriggerStudies/interface/HLTAlgo.h"
+#include "CMSSW_VBFHToInv/TriggerStudies/interface/HLTAlgo.h"
 
 using namespace std;
 

@@ -7,7 +7,7 @@
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 
 // VBFHiggsToInvisible
-#include "CMSSW-VBFHToInv/TriggerStudies/interface/HLTPathData.h"
+#include "CMSSW_VBFHToInv/TriggerStudies/interface/HLTPathData.h"
 
 // System include files
 #include <string>

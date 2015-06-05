@@ -1,4 +1,4 @@
-#include "CMSSW-VBFHToInv/TriggerStudies/interface/HLTDiobject.h"
+#include "CMSSW_VBFHToInv/TriggerStudies/interface/HLTDiobject.h"
 
 using namespace std;
 

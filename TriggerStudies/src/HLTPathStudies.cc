@@ -1,15 +1,15 @@
-#include "CMSSW-VBFHToInv/TriggerStudies/interface/HLTPathStudies.h"
+#include "CMSSW_VBFHToInv/TriggerStudies/interface/HLTPathStudies.h"
 
 #include "PhysicsTools/PatUtils/interface/TriggerHelper.h"
 #include "DataFormats/PatCandidates/interface/TriggerEvent.h"
 #include "DataFormats/PatCandidates/interface/TriggerObject.h"
 
 // VBFHiggsToInvisible includes
-#include "CMSSW-VBFHToInv/TriggerStudies/interface/HLTEventData.h"
-#include "CMSSW-VBFHToInv/TriggerStudies/interface/L1ExtraPayload.h"
-#include "CMSSW-VBFHToInv/TriggerStudies/interface/L1TDijet.h"
-#include "CMSSW-VBFHToInv/TriggerStudies/interface/TriggerJet.h"
-#include "CMSSW-VBFHToInv/TriggerStudies/interface/TriggerDijet.h"
+#include "CMSSW_VBFHToInv/TriggerStudies/interface/HLTEventData.h"
+#include "CMSSW_VBFHToInv/TriggerStudies/interface/L1ExtraPayload.h"
+#include "CMSSW_VBFHToInv/TriggerStudies/interface/L1TDijet.h"
+#include "CMSSW_VBFHToInv/TriggerStudies/interface/TriggerJet.h"
+#include "CMSSW_VBFHToInv/TriggerStudies/interface/TriggerDijet.h"
 
 #include <stdio.h>
 #include <math.h>

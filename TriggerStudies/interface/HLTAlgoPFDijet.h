@@ -2,8 +2,8 @@
 #ifndef VBFHiggsToInvisible_TriggerStudies_HLTAlgoPFDijet_H
 #define VBFHiggsToInvisible_TriggerStudies_HLTAlgoPFDijet_H
 
-#include "CMSSW-VBFHToInv/TriggerStudies/interface/HLTAlgo.h"
-#include "CMSSW-VBFHToInv/TriggerStudies/interface/HLTEventData.h"
+#include "CMSSW_VBFHToInv/TriggerStudies/interface/HLTAlgo.h"
+#include "CMSSW_VBFHToInv/TriggerStudies/interface/HLTEventData.h"
 
 #include "Math/Vector4D.h"
 #include "Math/Vector4Dfwd.h"

@@ -3,7 +3,7 @@
 #define VBFHiggsToInvisible_TriggerStudies_HLTPlots_H
 
 // CMSSW includes
-#include "CMSSW-VBFHToInv/TriggerStudies/interface/HLTEventData.h"
+#include "CMSSW_VBFHToInv/TriggerStudies/interface/HLTEventData.h"
 
 // ROOT includes
 #include "TH1D.h"

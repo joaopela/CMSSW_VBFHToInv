@@ -3,8 +3,8 @@
 #define VBFHiggsToInvisible_TriggerStudies_HLTPathData_H
 
 // CMSSW includes
-#include "CMSSW-VBFHToInv/TriggerStudies/interface/HLTObject.h"
-#include "CMSSW-VBFHToInv/TriggerStudies/interface/HLTDiobject.h"
+#include "CMSSW_VBFHToInv/TriggerStudies/interface/HLTObject.h"
+#include "CMSSW_VBFHToInv/TriggerStudies/interface/HLTDiobject.h"
 
 // System include files
 #include <string>

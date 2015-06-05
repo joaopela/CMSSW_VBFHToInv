@@ -1,4 +1,4 @@
-#include "CMSSW-VBFHToInv/TriggerStudies/interface/L1TSimulator.h"
+#include "CMSSW_VBFHToInv/TriggerStudies/interface/L1TSimulator.h"
 
 // CMSSW includes
 #include "FWCore/Framework/interface/ESHandle.h"

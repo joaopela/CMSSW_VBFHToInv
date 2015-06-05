@@ -1,7 +1,7 @@
 
 //-ap #include "Configuration/CSA06Skimming/interface/MCMETFilter.h"
 
-#include "CMSSW-VBFHToInv/GenFilters/interface/MCMETFilter.h"
+#include "CMSSW_VBFHToInv/GenFilters/interface/MCMETFilter.h"
 
 #include <iostream>
 

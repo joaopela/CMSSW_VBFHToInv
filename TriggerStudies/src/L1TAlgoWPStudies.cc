@@ -1,4 +1,4 @@
-#include "CMSSW-VBFHToInv/TriggerStudies/interface/L1AlgoWPStudies.h"
+#include "CMSSW_VBFHToInv/TriggerStudies/interface/L1AlgoWPStudies.h"
 
 #include "DataFormats/EcalDigi/interface/EcalTriggerPrimitiveDigi.h"
 #include "DataFormats/EcalDigi/interface/EcalDigiCollections.h"

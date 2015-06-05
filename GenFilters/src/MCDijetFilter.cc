@@ -1,4 +1,4 @@
-#include "CMSSW-VBFHToInv/GenFilters/interface/MCDijetFilter.h"
+#include "CMSSW_VBFHToInv/GenFilters/interface/MCDijetFilter.h"
 
 
 #include <HepMC/GenVertex.h>

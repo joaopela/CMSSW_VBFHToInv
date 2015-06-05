@@ -34,10 +34,10 @@
 #include "TMath.h"
 
 // My includes
-#include "CMSSW-VBFHToInv/TriggerStudies/interface/L1ExtraPayload.h"
-#include "CMSSW-VBFHToInv/TriggerStudies/interface/AlgoTester.h"
-#include "CMSSW-VBFHToInv/TriggerStudies/interface/L1TPlots.h"
-#include "CMSSW-VBFHToInv/TriggerStudies/interface/L1TDijet.h"
+#include "CMSSW_VBFHToInv/TriggerStudies/interface/L1ExtraPayload.h"
+#include "CMSSW_VBFHToInv/TriggerStudies/interface/AlgoTester.h"
+#include "CMSSW_VBFHToInv/TriggerStudies/interface/L1TPlots.h"
+#include "CMSSW_VBFHToInv/TriggerStudies/interface/L1TDijet.h"
 
 // System include files
 #include <memory>

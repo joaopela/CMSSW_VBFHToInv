@@ -1,4 +1,4 @@
-#include "CMSSW-VBFHToInv/TriggerStudies/interface/HLTObject.h"
+#include "CMSSW_VBFHToInv/TriggerStudies/interface/HLTObject.h"
 
 #include "DataFormats/HLTReco/interface/TriggerTypeDefs.h"
 
