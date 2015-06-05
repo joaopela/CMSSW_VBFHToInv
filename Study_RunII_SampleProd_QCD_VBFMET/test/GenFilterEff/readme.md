@@ -8,8 +8,8 @@ This work was made in the context of the feasibility study of QCD VBF-like + MET
 
 Quick receipt (in bash command line):
 ```bash
-./createJobs.sh
-./submitJobs.sh 
+./createJobs_CMSSW_7_4_1_patch1_ak4.sh
+./submitAllJobs.sh 
 
 #Wait a few hours
 ./haddJobs.sh
@@ -17,7 +17,7 @@ vbfinv_qcdSamplesRunII_extractResults
 ```
 
 Description of commands
-* **createJobs.sh**: Create all jobs for all QCD pT hats
-* **submitJobs.sh**: Submit all jobs to CERN lxbatch
+* **createJobs_CMSSW_7_4_1_patch1_ak4.sh**: Create all jobs for all QCD pT hats
+* **submitAllJobs.sh**: Submit all jobs to CERN lxbatch
 * **haddJobs.sh**: Add all histogram together for each QCD pT hat
 * **vbfinv_qcdSamplesRunII_extractResults**: C++ code to extract plots and tables
