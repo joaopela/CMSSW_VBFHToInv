@@ -1,5 +1,3 @@
-results = dict();
-
 myOrder  = []
 myOrder.append('30-50')
 myOrder.append('50-80')
@@ -10,6 +8,7 @@ myOrder.append('300-470')
 myOrder.append('470-600')
 myOrder.append('600-800')
 
+results = dict();
 results['30-50']   = 'QCD_Pt-30to50_step1/LSFJOB_662506132'
 results['50-80']   = 'QCD_Pt-50to80_step1/LSFJOB_662506154'
 results['80-120']  = 'QCD_Pt-80to120_step1/LSFJOB_662506165'
