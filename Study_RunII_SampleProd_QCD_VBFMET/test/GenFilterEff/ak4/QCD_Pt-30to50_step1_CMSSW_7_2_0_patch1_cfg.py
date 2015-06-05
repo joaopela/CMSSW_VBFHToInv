@@ -27,27 +27,31 @@ process.load('HLTrigger.Configuration.HLT_GRun_cff')
 process.load('Configuration.StandardSequences.EndOfProcess_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
 
+###############################################################
+# START: Extra block for job making
+###############################################################
 process.load("FWCore.MessageLogger.MessageLogger_cfi")
 process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) )
 process.MessageLogger.cerr.FwkReport.reportEvery = 10000
 
 process.maxEvents = cms.untracked.PSet(input = cms.untracked.int32(1))
 
-jobNumber=0
-
 # Input source
 process.source = cms.Source("EmptySource",
   firstRun            =cms.untracked.uint32(1),
-  firstLuminosityBlock=cms.untracked.uint32(jobNumber)
+  firstLuminosityBlock=cms.untracked.uint32(JOBNUMBER)
 )
 
 
 process.RandomNumberGeneratorService = cms.Service("RandomNumberGeneratorService",
   generator = cms.PSet(              # 900000000
-    initialSeed = cms.untracked.uint32(jobNumber),
+    initialSeed = cms.untracked.uint32(JOBNUMBER),
     engineName = cms.untracked.string('HepJamesRandom')
   )
 )
+###############################################################
+# END: Extra block for job making
+###############################################################
 
 # Production Info
 process.configurationMetadata = cms.untracked.PSet(
@@ -104,9 +108,9 @@ process.generator = cms.EDFilter("Pythia8GeneratorFilter",
 )
 
 # Generator level event filter definition
-from VBFHiggsToInvisible.SampleProduction.GenFilterAnalyzer_cfi import *
+from Study_RunII_SampleProd_QCD-VBF-MET.SampleProduction.GenFilterAnalyzer_cfi import *
 process.genFilterAnalyzer                           = genFilterAnalyzer
-process.genFilterAnalyzer.outFile                   = cms.untracked.string('GenFilterAnalyzer_QCD_Pt-30to50_'+str(jobNumber)+'.root')
+process.genFilterAnalyzer.outFile                   = cms.untracked.string('GenFilterAnalyzer_QCD_Pt-30to50_'+str(JOBNUMBER)+'.root')
 process.genFilterAnalyzer.inputTag_GenJetCollection = cms.untracked.InputTag('ak4GenJetsNoNu')
 
 # Path and EndPath definitions
