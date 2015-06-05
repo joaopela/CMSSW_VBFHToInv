@@ -117,7 +117,7 @@ process.generator = cms.EDFilter("Pythia8GeneratorFilter",
 from CMSSW_VBFHToInv.GenFilters.MCDijetFilter_cfi import *
 process.filterDijet                           = mcDijetFilter_RunII_WPB
 process.filterDijet.inputTag_GenJetCollection = cms.untracked.InputTag('ak4GenJetsNoNu')
-process.filterDijet.outFile                   = cms.untracked.string('mcDijetFilter_'+str(jobNumber)+'.root')
+process.filterDijet.outFile                   = cms.untracked.string('mcDijetFilter_'+str(JOBNUMBER)+'.root')
 
 # Offline analysis initialization
 process.offlineFilterAnalyzer = cms.EDAnalyzer('OfflineFilterAnalyzer',
@@ -125,7 +125,7 @@ process.offlineFilterAnalyzer = cms.EDAnalyzer('OfflineFilterAnalyzer',
   verbose               = cms.untracked.bool(False),
   inputTag_HLTResults   = cms.untracked.InputTag("TriggerResults::HLT"),
   inputTag_L1Extra_mets = cms.untracked.InputTag("hltL1extraParticles","MET"),
-  outputFilename = cms.untracked.string('OfflineFilterAnalyzer_Results_'+str(jobNumber)+'.root'),
+  outputFilename = cms.untracked.string('OfflineFilterAnalyzer_Results_'+str(JOBNUMBER)+'.root'),
 )
 
 # Path and EndPath definitions
