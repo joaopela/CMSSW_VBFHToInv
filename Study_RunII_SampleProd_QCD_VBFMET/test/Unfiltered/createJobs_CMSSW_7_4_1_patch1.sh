@@ -1,8 +1,8 @@
 #!/bin/bash 
 
-hepfwMakeBatchJobs -jobType cmssw -jobName QCD_Pt-30to50_step1   -jobQueue 2nd -cmsswCfg QCD_Pt-30to50_CMSSW_7_4_1_patch1_step1_cfg.py   -nJobs 1 -jobNEvents 100
-hepfwMakeBatchJobs -jobType cmssw -jobName QCD_Pt-50to80_step1   -jobQueue 2nd -cmsswCfg QCD_Pt-50to80_CMSSW_7_4_1_patch1_step1_cfg.py   -nJobs 1 -jobNEvents 100
-hepfwMakeBatchJobs -jobType cmssw -jobName QCD_Pt-80to120_step1  -jobQueue 2nd -cmsswCfg QCD_Pt-80to120_CMSSW_7_4_1_patch1_step1_cfg.py  -nJobs 1 -jobNEvents 100
+hepfwMakeBatchJobs -jobType cmssw -jobName QCD_Pt-30to50_step1   -jobQueue 2nd -cmsswCfg QCD_Pt-30to50_step1_CMSSW_7_4_1_patch1_cfg.py   -nJobs 1 -jobNEvents 100
+hepfwMakeBatchJobs -jobType cmssw -jobName QCD_Pt-50to80_step1   -jobQueue 2nd -cmsswCfg QCD_Pt-50to80_step1_CMSSW_7_4_1_patch1_cfg.py   -nJobs 1 -jobNEvents 100
+hepfwMakeBatchJobs -jobType cmssw -jobName QCD_Pt-80to120_step1  -jobQueue 2nd -cmsswCfg QCD_Pt-80to120_step1_CMSSW_7_4_1_patch1_cfg.py  -nJobs 1 -jobNEvents 100
 hepfwMakeBatchJobs -jobType cmssw -jobName QCD_Pt-120to170_step1 -jobQueue 2nd -cmsswCfg QCD_Pt-120to170_step1_CMSSW_7_4_1_patch1_cfg.py -nJobs 1 -jobNEvents 100
 hepfwMakeBatchJobs -jobType cmssw -jobName QCD_Pt-170to300_step1 -jobQueue 2nd -cmsswCfg QCD_Pt-170to300_step1_CMSSW_7_4_1_patch1_cfg.py -nJobs 1 -jobNEvents 100
 hepfwMakeBatchJobs -jobType cmssw -jobName QCD_Pt-300to470_step1 -jobQueue 2nd -cmsswCfg QCD_Pt-300to470_step1_CMSSW_7_4_1_patch1_cfg.py -nJobs 1 -jobNEvents 100
