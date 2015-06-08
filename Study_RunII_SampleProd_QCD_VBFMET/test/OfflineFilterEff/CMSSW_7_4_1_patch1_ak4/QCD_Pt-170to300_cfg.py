@@ -74,7 +74,16 @@ process.RAWSIMoutput = cms.OutputModule("PoolOutputModule",
 # Additional output definition
 
 # Other statements
-process.mix.input.fileNames = cms.untracked.vstring([])
+###############################################################
+# START: Fixing PU files
+###############################################################
+import CMSSW_VBFHToInv.Samples.MinBias_TuneA2MB_13TeV_pythia8_Fall13_POSTLS162_V1_v1_GEN_SIM_cfi as pu_dataset
+
+process.mix.input.fileNames     = pu_dataset.readFiles
+###############################################################
+# END: Fixing PU files
+###############################################################
+
 process.genstepfilter.triggerConditions=cms.vstring("generation_step")
 from Configuration.AlCa.GlobalTag_condDBv2 import GlobalTag
 process.GlobalTag = GlobalTag(process.GlobalTag, 'MCRUN2_74_V9', '')
@@ -168,6 +177,7 @@ for path in process.paths:
 ## filter all path with the production filter sequence
 #for path in process.paths:
         #getattr(process,path)._seq = process.generator * getattr(process,path)._seq 
+
 # customisation of the process.
 
 # Automatic addition of the customisation function from SLHCUpgradeSimulations.Configuration.postLS1Customs
@@ -189,4 +199,4 @@ from HLTrigger.Configuration.customizeHLTforMC import customizeHLTforMC
 process = customizeHLTforMC(process)
 
 # End of customisation functions
-
+process.mix.input.nbPileupEvents.histoFileName = cms.untracked.string('histProbFunction_'+str(JOBNUMBER)+'.root')
