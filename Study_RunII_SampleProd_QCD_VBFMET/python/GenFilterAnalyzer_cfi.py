@@ -106,7 +106,7 @@ genFilterAnalyzer = cms.EDAnalyzer("GenFilterAnalyzer",
     ######################################################
     # WP_A: With Dijet Mjj>900 (lower by 100) GeV
     cms.PSet(
-      name                    = cms.untracked.string("Pt50_Eta4p8_DEta3p0_Dphi1p5_Mjj900"),
+      name                    = cms.untracked.string("Pt50_Eta4p8_DEta3p5_Dphi1p5_Mjj900"),
       jetMinPt                = cms.untracked.double(50.0),
       jetMaxEta               = cms.untracked.double(4.8),
       dijetOppositeHemisphere = cms.untracked.double(True),
