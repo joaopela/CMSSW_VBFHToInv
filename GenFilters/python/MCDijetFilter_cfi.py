@@ -115,9 +115,9 @@ mcDijetFilter_Pt40_Eta4p8_DEta3p5_Dphi1p5_Mjj600 = cms.EDFilter("MCDijetFilter",
 
 # Working Point B
 mcDijetFilter_Pt50_Eta4p8_DEta3p0_Dphi2p0_Mjj1000 = cms.EDFilter("MCDijetFilter",
-  MinPt       = cms.untracked.double(40.0),
-  MaxEta      = cms.untracked.double(4.75),
-  MinEta      = cms.untracked.double(-4.75),
+  MinPt       = cms.untracked.double(50.0),
+  MaxEta      = cms.untracked.double(4.8),
+  MinEta      = cms.untracked.double(-4.8),
   MinDeltaEta = cms.untracked.double(3.0),
   MaxDeltaEta = cms.untracked.double(10.0),
   MinDeltaPhi = cms.untracked.double(0),
