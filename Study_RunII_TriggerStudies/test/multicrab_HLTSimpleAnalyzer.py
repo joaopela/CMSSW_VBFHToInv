@@ -44,19 +44,19 @@ if __name__ == '__main__':
     config.General.workArea    = 'HLTSimpleAnalyser/PU20bx25/HCALMethod0'
     config.Data.outLFNDirBase  = '/store/user/pela/2015/HLTSimpleAnalyser/PU20bx25/HCALMethod0/'
     tasks_PU20bx25_HCALMethod0 = list()
-    tasks_PU20bx25_HCALMethod0.append(('VBF_HToInv_M-125_PU20bx25',  '/VBF_HToInv_M-125_13TeV_powheg-pythia6/pela-crab_VBF_HToInv_M-125_PU20bx25-bab29548c73f71aefc21197e14949f23/USER'))
-    tasks_PU20bx25_HCALMethod0.append(('QCD_Pt-30to50_AVE20BX25',    '/QCD_Pt-30to50_Tune4C_13TeV_pythia8/pela-crab_QCD_Pt-30to50_AVE20BX25-bab29548c73f71aefc21197e14949f23/USER')) 
-    tasks_PU20bx25_HCALMethod0.append(('QCD_Pt-50to80_AVE20BX25',    '/QCD_Pt-50to80_Tune4C_13TeV_pythia8/pela-crab_QCD_Pt-50to80_AVE20BX25-bab29548c73f71aefc21197e14949f23/USER')) #158/224 <---
-    tasks_PU20bx25_HCALMethod0.append(('QCD_Pt-80to120_AVE20BX25',   '/QCD_Pt-80to120_Tune4C_13TeV_pythia8/pela-crab_QCD_Pt-80to120_AVE20BX25-bab29548c73f71aefc21197e14949f23/USER'))
-    tasks_PU20bx25_HCALMethod0.append(('QCD_Pt-120to170_AVE20BX25',  '/QCD_Pt-120to170_Tune4C_13TeV_pythia8/pela-crab_QCD_Pt-120to170_AVE20BX25-bab29548c73f71aefc21197e14949f23/USER')) #280/280
-    tasks_PU20bx25_HCALMethod0.append(('QCD_Pt-170to300_AVE20BX25',  '/QCD_Pt-170to300_Tune4C_13TeV_pythia8/pela-crab_QCD_Pt-170to300_AVE20BX25-bab29548c73f71aefc21197e14949f23/USER'))
-    tasks_PU20bx25_HCALMethod0.append(('QCD_Pt-300to470_AVE20BX25',  '/QCD_Pt-300to470_Tune4C_13TeV_pythia8/pela-crab_QCD_Pt-300to470_AVE20BX25-bab29548c73f71aefc21197e14949f23/USER')) 
-    tasks_PU20bx25_HCALMethod0.append(('QCD_Pt-470to600_AVE20BX25',  '/QCD_Pt-470to600_Tune4C_13TeV_pythia8/pela-crab_QCD_Pt-470to600_AVE20BX25-bab29548c73f71aefc21197e14949f23/USER')) #249/249
-    tasks_PU20bx25_HCALMethod0.append(('QCD_Pt-600to800_AVE20BX25',  '/QCD_Pt-600to800_Tune4C_13TeV_pythia8/pela-crab_QCD_Pt-600to800_AVE20BX25-bab29548c73f71aefc21197e14949f23/USER'))
-    tasks_PU20bx25_HCALMethod0.append(('QCD_Pt-800to1000_AVE20BX25', '/QCD_Pt-800to1000_Tune4C_13TeV_pythia8/pela-crab_QCD_Pt-800to1000_AVE20BX25-bab29548c73f71aefc21197e14949f23/USER'))
-    tasks_PU20bx25_HCALMethod0.append(('QCD_Pt-1000to1400_AVE20BX25','/QCD_Pt-1000to1400_Tune4C_13TeV_pythia8/pela-crab_QCD_Pt-1000to1400_AVE20BX25-bab29548c73f71aefc21197e14949f23/USER')) #45/45
-    tasks_PU20bx25_HCALMethod0.append(('QCD_Pt-1400to1800_AVE20BX25','/QCD_Pt-1400to1800_Tune4C_13TeV_pythia8/pela-crab_QCD_Pt-1400to1800_AVE20BX25-bab29548c73f71aefc21197e14949f23/USER')) #45/45
-    tasks_PU20bx25_HCALMethod0.append(('QCD_Pt-1800_AVE20BX25',      '/QCD_Pt-1800_Tune4C_13TeV_pythia8/pela-crab_QCD_Pt-1800_AVE20BX25-bab29548c73f71aefc21197e14949f23/USER'))
+    tasks_PU20bx25_HCALMethod0.append(('VBF_HToInv_M-125_PU20bx25',  '/VBF_HToInv_M-125_13TeV_powheg-pythia6/pela-crab_VBF_HToInv_M-125_PU20bx25-bab29548c73f71aefc21197e14949f23/USER'))    #020/020 done
+    tasks_PU20bx25_HCALMethod0.append(('QCD_Pt-30to50_AVE20BX25',    '/QCD_Pt-30to50_Tune4C_13TeV_pythia8/pela-crab_QCD_Pt-30to50_AVE20BX25-bab29548c73f71aefc21197e14949f23/USER'))         #220/224
+    tasks_PU20bx25_HCALMethod0.append(('QCD_Pt-50to80_AVE20BX25',    '/QCD_Pt-50to80_Tune4C_13TeV_pythia8/pela-crab_QCD_Pt-50to80_AVE20BX25-bab29548c73f71aefc21197e14949f23/USER'))         #158/224
+    tasks_PU20bx25_HCALMethod0.append(('QCD_Pt-80to120_AVE20BX25',   '/QCD_Pt-80to120_Tune4C_13TeV_pythia8/pela-crab_QCD_Pt-80to120_AVE20BX25-bab29548c73f71aefc21197e14949f23/USER'))       #262/262 done
+    tasks_PU20bx25_HCALMethod0.append(('QCD_Pt-120to170_AVE20BX25',  '/QCD_Pt-120to170_Tune4C_13TeV_pythia8/pela-crab_QCD_Pt-120to170_AVE20BX25-bab29548c73f71aefc21197e14949f23/USER'))     #280/280 done
+    tasks_PU20bx25_HCALMethod0.append(('QCD_Pt-170to300_AVE20BX25',  '/QCD_Pt-170to300_Tune4C_13TeV_pythia8/pela-crab_QCD_Pt-170to300_AVE20BX25-bab29548c73f71aefc21197e14949f23/USER'))     #089/174 
+    tasks_PU20bx25_HCALMethod0.append(('QCD_Pt-300to470_AVE20BX25',  '/QCD_Pt-300to470_Tune4C_13TeV_pythia8/pela-crab_QCD_Pt-300to470_AVE20BX25-bab29548c73f71aefc21197e14949f23/USER'))     #175/300
+    tasks_PU20bx25_HCALMethod0.append(('QCD_Pt-470to600_AVE20BX25',  '/QCD_Pt-470to600_Tune4C_13TeV_pythia8/pela-crab_QCD_Pt-470to600_AVE20BX25-bab29548c73f71aefc21197e14949f23/USER'))     #249/249
+    tasks_PU20bx25_HCALMethod0.append(('QCD_Pt-600to800_AVE20BX25',  '/QCD_Pt-600to800_Tune4C_13TeV_pythia8/pela-crab_QCD_Pt-600to800_AVE20BX25-bab29548c73f71aefc21197e14949f23/USER'))     #233/238
+    tasks_PU20bx25_HCALMethod0.append(('QCD_Pt-800to1000_AVE20BX25', '/QCD_Pt-800to1000_Tune4C_13TeV_pythia8/pela-crab_QCD_Pt-800to1000_AVE20BX25-bab29548c73f71aefc21197e14949f23/USER'))   #044/044
+    tasks_PU20bx25_HCALMethod0.append(('QCD_Pt-1000to1400_AVE20BX25','/QCD_Pt-1000to1400_Tune4C_13TeV_pythia8/pela-crab_QCD_Pt-1000to1400_AVE20BX25-bab29548c73f71aefc21197e14949f23/USER')) #045/045
+    tasks_PU20bx25_HCALMethod0.append(('QCD_Pt-1400to1800_AVE20BX25','/QCD_Pt-1400to1800_Tune4C_13TeV_pythia8/pela-crab_QCD_Pt-1400to1800_AVE20BX25-bab29548c73f71aefc21197e14949f23/USER')) #045/045
+    tasks_PU20bx25_HCALMethod0.append(('QCD_Pt-1800_AVE20BX25',      '/QCD_Pt-1800_Tune4C_13TeV_pythia8/pela-crab_QCD_Pt-1800_AVE20BX25-bab29548c73f71aefc21197e14949f23/USER'))             #046/047
     
     for task in tasks_PU20bx25_HCALMethod0:
       print task[0]
@@ -92,7 +92,7 @@ if __name__ == '__main__':
     config.General.workArea    = 'HLTSimpleAnalyser/PU40bx25/HCALMethod0'
     config.Data.outLFNDirBase  = '/store/user/pela/2015/HLTSimpleAnalyser/PU40bx25/HCALMethod0/'
     tasks_PU40bx25_HCALMethod0=list()
-    tasks_PU40bx25_HCALMethod0.append(('VBF_HToInv_M-125_PU40bx25','/VBF_HToInv_M-125_13TeV_powheg-pythia6/pela-crab_VBF_HToInv_M-125_PU40bx25-bab29548c73f71aefc21197e14949f23/USER'))
+    tasks_PU40bx25_HCALMethod0.append(('VBF_HToInv_M-125_PU40bx25','/VBF_HToInv_M-125_13TeV_powheg-pythia6/pela-crab_VBF_HToInv_M-125_PU40bx25-bab29548c73f71aefc21197e14949f23/USER')) #6/6
     
     for task in tasks_PU40bx25_HCALMethod0:
       print task[0]
@@ -116,7 +116,7 @@ if __name__ == '__main__':
     config.General.workArea    = 'HLTSimpleAnalyser/PU30bx50/HCALMethod0'
     config.Data.outLFNDirBase  = '/store/user/pela/2015/HLTSimpleAnalyser/PU30bx50/HCALMethod0/'
     tasks_PU30bx50_HCALMethod0=list()
-    tasks_PU30bx50_HCALMethod0.append(('VBF_HToInv_M-125_AVE30BX50','/VBF_HToInv_M-125_13TeV_powheg-pythia6/pela-crab_VBF_HToInv_M-125_AVE30BX50-bab29548c73f71aefc21197e14949f23/USER'))
+    tasks_PU30bx50_HCALMethod0.append(('VBF_HToInv_M-125_AVE30BX50','/VBF_HToInv_M-125_13TeV_powheg-pythia6/pela-crab_VBF_HToInv_M-125_AVE30BX50-bab29548c73f71aefc21197e14949f23/USER')) #8/8
     
     for task in tasks_PU30bx50_HCALMethod0:
       print task[0]
