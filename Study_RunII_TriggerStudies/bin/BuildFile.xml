@@ -1,0 +1,7 @@
+<use name="root"/>
+<use name="rootgraphics"/>
+<use name="HEPFWCommon/Style"/>
+<use name="HEPFWCommon/LatexTables"/>
+
+<bin name="vbfinv_RunII_TriggerStudies_HLTSimpleAnalyzerResults" file="vbfinv_RunII_TriggerStudies_HLTSimpleAnalyzerResults.cxx"/>
+<flags CXXFLAGS="-g"/>
