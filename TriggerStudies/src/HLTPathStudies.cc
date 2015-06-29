@@ -44,7 +44,7 @@ HLTPathStudies::HLTPathStudies(const edm::ParameterSet& pset){
   // Other histograms
   m_hltAlgos = pset.getParameter< vector<string> >("HLTPaths");
   
-  hHLTPathCount = new TH1I("HLTPathCount","HLTPathCount",m_hltAlgos.size(),0.5,m_hltAlgos.size()+0.5); hEventCount->SetDirectory(fOut);
+  hHLTPathCount = new TH1I("HLTPathCount","HLTPathCount",m_hltAlgos.size(),0.5,m_hltAlgos.size()+0.5);
   for(unsigned i=0; i<m_hltAlgos.size(); i++){
     hHLTPathCount->GetXaxis()->SetBinLabel(i+1,m_hltAlgos[i].c_str());
   }
