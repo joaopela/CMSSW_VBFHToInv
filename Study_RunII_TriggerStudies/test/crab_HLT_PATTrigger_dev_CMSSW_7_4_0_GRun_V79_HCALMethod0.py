@@ -11,7 +11,7 @@ config.General.transferOutputs = True
 config.General.transferLogs    = True
 config.General.workArea        = 'HLT_PATTrigger_dev_CMSSW_7_4_0_GRun_V79/HCALMethod0'
 
-config.JobType.psetName    = 'HLT_dev_CMSSW_7_4_0_GRun_V79_HCALMethod0_cfg.py'
+config.JobType.psetName    = 'rerunHLT_Phys14_dev_CMSSW_7_4_0_GRun_V79_HCALMethod0_cfg.py'
 config.JobType.pluginName  = 'Analysis'
 config.JobType.outputFiles = ['hltReRunResults.root',]
 
