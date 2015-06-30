@@ -7,6 +7,10 @@ parser = argparse.ArgumentParser(description='Process some integers.')
 parser.add_argument('-puScenario',required=True,help='Select PU scenario from: Phys14_PU40bx25, Phys14_PU20bx25 or Phys14_PU30bx50')
 parser.add_argument("-hcalMethod",required=True,help="Select HCAL Method")
 
+args = vars(parser.parse_args())
+print "puScenario :",args['puScenario']
+print "hcalMethod :",args['hcalMethod']
+
 if args['puScenario']=='Phys14_PU20bx25' and args['hcalMethod']=='0':
 
   # HLTSimpleAnalyser PU20bx25 HCALMethod0
