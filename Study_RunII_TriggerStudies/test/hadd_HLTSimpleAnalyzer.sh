@@ -2,6 +2,7 @@
 
 # HLTSimpleAnalyser PU20bx25 HCALMethod0
 hadd HLTSimpleAnalyser_PU20bx25_HCALMethod0_VBF_HToInv_M-125.root  HLTSimpleAnalyser/PU20bx25/HCALMethod0/crab_VBF_HToInv_M-125_PU20bx25/results/*.root
+hadd HLTSimpleAnalyser_PU20bx25_HCALMethod0_QCD_Pt-30to80.root     HLTSimpleAnalyser/PU20bx25/HCALMethod0/crab_QCD_Pt-50to80_AVE20BX25/results/*.root
 hadd HLTSimpleAnalyser_PU20bx25_HCALMethod0_QCD_Pt-50to80.root     HLTSimpleAnalyser/PU20bx25/HCALMethod0/crab_QCD_Pt-50to80_AVE20BX25/results/*.root
 hadd HLTSimpleAnalyser_PU20bx25_HCALMethod0_QCD_Pt-80to120.root    HLTSimpleAnalyser/PU20bx25/HCALMethod0/crab_QCD_Pt-80to120_AVE20BX25/results/*.root
 hadd HLTSimpleAnalyser_PU20bx25_HCALMethod0_QCD_Pt-120to170.root   HLTSimpleAnalyser/PU20bx25/HCALMethod0/crab_QCD_Pt-120to170_AVE20BX25/results/*.root
@@ -16,6 +17,7 @@ hadd HLTSimpleAnalyser_PU20bx25_HCALMethod0_QCD_Pt-1800.root       HLTSimpleAnal
 
 # HLTSimpleAnalyser PU20bx25 HCALMethod3
 hadd HLTSimpleAnalyser_PU20bx25_HCALMethod3_VBF_HToInv_M-125.root  HLTSimpleAnalyser/PU20bx25/HCALMethod3/crab_VBF_HToInv_M-125_PU20bx25/results/*.root
+hadd HLTSimpleAnalyser_PU20bx25_HCALMethod3_QCD_Pt-30to50.root     HLTSimpleAnalyser/PU20bx25/HCALMethod3/crab_QCD_Pt-30to50_AVE20BX25/results/*.root
 hadd HLTSimpleAnalyser_PU20bx25_HCALMethod3_QCD_Pt-50to80.root     HLTSimpleAnalyser/PU20bx25/HCALMethod3/crab_QCD_Pt-50to80_AVE20BX25/results/*.root
 hadd HLTSimpleAnalyser_PU20bx25_HCALMethod3_QCD_Pt-80to120.root    HLTSimpleAnalyser/PU20bx25/HCALMethod3/crab_QCD_Pt-80to120_AVE20BX25/results/*.root
 hadd HLTSimpleAnalyser_PU20bx25_HCALMethod3_QCD_Pt-120to170.root   HLTSimpleAnalyser/PU20bx25/HCALMethod3/crab_QCD_Pt-120to170_AVE20BX25/results/*.root
