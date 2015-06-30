@@ -1,4 +1,9 @@
 *.root
 *.log
 *.pyc
+*.tex
+
+HLTSimpleAnalyser/
+HLT_PATTrigger_dev_CMSSW_7_4_0_GRun_V79/
+
 
