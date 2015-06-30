@@ -83,6 +83,7 @@ int main(){
   
   map<string,string> HLTSimpleAnalyser_PU20bx25_HCALMethod0;
   HLTSimpleAnalyser_PU20bx25_HCALMethod0["VBF_HToInv_M-125"]  = "HLTSimpleAnalyser_PU20bx25_HCALMethod0_VBF_HToInv_M-125.root";
+  HLTSimpleAnalyser_PU20bx25_HCALMethod0["QCD_Pt-30to50"]     = "HLTSimpleAnalyser_PU20bx25_HCALMethod0_QCD_Pt-30to50.root";
   HLTSimpleAnalyser_PU20bx25_HCALMethod0["QCD_Pt-50to80"]     = "HLTSimpleAnalyser_PU20bx25_HCALMethod0_QCD_Pt-50to80.root";
   HLTSimpleAnalyser_PU20bx25_HCALMethod0["QCD_Pt-80to120"]    = "HLTSimpleAnalyser_PU20bx25_HCALMethod0_QCD_Pt-80to120.root";
   HLTSimpleAnalyser_PU20bx25_HCALMethod0["QCD_Pt-120to170"]   = "HLTSimpleAnalyser_PU20bx25_HCALMethod0_QCD_Pt-120to170.root";
@@ -109,6 +110,7 @@ int main(){
   
   map<string,string> HLTSimpleAnalyser_PU20bx25_HCALMethod3;
   HLTSimpleAnalyser_PU20bx25_HCALMethod3["VBF_HToInv_M-125"]  = "HLTSimpleAnalyser_PU20bx25_HCALMethod3_VBF_HToInv_M-125.root";
+  HLTSimpleAnalyser_PU20bx25_HCALMethod3["QCD_Pt-30to50"]     = "HLTSimpleAnalyser_PU20bx25_HCALMethod3_QCD_Pt-30to50.root";
   HLTSimpleAnalyser_PU20bx25_HCALMethod3["QCD_Pt-50to80"]     = "HLTSimpleAnalyser_PU20bx25_HCALMethod3_QCD_Pt-50to80.root";
   HLTSimpleAnalyser_PU20bx25_HCALMethod3["QCD_Pt-80to120"]    = "HLTSimpleAnalyser_PU20bx25_HCALMethod3_QCD_Pt-80to120.root";
   HLTSimpleAnalyser_PU20bx25_HCALMethod3["QCD_Pt-120to170"]   = "HLTSimpleAnalyser_PU20bx25_HCALMethod3_QCD_Pt-120to170.root";
