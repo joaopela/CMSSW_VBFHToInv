@@ -81,6 +81,7 @@ int main(){
   hepfw::Style myStyle;
   myStyle.setTDRStyle();
   
+  //########################################################
   map<string,string> HLTSimpleAnalyser_PU20bx25_HCALMethod0;
   HLTSimpleAnalyser_PU20bx25_HCALMethod0["VBF_HToInv_M-125"]  = "HLTSimpleAnalyser_PU20bx25_HCALMethod0_VBF_HToInv_M-125.root";
   HLTSimpleAnalyser_PU20bx25_HCALMethod0["QCD_Pt-30to50"]     = "HLTSimpleAnalyser_PU20bx25_HCALMethod0_QCD_Pt-30to50.root";
@@ -107,7 +108,34 @@ int main(){
   
   getStats(filesHLTSimpleAnalyser_PU20bx25_HCALMethod0,"HLTSimpleAnalyser_PU20bx25_HCALMethod0.tex");
   
+  //########################################################
+  map<string,string> HLTSimpleAnalyser_PU20bx25_HCALMethod2;
+  HLTSimpleAnalyser_PU20bx25_HCALMethod2["VBF_HToInv_M-125"]  = "HLTSimpleAnalyser_PU20bx25_HCALMethod2_VBF_HToInv_M-125.root";
+  HLTSimpleAnalyser_PU20bx25_HCALMethod2["QCD_Pt-30to50"]     = "HLTSimpleAnalyser_PU20bx25_HCALMethod2_QCD_Pt-30to50.root";
+  HLTSimpleAnalyser_PU20bx25_HCALMethod2["QCD_Pt-50to80"]     = "HLTSimpleAnalyser_PU20bx25_HCALMethod2_QCD_Pt-50to80.root";
+  HLTSimpleAnalyser_PU20bx25_HCALMethod2["QCD_Pt-80to120"]    = "HLTSimpleAnalyser_PU20bx25_HCALMethod2_QCD_Pt-80to120.root";
+  HLTSimpleAnalyser_PU20bx25_HCALMethod2["QCD_Pt-120to170"]   = "HLTSimpleAnalyser_PU20bx25_HCALMethod2_QCD_Pt-120to170.root";
+  HLTSimpleAnalyser_PU20bx25_HCALMethod2["QCD_Pt-170to300"]   = "HLTSimpleAnalyser_PU20bx25_HCALMethod2_QCD_Pt-170to300.root";
+  HLTSimpleAnalyser_PU20bx25_HCALMethod2["QCD_Pt-300to470"]   = "HLTSimpleAnalyser_PU20bx25_HCALMethod2_QCD_Pt-300to470.root";
+  HLTSimpleAnalyser_PU20bx25_HCALMethod2["QCD_Pt-470to600"]   = "HLTSimpleAnalyser_PU20bx25_HCALMethod2_QCD_Pt-470to600.root";
+  HLTSimpleAnalyser_PU20bx25_HCALMethod2["QCD_Pt-600to800"]   = "HLTSimpleAnalyser_PU20bx25_HCALMethod2_QCD_Pt-600to800.root";
+  HLTSimpleAnalyser_PU20bx25_HCALMethod2["QCD_Pt-800to1000"]  = "HLTSimpleAnalyser_PU20bx25_HCALMethod2_QCD_Pt-800to1000.root";
+  HLTSimpleAnalyser_PU20bx25_HCALMethod2["QCD_Pt-1000to1400"] = "HLTSimpleAnalyser_PU20bx25_HCALMethod2_QCD_Pt-1000to1400.root";
+  HLTSimpleAnalyser_PU20bx25_HCALMethod2["QCD_Pt-1400to1800"] = "HLTSimpleAnalyser_PU20bx25_HCALMethod2_QCD_Pt-1400to1800.root";
+  HLTSimpleAnalyser_PU20bx25_HCALMethod2["QCD_Pt-1800"]       = "HLTSimpleAnalyser_PU20bx25_HCALMethod2_QCD_Pt-1800.root";
   
+  if(!checkFiles(HLTSimpleAnalyser_PU20bx25_HCALMethod2)){cout << "FATAL ERROR: One or more files missing!" << endl;
+    return 1;
+  }
+  
+  map<string,TFile*> filesHLTSimpleAnalyser_PU20bx25_HCALMethod2;
+  for(auto i=HLTSimpleAnalyser_PU20bx25_HCALMethod2.begin(); i!=HLTSimpleAnalyser_PU20bx25_HCALMethod2.end(); i++){
+    filesHLTSimpleAnalyser_PU20bx25_HCALMethod2[i->first] = new TFile(i->second.c_str(),"READ");
+  }
+  
+  getStats(filesHLTSimpleAnalyser_PU20bx25_HCALMethod2,"HLTSimpleAnalyser_PU20bx25_HCALMethod2.tex");
+  
+  //########################################################
   map<string,string> HLTSimpleAnalyser_PU20bx25_HCALMethod3;
   HLTSimpleAnalyser_PU20bx25_HCALMethod3["VBF_HToInv_M-125"]  = "HLTSimpleAnalyser_PU20bx25_HCALMethod3_VBF_HToInv_M-125.root";
   HLTSimpleAnalyser_PU20bx25_HCALMethod3["QCD_Pt-30to50"]     = "HLTSimpleAnalyser_PU20bx25_HCALMethod3_QCD_Pt-30to50.root";
