@@ -93,6 +93,9 @@ elif hcalMethod=='2' and addFilters=='false':
 elif hcalMethod=='3' and addFilters=='false':
   config.JobType.psetName   = 'rerunHLT_Phys14_dev_CMSSW_7_4_0_GRun_V79_HCALMethod3_cfg.py'
 
+elif hcalMethod=='0' and addFilters=='true':
+  config.JobType.psetName   = 'rerunHLT_Phys14_dev_CMSSW_7_4_0_GRun_V79_HCALMethod0_PUFiltered_cfg.py'
+
 elif hcalMethod=='3' and addFilters=='true':
   config.JobType.psetName   = 'rerunHLT_Phys14_dev_CMSSW_7_4_0_GRun_V79_HCALMethod3_PUFiltered_cfg.py'
 
