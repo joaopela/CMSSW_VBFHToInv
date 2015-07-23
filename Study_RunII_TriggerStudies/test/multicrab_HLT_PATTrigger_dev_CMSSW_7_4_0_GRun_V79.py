@@ -97,18 +97,38 @@ if args['mcCampaign']=='Phys14' and args['puScenario']=='PU40bx25':
 elif args['mcCampaign']=='Phys14' and args['puScenario']=='PU20bx25':
   
   tasks.append(('VBF_HToInv_M-125_PU20bx25',  '/VBF_HToInv_M-125_13TeV_powheg-pythia6/Phys14DR-AVE30BX50_tsg_PHYS14_ST_V1-v2/GEN-SIM-RAW',        'PU20bx25_HLT_PATTrigger_dev_CMSSW_7_4_0_GRun_V79_HCALMethod'+args['hcalMethod']))
-  tasks.append(('QCD_Pt-30to50_AVE20BX25',    '/QCD_Pt-30to50_Tune4C_13TeV_pythia8/Phys14DR-AVE20BX25_tsg_castor_PHYS14_25_V3-v2/GEN-SIM-RAW',    'PU20bx25_HLT_PATTrigger_dev_CMSSW_7_4_0_GRun_V79_HCALMethod'+args['hcalMethod']))
-  tasks.append(('QCD_Pt-50to80_AVE20BX25',    '/QCD_Pt-50to80_Tune4C_13TeV_pythia8/Phys14DR-AVE20BX25_tsg_castor_PHYS14_25_V3-v1/GEN-SIM-RAW',    'PU20bx25_HLT_PATTrigger_dev_CMSSW_7_4_0_GRun_V79_HCALMethod'+args['hcalMethod']))
-  tasks.append(('QCD_Pt-80to120_AVE20BX25',   '/QCD_Pt-80to120_Tune4C_13TeV_pythia8/Phys14DR-AVE20BX25_tsg_castor_PHYS14_25_V3-v1/GEN-SIM-RAW',   'PU20bx25_HLT_PATTrigger_dev_CMSSW_7_4_0_GRun_V79_HCALMethod'+args['hcalMethod']))
-  tasks.append(('QCD_Pt-120to170_AVE20BX25',  '/QCD_Pt-120to170_Tune4C_13TeV_pythia8/Phys14DR-AVE20BX25_tsg_castor_PHYS14_25_V3-v1/GEN-SIM-RAW',  'PU20bx25_HLT_PATTrigger_dev_CMSSW_7_4_0_GRun_V79_HCALMethod'+args['hcalMethod']))
-  tasks.append(('QCD_Pt-170to300_AVE20BX25',  '/QCD_Pt-170to300_Tune4C_13TeV_pythia8/Phys14DR-AVE20BX25_tsg_castor_PHYS14_25_V3-v1/GEN-SIM-RAW',  'PU20bx25_HLT_PATTrigger_dev_CMSSW_7_4_0_GRun_V79_HCALMethod'+args['hcalMethod']))
-  tasks.append(('QCD_Pt-300to470_AVE20BX25',  '/QCD_Pt-300to470_Tune4C_13TeV_pythia8/Phys14DR-AVE20BX25_tsg_castor_PHYS14_25_V3-v1/GEN-SIM-RAW',  'PU20bx25_HLT_PATTrigger_dev_CMSSW_7_4_0_GRun_V79_HCALMethod'+args['hcalMethod']))
-  tasks.append(('QCD_Pt-470to600_AVE20BX25',  '/QCD_Pt-470to600_Tune4C_13TeV_pythia8/Phys14DR-AVE20BX25_tsg_castor_PHYS14_25_V3-v1/GEN-SIM-RAW',  'PU20bx25_HLT_PATTrigger_dev_CMSSW_7_4_0_GRun_V79_HCALMethod'+args['hcalMethod']))
-  tasks.append(('QCD_Pt-600to800_AVE20BX25',  '/QCD_Pt-600to800_Tune4C_13TeV_pythia8/Phys14DR-AVE20BX25_tsg_castor_PHYS14_25_V3-v1/GEN-SIM-RAW',  'PU20bx25_HLT_PATTrigger_dev_CMSSW_7_4_0_GRun_V79_HCALMethod'+args['hcalMethod']))
-  tasks.append(('QCD_Pt-800to1000_AVE20BX25', '/QCD_Pt-800to1000_Tune4C_13TeV_pythia8/Phys14DR-AVE20BX25_tsg_castor_PHYS14_25_V3-v1/GEN-SIM-RAW', 'PU20bx25_HLT_PATTrigger_dev_CMSSW_7_4_0_GRun_V79_HCALMethod'+args['hcalMethod']))
-  tasks.append(('QCD_Pt-1000to1400_AVE20BX25','/QCD_Pt-1000to1400_Tune4C_13TeV_pythia8/Phys14DR-AVE20BX25_tsg_castor_PHYS14_25_V3-v1/GEN-SIM-RAW','PU20bx25_HLT_PATTrigger_dev_CMSSW_7_4_0_GRun_V79_HCALMethod'+args['hcalMethod']))
-  tasks.append(('QCD_Pt-1400to1800_AVE20BX25','/QCD_Pt-1400to1800_Tune4C_13TeV_pythia8/Phys14DR-AVE20BX25_tsg_castor_PHYS14_25_V3-v1/GEN-SIM-RAW','PU20bx25_HLT_PATTrigger_dev_CMSSW_7_4_0_GRun_V79_HCALMethod'+args['hcalMethod']))
-  tasks.append(('QCD_Pt-1800_AVE20BX25',      '/QCD_Pt-1800_Tune4C_13TeV_pythia8/Phys14DR-AVE20BX25_tsg_castor_PHYS14_25_V3-v1/GEN-SIM-RAW',      'PU20bx25_HLT_PATTrigger_dev_CMSSW_7_4_0_GRun_V79_HCALMethod'+args['hcalMethod']))
+
+  # Inclusive QCD samples
+  tasks.append(('QCD_Pt-15to30',    '/QCD_Pt-15to30_Tune4C_13TeV_pythia8/Phys14DR-AVE20BX25_tsg_castor_PHYS14_25_V3-v2/GEN-SIM-RAW',    'PU20bx25_HLT_PATTrigger_dev_CMSSW_7_4_0_GRun_V79_HCALMethod'+args['hcalMethod']))
+  tasks.append(('QCD_Pt-30to50',    '/QCD_Pt-30to50_Tune4C_13TeV_pythia8/Phys14DR-AVE20BX25_tsg_castor_PHYS14_25_V3-v2/GEN-SIM-RAW',    'PU20bx25_HLT_PATTrigger_dev_CMSSW_7_4_0_GRun_V79_HCALMethod'+args['hcalMethod']))
+  tasks.append(('QCD_Pt-50to80',    '/QCD_Pt-50to80_Tune4C_13TeV_pythia8/Phys14DR-AVE20BX25_tsg_castor_PHYS14_25_V3-v1/GEN-SIM-RAW',    'PU20bx25_HLT_PATTrigger_dev_CMSSW_7_4_0_GRun_V79_HCALMethod'+args['hcalMethod']))
+  tasks.append(('QCD_Pt-80to120',   '/QCD_Pt-80to120_Tune4C_13TeV_pythia8/Phys14DR-AVE20BX25_tsg_castor_PHYS14_25_V3-v1/GEN-SIM-RAW',   'PU20bx25_HLT_PATTrigger_dev_CMSSW_7_4_0_GRun_V79_HCALMethod'+args['hcalMethod']))
+  tasks.append(('QCD_Pt-120to170',  '/QCD_Pt-120to170_Tune4C_13TeV_pythia8/Phys14DR-AVE20BX25_tsg_castor_PHYS14_25_V3-v1/GEN-SIM-RAW',  'PU20bx25_HLT_PATTrigger_dev_CMSSW_7_4_0_GRun_V79_HCALMethod'+args['hcalMethod']))
+  tasks.append(('QCD_Pt-170to300',  '/QCD_Pt-170to300_Tune4C_13TeV_pythia8/Phys14DR-AVE20BX25_tsg_castor_PHYS14_25_V3-v1/GEN-SIM-RAW',  'PU20bx25_HLT_PATTrigger_dev_CMSSW_7_4_0_GRun_V79_HCALMethod'+args['hcalMethod']))
+  tasks.append(('QCD_Pt-300to470',  '/QCD_Pt-300to470_Tune4C_13TeV_pythia8/Phys14DR-AVE20BX25_tsg_castor_PHYS14_25_V3-v1/GEN-SIM-RAW',  'PU20bx25_HLT_PATTrigger_dev_CMSSW_7_4_0_GRun_V79_HCALMethod'+args['hcalMethod']))
+  tasks.append(('QCD_Pt-470to600',  '/QCD_Pt-470to600_Tune4C_13TeV_pythia8/Phys14DR-AVE20BX25_tsg_castor_PHYS14_25_V3-v1/GEN-SIM-RAW',  'PU20bx25_HLT_PATTrigger_dev_CMSSW_7_4_0_GRun_V79_HCALMethod'+args['hcalMethod']))
+  tasks.append(('QCD_Pt-600to800',  '/QCD_Pt-600to800_Tune4C_13TeV_pythia8/Phys14DR-AVE20BX25_tsg_castor_PHYS14_25_V3-v1/GEN-SIM-RAW',  'PU20bx25_HLT_PATTrigger_dev_CMSSW_7_4_0_GRun_V79_HCALMethod'+args['hcalMethod']))
+  tasks.append(('QCD_Pt-800to1000', '/QCD_Pt-800to1000_Tune4C_13TeV_pythia8/Phys14DR-AVE20BX25_tsg_castor_PHYS14_25_V3-v1/GEN-SIM-RAW', 'PU20bx25_HLT_PATTrigger_dev_CMSSW_7_4_0_GRun_V79_HCALMethod'+args['hcalMethod']))
+  tasks.append(('QCD_Pt-1000to1400','/QCD_Pt-1000to1400_Tune4C_13TeV_pythia8/Phys14DR-AVE20BX25_tsg_castor_PHYS14_25_V3-v1/GEN-SIM-RAW','PU20bx25_HLT_PATTrigger_dev_CMSSW_7_4_0_GRun_V79_HCALMethod'+args['hcalMethod']))
+  tasks.append(('QCD_Pt-1400to1800','/QCD_Pt-1400to1800_Tune4C_13TeV_pythia8/Phys14DR-AVE20BX25_tsg_castor_PHYS14_25_V3-v1/GEN-SIM-RAW','PU20bx25_HLT_PATTrigger_dev_CMSSW_7_4_0_GRun_V79_HCALMethod'+args['hcalMethod']))
+  tasks.append(('QCD_Pt-1800',      '/QCD_Pt-1800_Tune4C_13TeV_pythia8/Phys14DR-AVE20BX25_tsg_castor_PHYS14_25_V3-v1/GEN-SIM-RAW',      'PU20bx25_HLT_PATTrigger_dev_CMSSW_7_4_0_GRun_V79_HCALMethod'+args['hcalMethod']))
+
+  # QCD EMEnriched
+  tasks.append(('QCD_Pt-30to80_EMEnriched', '/QCD_Pt-30to80_EMEnriched_Tune4C_13TeV_pythia8/Phys14DR-AVE20BX25_tsg_castor_PHYS14_25_V3-v1/GEN-SIM-RAW', 'PU20bx25_HLT_PATTrigger_dev_CMSSW_7_4_0_GRun_V79_HCALMethod'+args['hcalMethod']))
+  tasks.append(('QCD_Pt-80to170_EMEnriched','/QCD_Pt-80to170_EMEnriched_Tune4C_13TeV_pythia8/Phys14DR-AVE20BX25_tsg_castor_PHYS14_25_V3-v1/GEN-SIM-RAW','PU20bx25_HLT_PATTrigger_dev_CMSSW_7_4_0_GRun_V79_HCALMethod'+args['hcalMethod']))
+
+  # QCD Mu Enriched Pion and Kaon decay
+  tasks.append(('QCD_Pt-30to50_MuEnrichedPt5_PionKaonDecay', '/QCD_Pt-30to50_MuEnrichedPt5_PionKaonDecay_Tune4C_13TeV_pythia8/Phys14DR-AVE20BX25_tsg_PHYS14_25_V3-v2/GEN-SIM-RAW', 'PU20bx25_HLT_PATTrigger_dev_CMSSW_7_4_0_GRun_V79_HCALMethod'+args['hcalMethod']))
+  tasks.append(('QCD_Pt-50to80_MuEnrichedPt5_PionKaonDecay', '/QCD_Pt-50to80_MuEnrichedPt5_PionKaonDecay_Tune4C_13TeV_pythia8/Phys14DR-AVE20BX25_tsg_PHYS14_25_V3-v1/GEN-SIM-RAW', 'PU20bx25_HLT_PATTrigger_dev_CMSSW_7_4_0_GRun_V79_HCALMethod'+args['hcalMethod']))
+  tasks.append(('QCD_Pt-80to120_MuEnrichedPt5_PionKaonDecay','/QCD_Pt-80to120_MuEnrichedPt5_PionKaonDecay_Tune4C_13TeV_pythia8/Phys14DR-AVE20BX25_tsg_PHYS14_25_V3-v1/GEN-SIM-RAW','PU20bx25_HLT_PATTrigger_dev_CMSSW_7_4_0_GRun_V79_HCALMethod'+args['hcalMethod']))
+
+  # DY to LL
+  tasks.append(('DYToMuMu','/DYToMuMu_Tune4C_13TeV-pythia8/Phys14DR-AVE20BX25_tsg_PHYS14_25_V3-v1/GEN-SIM-RAW','PU20bx25_HLT_PATTrigger_dev_CMSSW_7_4_0_GRun_V79_HCALMethod'+args['hcalMethod']))
+  tasks.append(('DYToEE',  '/DYToEE_Tune4C_13TeV-pythia8/Phys14DR-AVE20BX25_tsg_PHYS14_25_V3-v1/GEN-SIM-RAW',  'PU20bx25_HLT_PATTrigger_dev_CMSSW_7_4_0_GRun_V79_HCALMethod'+args['hcalMethod']))
+
+  # W to L+nu
+  tasks.append(('WToMuNu','/WToMuNu_Tune4C_13TeV-pythia8/Phys14DR-AVE20BX25_tsg_PHYS14_25_V3-v1/GEN-SIM-RAW','PU20bx25_HLT_PATTrigger_dev_CMSSW_7_4_0_GRun_V79_HCALMethod'+args['hcalMethod']))
+  tasks.append(('WToENu', '/WToENu_Tune4C_13TeV-pythia8/Phys14DR-AVE20BX25_tsg_PHYS14_25_V3-v1/GEN-SIM-RAW', 'PU20bx25_HLT_PATTrigger_dev_CMSSW_7_4_0_GRun_V79_HCALMethod'+args['hcalMethod']))
 
 elif args['mcCampaign']=='Phys14' and args['puScenario']=='PU30bx50':
 
@@ -126,7 +146,7 @@ elif args['mcCampaign']=='Phys14' and args['puScenario']=='PU30bx50':
   tasks.append(('QCD_Pt-1400to1800_AVE30BX50','/QCD_Pt-1400to1800_Tune4C_13TeV_pythia8/Phys14DR-AVE30BX50_tsg_castor_PHYS14_ST_V1-v1/GEN-SIM-RAW','PU30bx50_HLT_PATTrigger_dev_CMSSW_7_4_0_GRun_V79_HCALMethod'+args['hcalMethod']))
   tasks.append(('QCD_Pt-1800_AVE30BX50',      '/QCD_Pt-1800_Tune4C_13TeV_pythia8/Phys14DR-AVE30BX50_tsg_castor_PHYS14_ST_V1-v1/GEN-SIM-RAW',      'PU30bx50_HLT_PATTrigger_dev_CMSSW_7_4_0_GRun_V79_HCALMethod'+args['hcalMethod']))
 
-elif puScenario=='Summer15' and puScenario=='PU20bx25':
+elif puScenario=='Spring15' and puScenario=='PU20bx25':
 
   tasks.append(('QCD_Pt_30to50',    '/QCD_Pt_30to50_TuneCUETP8M1_13TeV_pythia8/RunIISpring15Digi74-AVE_20_BX_25ns_tsg_MCRUN2_74_V7-v1/GEN-SIM-RAW    ','HLT_PATTrigger_'+strHLTMenu+'_'+puScenario+'_'strHCALMethod))
   tasks.append(('QCD_Pt_50to80',    '/QCD_Pt_50to80_TuneCUETP8M1_13TeV_pythia8/RunIISpring15Digi74-AVE_20_BX_25ns_tsg_MCRUN2_74_V7-v1/GEN-SIM-RAW    ','HLT_PATTrigger_'+strHLTMenu+'_'+puScenario+'_'strHCALMethod))
