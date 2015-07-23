@@ -109,19 +109,19 @@ elif args['puScenario']=='Phys14_PU20bx25' and args['hcalMethod']=='3':
   config.General.workArea    = 'HLTSimpleAnalyser/PU20bx25/HCALMethod3'
   config.Data.outLFNDirBase  = '/store/user/pela/2015/HLTSimpleAnalyser/PU20bx25/HCALMethod3/'
  
-  tasks.append(('VBF_HToInv_M-125_PU20bx25',  '/VBF_HToInv_M-125_13TeV_powheg-pythia6/pela-PU20bx25_HLT_PATTrigger_dev_CMSSW_7_4_0_GRun_V79_HCALMethod3-44a9dda7380fda8c10ac873eb1cb389d/USER')) #19/20
-  tasks.append(('QCD_Pt-30to50_AVE20BX25',    '/QCD_Pt-30to50_Tune4C_13TeV_pythia8/pela-PU20bx25_HLT_PATTrigger_dev_CMSSW_7_4_0_GRun_V79_HCALMethod3-44a9dda7380fda8c10ac873eb1cb389d/USER')) #168/224
-  tasks.append(('QCD_Pt-50to80_AVE20BX25',    '/QCD_Pt-50to80_Tune4C_13TeV_pythia8/pela-PU20bx25_HLT_PATTrigger_dev_CMSSW_7_4_0_GRun_V79_HCALMethod3-44a9dda7380fda8c10ac873eb1cb389d/USER')) #162/224
-  tasks.append(('QCD_Pt-80to120_AVE20BX25',   '/QCD_Pt-80to120_Tune4C_13TeV_pythia8/pela-PU20bx25_HLT_PATTrigger_dev_CMSSW_7_4_0_GRun_V79_HCALMethod3-44a9dda7380fda8c10ac873eb1cb389d/USER')) #261/262
-  tasks.append(('QCD_Pt-120to170_AVE20BX25',  '/QCD_Pt-120to170_Tune4C_13TeV_pythia8/pela-PU20bx25_HLT_PATTrigger_dev_CMSSW_7_4_0_GRun_V79_HCALMethod3-44a9dda7380fda8c10ac873eb1cb389d/USER')) #280/280
-  tasks.append(('QCD_Pt-170to300_AVE20BX25',  '/QCD_Pt-170to300_Tune4C_13TeV_pythia8/pela-PU20bx25_HLT_PATTrigger_dev_CMSSW_7_4_0_GRun_V79_HCALMethod3-44a9dda7380fda8c10ac873eb1cb389d/USER')) #89/174
-  tasks.append(('QCD_Pt-300to470_AVE20BX25',  '/QCD_Pt-300to470_Tune4C_13TeV_pythia8/pela-PU20bx25_HLT_PATTrigger_dev_CMSSW_7_4_0_GRun_V79_HCALMethod3-44a9dda7380fda8c10ac873eb1cb389d/USER')) #172/207
-  tasks.append(('QCD_Pt-470to600_AVE20BX25',  '/QCD_Pt-470to600_Tune4C_13TeV_pythia8/pela-PU20bx25_HLT_PATTrigger_dev_CMSSW_7_4_0_GRun_V79_HCALMethod3-44a9dda7380fda8c10ac873eb1cb389d/USER')) #249/249
-  tasks.append(('QCD_Pt-600to800_AVE20BX25',  '/QCD_Pt-470to600_Tune4C_13TeV_pythia8/pela-PU20bx25_HLT_PATTrigger_dev_CMSSW_7_4_0_GRun_V79_HCALMethod3-44a9dda7380fda8c10ac873eb1cb389d/USER')) #222/238
-  tasks.append(('QCD_Pt-800to1000_AVE20BX25', '/QCD_Pt-800to1000_Tune4C_13TeV_pythia8/pela-PU20bx25_HLT_PATTrigger_dev_CMSSW_7_4_0_GRun_V79_HCALMethod3-44a9dda7380fda8c10ac873eb1cb389d/USER')) #44/44
+  tasks.append(('VBF_HToInv_M-125_PU20bx25',  '/VBF_HToInv_M-125_13TeV_powheg-pythia6/pela-PU20bx25_HLT_PATTrigger_dev_CMSSW_7_4_0_GRun_V79_HCALMethod3-44a9dda7380fda8c10ac873eb1cb389d/USER'))  #19/20
+  tasks.append(('QCD_Pt-30to50_AVE20BX25',    '/QCD_Pt-30to50_Tune4C_13TeV_pythia8/pela-PU20bx25_HLT_PATTrigger_dev_CMSSW_7_4_0_GRun_V79_HCALMethod3-44a9dda7380fda8c10ac873eb1cb389d/USER'))     #168/224
+  tasks.append(('QCD_Pt-50to80_AVE20BX25',    '/QCD_Pt-50to80_Tune4C_13TeV_pythia8/pela-PU20bx25_HLT_PATTrigger_dev_CMSSW_7_4_0_GRun_V79_HCALMethod3-44a9dda7380fda8c10ac873eb1cb389d/USER'))     #162/224
+  tasks.append(('QCD_Pt-80to120_AVE20BX25',   '/QCD_Pt-80to120_Tune4C_13TeV_pythia8/pela-PU20bx25_HLT_PATTrigger_dev_CMSSW_7_4_0_GRun_V79_HCALMethod3-44a9dda7380fda8c10ac873eb1cb389d/USER'))    #261/262
+  tasks.append(('QCD_Pt-120to170_AVE20BX25',  '/QCD_Pt-120to170_Tune4C_13TeV_pythia8/pela-PU20bx25_HLT_PATTrigger_dev_CMSSW_7_4_0_GRun_V79_HCALMethod3-44a9dda7380fda8c10ac873eb1cb389d/USER'))   #280/280
+  tasks.append(('QCD_Pt-170to300_AVE20BX25',  '/QCD_Pt-170to300_Tune4C_13TeV_pythia8/pela-PU20bx25_HLT_PATTrigger_dev_CMSSW_7_4_0_GRun_V79_HCALMethod3-44a9dda7380fda8c10ac873eb1cb389d/USER'))   #89/174
+  tasks.append(('QCD_Pt-300to470_AVE20BX25',  '/QCD_Pt-300to470_Tune4C_13TeV_pythia8/pela-PU20bx25_HLT_PATTrigger_dev_CMSSW_7_4_0_GRun_V79_HCALMethod3-44a9dda7380fda8c10ac873eb1cb389d/USER'))   #172/207
+  tasks.append(('QCD_Pt-470to600_AVE20BX25',  '/QCD_Pt-470to600_Tune4C_13TeV_pythia8/pela-PU20bx25_HLT_PATTrigger_dev_CMSSW_7_4_0_GRun_V79_HCALMethod3-44a9dda7380fda8c10ac873eb1cb389d/USER'))   #249/249
+  tasks.append(('QCD_Pt-600to800_AVE20BX25',  '/QCD_Pt-470to600_Tune4C_13TeV_pythia8/pela-PU20bx25_HLT_PATTrigger_dev_CMSSW_7_4_0_GRun_V79_HCALMethod3-44a9dda7380fda8c10ac873eb1cb389d/USER'))   #222/238
+  tasks.append(('QCD_Pt-800to1000_AVE20BX25', '/QCD_Pt-800to1000_Tune4C_13TeV_pythia8/pela-PU20bx25_HLT_PATTrigger_dev_CMSSW_7_4_0_GRun_V79_HCALMethod3-44a9dda7380fda8c10ac873eb1cb389d/USER'))  #44/44
   tasks.append(('QCD_Pt-1000to1400_AVE20BX25','/QCD_Pt-1000to1400_Tune4C_13TeV_pythia8/pela-PU20bx25_HLT_PATTrigger_dev_CMSSW_7_4_0_GRun_V79_HCALMethod3-44a9dda7380fda8c10ac873eb1cb389d/USER')) #45/45
   tasks.append(('QCD_Pt-1400to1800_AVE20BX25','/QCD_Pt-1400to1800_Tune4C_13TeV_pythia8/pela-PU20bx25_HLT_PATTrigger_dev_CMSSW_7_4_0_GRun_V79_HCALMethod3-44a9dda7380fda8c10ac873eb1cb389d/USER')) #44/45
-  tasks.append(('QCD_Pt-1800_AVE20BX25',      '/QCD_Pt-1800_Tune4C_13TeV_pythia8/pela-PU20bx25_HLT_PATTrigger_dev_CMSSW_7_4_0_GRun_V79_HCALMethod3-44a9dda7380fda8c10ac873eb1cb389d/USER')) #46/47 <---
+  tasks.append(('QCD_Pt-1800_AVE20BX25',      '/QCD_Pt-1800_Tune4C_13TeV_pythia8/pela-PU20bx25_HLT_PATTrigger_dev_CMSSW_7_4_0_GRun_V79_HCALMethod3-44a9dda7380fda8c10ac873eb1cb389d/USER'))       #46/47 <---
 
   submitTask(config,tasks)
 
