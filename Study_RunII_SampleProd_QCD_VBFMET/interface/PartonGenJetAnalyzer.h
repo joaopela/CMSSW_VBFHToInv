@@ -61,6 +61,7 @@ private:
   // Parameter related variables
   edm::ParameterSet ps;
   edm::EDGetTokenT<edm::HepMCProduct> m_InputTag_HepMCProduct;
+  edm::EDGetTokenT< reco::GenJetCollection > m_inputTag_GenJetCollection;
   
   // Output file
   TFile* fOut;
@@ -68,6 +69,14 @@ private:
   // Histograms
   TH1D* m_EventCount;
 
+  TH1D* m_MatchingResults;
+  TH1D* m_Parton_N;
+  TH2D* m_PartonvsGenJet_Pt;
+  TH2D* m_PartonvsGenJet_Eta;
+  
+  TH2D* m_PartonvsGenJet_minDr_Pt;
+  TH2D* m_PartonvsGenJet_minDr_Eta;
+  
 };
 
 
