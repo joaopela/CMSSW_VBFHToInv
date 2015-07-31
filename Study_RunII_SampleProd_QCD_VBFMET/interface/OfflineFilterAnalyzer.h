@@ -70,6 +70,7 @@ private:
   edm::EDGetTokenT<reco::GenJetCollection>              m_InputTag_GenJetCollection;
   edm::EDGetTokenT<l1extra::L1EtMissParticleCollection> m_InputTag_L1Extra_mets;
   edm::EDGetTokenT<edm::TriggerResults>                 m_InputTag_HLTResults;
+
   // Output file
   TFile* fOut;
   
