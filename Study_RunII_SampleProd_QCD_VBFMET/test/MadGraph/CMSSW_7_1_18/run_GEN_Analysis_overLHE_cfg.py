@@ -27,7 +27,7 @@ process.load('Configuration.StandardSequences.EndOfProcess_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32(-1)
+    input = cms.untracked.int32(10000)
 )
 
 # Input source
@@ -73,7 +73,7 @@ from Configuration.AlCa.GlobalTag import GlobalTag
 process.GlobalTag = GlobalTag(process.GlobalTag, 'MCRUN2_71_V1::All', '')
 
 process.generator = cms.EDFilter("Pythia8HadronizerFilter",
-    pythiaPylistVerbosity = cms.untracked.int32(1),
+    pythiaPylistVerbosity = cms.untracked.int32(0),
     filterEfficiency = cms.untracked.double(1.0),
     pythiaHepMCVerbosity = cms.untracked.bool(False),
     comEnergy = cms.double(13000.0),
@@ -116,7 +116,7 @@ process.ProductionFilterSequence = cms.Sequence(process.generator)
 ###############################################################
 # START: HLT Simple Analysis
 ###############################################################
-process.hltAnalysis = cms.EDAnalyzer('PartonGenJetAnalyzer',
+process.analyzer = cms.EDAnalyzer('PartonGenJetAnalyzer',
 
   outputFilename = cms.untracked.string("PartonGenJetAnalyzer_Results.root"),
 
@@ -126,7 +126,8 @@ process.hltAnalysis = cms.EDAnalyzer('PartonGenJetAnalyzer',
 process.generation_step = cms.Path(
   process.pgen*
   process.genParticlesForJetsNoNu*
-  process.ak4GenJetsNoNu
+  process.ak4GenJetsNoNu*
+  process.analyzer
 )
 process.simulation_step = cms.Path(process.psim)
 process.genfiltersummary_step = cms.EndPath(process.genFilterSummary)
