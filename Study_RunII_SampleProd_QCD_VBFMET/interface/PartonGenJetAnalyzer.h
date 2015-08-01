@@ -28,6 +28,7 @@
 // ROOT includes
 #include "TH1D.h"
 #include "TH2D.h"
+#include "TProfile.h"
 #include "TFile.h"
 
 // System include files
@@ -68,12 +69,14 @@ private:
   
   // Histograms
   TH1D* m_EventCount;
-
   TH1D* m_MatchingResults;
   TH1D* m_Parton_N;
+  
+  TProfile* m_Profile_PartonvsGenJet_DiffPt;
+  TProfile* m_Profile_PartonvsGenJet_DiffEta;
+  
   TH2D* m_PartonvsGenJet_Pt;
   TH2D* m_PartonvsGenJet_Eta;
-  
   TH2D* m_PartonvsGenJet_minDr_Pt;
   TH2D* m_PartonvsGenJet_minDr_Eta;
   

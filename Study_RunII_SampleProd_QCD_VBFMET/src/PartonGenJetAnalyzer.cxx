@@ -34,6 +34,9 @@ PartonGenJetAnalyzer::PartonGenJetAnalyzer(const edm::ParameterSet& pset){
   
   m_Parton_N = new TH1D("Parton_N","Parton_N",11,-0.5,10.5); m_Parton_N->SetDirectory(fOut);
   
+  m_Profile_PartonvsGenJet_DiffPt  = new TProfile("Profile_PartonvsGenJet_DiffPt", "Profile_PartonvsGenJet_DiffPt" ,500,  0,500); m_Profile_PartonvsGenJet_DiffPt ->SetDirectory(fOut);
+  m_Profile_PartonvsGenJet_DiffEta = new TProfile("Profile_PartonvsGenJet_DiffEta","Profile_PartonvsGenJet_DiffEta",100, -5,  5); m_Profile_PartonvsGenJet_DiffEta->SetDirectory(fOut);
+  
   m_PartonvsGenJet_Pt  = new TH2D("PartonvsGenJet_Pt", "PartonvsGenJet_Pt",  500,  0,500, 500,  0,500); m_PartonvsGenJet_Pt ->SetDirectory(fOut);
   m_PartonvsGenJet_Eta = new TH2D("PartonvsGenJet_Eta","PartonvsGenJet_Eta", 100, -5,  5, 100, -5,  5); m_PartonvsGenJet_Eta->SetDirectory(fOut);
   
@@ -144,6 +147,9 @@ void PartonGenJetAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSet
     
     m_PartonvsGenJet_Pt ->Fill(parton->momentum().perp(),genJet_matched->pt());
     m_PartonvsGenJet_Eta->Fill(parton->momentum().eta(), genJet_matched->eta());
+    
+    m_Profile_PartonvsGenJet_DiffPt ->Fill(parton->momentum().perp(),parton->momentum().perp()-genJet_matched->pt());
+    m_Profile_PartonvsGenJet_DiffEta->Fill(parton->momentum().eta(), parton->momentum().eta()-genJet_matched->eta());
   }
   
   if     (totalMatched==0){m_MatchingResults->Fill(3);}
