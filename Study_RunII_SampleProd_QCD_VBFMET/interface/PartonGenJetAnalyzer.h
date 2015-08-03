@@ -72,6 +72,9 @@ private:
   TH1D* m_MatchingResults;
   TH1D* m_Parton_N;
   
+  TH1D* m_PartonvsGenJet_DiffPt;
+  TH1D* m_PartonvsGenJet_DiffEta;
+  
   TProfile* m_Profile_PartonvsGenJet_DiffPt;
   TProfile* m_Profile_PartonvsGenJet_DiffEta;
   
