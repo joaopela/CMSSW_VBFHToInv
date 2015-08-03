@@ -4,4 +4,5 @@
 
 <bin name="vbfinv_qcdSamplesRunII_generatorFilter_extractResults" file="vbfinv_qcdSamplesRunII_generatorFilter_extractResults.cxx"/>
 <bin name="vbfinv_qcdSamplesRunII_offlineFilter_extractResults"   file="vbfinv_qcdSamplesRunII_offlineFilter_extractResults.cxx"/>
+<bin name="vbfinv_qcdSamplesRunII_madgraph_hadronization"         file="vbfinv_qcdSamplesRunII_madgraph_hadronization.cxx"/>
 <flags CXXFLAGS="-g"/>
