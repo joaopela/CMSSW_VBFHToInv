@@ -1,0 +1,3 @@
+#!/bin/bash
+
+cmsRun run_ANALYSIS_overGEN_cfg.py print inputFiles=file:lheSIM.root outputFile=file:PartonGenJetAnalyzer_Results_mg5_pp_jj_etaj4p8_ptj1min30_ptj2min30_mmjj800_unweighted_events.root maxEvents=-1
