@@ -87,7 +87,7 @@ C VARIABLES FOR KT CUT
 
       double precision etmin(nincoming+1:nexternal),etamax(nincoming+1:nexternal)
       double precision emin(nincoming+1:nexternal)
-      double precision                    r2min(nincoming+1:nexternal,nincoming+1:nexternal)
+      double precision r2min(nincoming+1:nexternal,nincoming+1:nexternal)
       double precision s_min(nexternal,nexternal)
       double precision s_any(nexternal,nexternal)
       double precision etmax(nincoming+1:nexternal),etamin(nincoming+1:nexternal)
@@ -96,7 +96,10 @@ C VARIABLES FOR KT CUT
       double precision s_max(nexternal,nexternal)
       double precision ptll_min(nexternal,nexternal),ptll_max(nexternal,nexternal)
       double precision inclHtmin,inclHtmax
-      common/to_cuts/  etmin, emin, etamax, r2min, s_min, s_any,
+      
+      logical doMMjjAny
+      
+      common/to_cuts/  etmin, emin, etamax, r2min, s_min, s_any, doMMjjAny,
      $     etmax, emax, etamin, r2max, s_max, ptll_min, ptll_max, inclHtmin,inclHtmax
 
       double precision ptjmin4(4),ptjmax4(4),htjmin4(2:4),htjmax4(2:4)
@@ -167,7 +170,7 @@ C-----
 C  BEGIN CODE
 C-----
 
-      write(*,*) 'cuts.f: Begin code'
+      if(debug) write(*,*) 'cuts.f: Begin code'
 
       PASSCUTS=.TRUE.             !EVENT IS OK UNLESS OTHERWISE CHANGED
       passmmjjany=.FALSE.         !J.Pela:
@@ -459,13 +462,15 @@ c
             if(debug) write (*,*) s_min(j,i),s_max(j,i),s_any(j,i)
             if(s_min(j,i).gt.0.or.s_max(j,i).ge.0d0.or.s_any(j,i).gt.0d0) then
                tmp=SumDot(p(0,i),p(0,j),+1d0)
-                 
-               if(debug) write(*,*) 'cuts.f: Testing mmjjany tmp=',tmp,' bigger then ',s_any(j,i)
-               notgood = tmp.lt.s_any(j,i)
-               if(.not.notgood) then
-                 if(debug) write(*,*) 'cuts.f: dijet passed passmmjjany cut'
-                 passmmjjany=.TRUE.
-                   
+               
+               ! Testing if at least on dijet passes mmjjany cut
+               if(doMMjjAny) then
+               
+                 if(debug) write(*,*) 'cuts.f: Testing mmjjany tmp=',tmp,' bigger then ',s_any(j,i)
+                 if(tmp.gt.s_any(j,i)) then
+                   if(debug) write(*,*) 'cuts.f: dijet passed passmmjjany cut'
+                   passmmjjany=.TRUE.
+                 endif
                endif
                
                if(s_min(j,i).le.s_max(j,i) .or. s_max(j,i).lt.0d0)then
@@ -488,7 +493,7 @@ c
          enddo
       enddo
       
-      if(.not.passmmjjany)then
+      if(.not.passmmjjany.and.doMMjjAny)then
         passcuts=.false.
         if(debug) write(*,*) 'cuts.f: event failed passmmjjany cut'
         return

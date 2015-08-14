@@ -56,7 +56,10 @@ c--cuts
       double precision s_max(nexternal,nexternal)
       double precision ptll_min(nexternal,nexternal),ptll_max(nexternal,nexternal)
       double precision inclHtmin,inclHtmax
-      common/to_cuts/  etmin, emin, etamax, r2min, s_min, s_any,
+      
+      logical doMMjjAny
+      
+      common/to_cuts/  etmin, emin, etamax, r2min, s_min, s_any, doMMjjAny,
      $     etmax, emax, etamin, r2max, s_max, ptll_min, ptll_max, inclHtmin,inclHtmax
 
       double precision ptjmin4(4),ptjmax4(4),htjmin4(2:4),htjmax4(2:4)
@@ -125,6 +128,7 @@ c     No pdfs for decay processes - set here since here we know the nincoming
 c     Also set stot here, and use mass of incoming particle for ren scale
 c
         write (*,*) 'setcuts.f: Begin mmjjany=',mmjjany
+        doMMjjAny=.FALSE.
         
          if(nincoming.eq.1)then
             lpp(1)=0
@@ -175,6 +179,11 @@ c           is expected to correct this already.
           endif
         endif
 
+        if(mmjjany.gt.0d0) then
+          write(*,*) 'mmjjany cut is enabled!'
+          doMMjjAny=.TRUE.
+        endif
+        
 c     Check which particles come from decays
       if(.not.cut_decays)
      $       call check_decay(from_decay)
