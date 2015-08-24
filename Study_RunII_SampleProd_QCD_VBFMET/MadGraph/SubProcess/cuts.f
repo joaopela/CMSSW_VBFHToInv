@@ -52,7 +52,7 @@ C
       REAL*8 XVAR,ptmax1,ptmax2,htj,tmp,inclht
       real*8 ptemp(0:3), ptemp2(0:3)
       character*20 formstr
-      logical passmmjjany !J.Pela
+      logical passDijetCuts !J.Pela
 C
 C     PARAMETERS
 C
@@ -97,9 +97,9 @@ C VARIABLES FOR KT CUT
       double precision ptll_min(nexternal,nexternal),ptll_max(nexternal,nexternal)
       double precision inclHtmin,inclHtmax
       
-      logical doMMjjAny
+      logical doDijetCuts
       
-      common/to_cuts/  etmin, emin, etamax, r2min, s_min, s_any, doMMjjAny,
+      common/to_cuts/  etmin, emin, etamax, r2min, s_min, s_any, doDijetCuts,
      $     etmax, emax, etamin, r2max, s_max, ptll_min, ptll_max, inclHtmin,inclHtmax
 
       double precision ptjmin4(4),ptjmax4(4),htjmin4(2:4),htjmax4(2:4)
@@ -171,9 +171,10 @@ C  BEGIN CODE
 C-----
 
       if(debug) write(*,*) 'cuts.f: Begin code'
-
+      if(debug) write(*,*) 'cuts.f: ptj cut=',PTJ
+      
       PASSCUTS=.TRUE.             !EVENT IS OK UNLESS OTHERWISE CHANGED
-      passmmjjany=.FALSE.         !J.Pela:
+      passDijetCuts=.FALSE.         !J.Pela:
 
       IF (FIRSTTIME) THEN
          FIRSTTIME=.FALSE.
@@ -464,12 +465,12 @@ c
                tmp=SumDot(p(0,i),p(0,j),+1d0)
                
                ! Testing if at least on dijet passes mmjjany cut
-               if(doMMjjAny) then
-               
-                 if(debug) write(*,*) 'cuts.f: Testing mmjjany tmp=',tmp,' bigger then ',s_any(j,i)
-                 if(tmp.gt.s_any(j,i)) then
-                   if(debug) write(*,*) 'cuts.f: dijet passed passmmjjany cut'
-                   passmmjjany=.TRUE.
+               if(doDijetCuts .and. is_a_j(i) .and. is_a_j(j) .and. .not.passDijetCuts) then
+                 
+                 if(pt(p(0,i)).gt.DIJET_PT .and. pt(p(0,j)).gt.DIJET_PT .and. tmp.gt.s_any(j,i)) then
+                   write(*,*) 'cuts.f: pt1=',pt(p(0,i)),' pt2=',pt(p(0,j)),' mjj=',tmp, "ptCut=",DIJET_PT
+                   write(*,*) 'cuts.f: dijet passed passDijetCuts cut'
+                   passDijetCuts=.TRUE.
                  endif
                endif
                
@@ -493,12 +494,12 @@ c
          enddo
       enddo
       
-      if(.not.passmmjjany.and.doMMjjAny)then
+      if(doDijetCuts .and. .not.passDijetCuts) then
         passcuts=.false.
-        if(debug) write(*,*) 'cuts.f: event failed passmmjjany cut'
+        if(debug) write(*,*) 'cuts.f: event failed passDijetCuts cut'
         return
       endif
-      if(debug) write(*,*) 'cuts.f: event passed passmmjjany cut'
+      if(debug) write(*,*) 'cuts.f: event passed passDijetCuts cut'
       
 C     $B$DESACTIVATE_BW_CUT$B$ This is a Tag for MadWeight
 c     

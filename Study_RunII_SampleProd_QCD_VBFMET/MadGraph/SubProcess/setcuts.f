@@ -57,9 +57,9 @@ c--cuts
       double precision ptll_min(nexternal,nexternal),ptll_max(nexternal,nexternal)
       double precision inclHtmin,inclHtmax
       
-      logical doMMjjAny
+      logical doDijetCuts
       
-      common/to_cuts/  etmin, emin, etamax, r2min, s_min, s_any, doMMjjAny,
+      common/to_cuts/  etmin, emin, etamax, r2min, s_min, s_any, doDijetCuts,
      $     etmax, emax, etamin, r2max, s_max, ptll_min, ptll_max, inclHtmin,inclHtmax
 
       double precision ptjmin4(4),ptjmax4(4),htjmin4(2:4),htjmax4(2:4)
@@ -127,8 +127,9 @@ c
 c     No pdfs for decay processes - set here since here we know the nincoming
 c     Also set stot here, and use mass of incoming particle for ren scale
 c
-        write (*,*) 'setcuts.f: Begin mmjjany=',mmjjany
-        doMMjjAny=.FALSE.
+!       write (*,*) 'setcuts.f: Begin DIJET_PY =',DIJET_PT
+!       write (*,*) 'setcuts.f: Begin DIJET_MJJ=',DIJET_MJJ
+        doDijetCuts=.FALSE.
         
          if(nincoming.eq.1)then
             lpp(1)=0
@@ -179,9 +180,14 @@ c           is expected to correct this already.
           endif
         endif
 
-        if(mmjjany.gt.0d0) then
-          write(*,*) 'mmjjany cut is enabled!'
-          doMMjjAny=.TRUE.
+        if(DIJET_MJJ.gt.0d0) then
+          write(*,*) 'DIJET_MJJ cut is enabled!'
+          doDijetCuts=.TRUE.
+        endif
+        
+        if(DIJET_PT.gt.0d0) then
+          write(*,*) 'DIJET_PT cut is enabled!'
+          doDijetCuts=.TRUE.
         endif
         
 c     Check which particles come from decays
@@ -408,7 +414,7 @@ c
             s_max(j,i)=-1
             if(do_cuts(i).and.do_cuts(j)) then
                if(is_a_j(i).and.is_a_j(j)) s_min(j,i)=mmjj*dabs(mmjj)
-               if(is_a_j(i).and.is_a_j(j)) s_any(j,i)=mmjjany*dabs(mmjjany)
+               if(is_a_j(i).and.is_a_j(j)) s_any(j,i)=DIJET_MJJ*dabs(DIJET_MJJ)
                if(is_a_a(i).and.is_a_a(j)) s_min(j,i)=mmaa*dabs(mmaa)  
                if( is_a_b(i).and.is_a_b(j) ) s_min(j,i)=mmbb*dabs(mmbb)     
                if((is_a_l(i).and.is_a_l(j)).and.
