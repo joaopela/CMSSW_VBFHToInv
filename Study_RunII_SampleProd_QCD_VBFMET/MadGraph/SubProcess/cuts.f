@@ -47,7 +47,7 @@ C
 C     LOCAL
 C
       LOGICAL FIRSTTIME,FIRSTTIME2,pass_bw,notgood,good,foundheavy
-      LOGICAL DEBUG
+      LOGICAL DEBUG, DEBUG_DIJET
       integer i,j,njets,nheavyjets,nleptons,hardj1,hardj2
       REAL*8 XVAR,ptmax1,ptmax2,htj,tmp,inclht
       real*8 ptemp(0:3), ptemp2(0:3)
@@ -170,6 +170,8 @@ C-----
 C  BEGIN CODE
 C-----
 
+      DEBUG=.FALSE.
+      DEBUG_DIJET=.FALSE.
       if(debug) write(*,*) 'cuts.f: Begin code'
       if(debug) write(*,*) 'cuts.f: ptj cut=',PTJ
       
@@ -468,8 +470,10 @@ c
                if(doDijetCuts .and. is_a_j(i) .and. is_a_j(j) .and. .not.passDijetCuts) then
                  
                  if(pt(p(0,i)).gt.DIJET_PT .and. pt(p(0,j)).gt.DIJET_PT .and. tmp.gt.s_any(j,i)) then
-                   write(*,*) 'cuts.f: pt1=',pt(p(0,i)),' pt2=',pt(p(0,j)),' mjj=',tmp, "ptCut=",DIJET_PT
-                   write(*,*) 'cuts.f: dijet passed passDijetCuts cut'
+                   if(DEBUG_DIJET) write(*,*) 'cuts.f: pt1=',pt(p(0,i)),' eta=',rap(p(0,i))
+                   if(DEBUG_DIJET) write(*,*) 'cuts.f: pt2=',pt(p(0,j)),' eta=',rap(p(0,j))
+                   if(DEBUG_DIJET) write(*,*) 'cuts.f: mjj=',DSQRT(tmp), "ptCut=",DIJET_PT
+                   if(DEBUG_DIJET) write(*,*) 'cuts.f: dijet passed passDijetCuts cut'
                    passDijetCuts=.TRUE.
                  endif
                endif
@@ -496,10 +500,10 @@ c
       
       if(doDijetCuts .and. .not.passDijetCuts) then
         passcuts=.false.
-        if(debug) write(*,*) 'cuts.f: event failed passDijetCuts cut'
+        if(DEBUG) write(*,*) 'cuts.f: event failed passDijetCuts cut'
         return
       endif
-      if(debug) write(*,*) 'cuts.f: event passed passDijetCuts cut'
+      if(DEBUG_DIJET) write(*,*) 'cuts.f: event passed passDijetCuts cut'
       
 C     $B$DESACTIVATE_BW_CUT$B$ This is a Tag for MadWeight
 c     
