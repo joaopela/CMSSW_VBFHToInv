@@ -135,7 +135,7 @@
 # Maximum and minimum absolute rapidity (for max, -1 means no cut)   *
 #*********************************************************************
   5.0 = etaj    ! max rap for the jets 
-  -1.0  = etab    ! max rap for the b
+-1.0  = etab    ! max rap for the b
  2.5  = etaa    ! max rap for the photons 
  2.5  = etal    ! max rap for the charged leptons 
  0.0  = etajmin ! min rap for the jets
@@ -200,8 +200,8 @@
 #*********************************************************************
 # Control the pt's of the jets sorted by pt                          *
 #*********************************************************************
- 0.0   = ptj1min ! minimum pt for the leading jet in pt
- 0.0   = ptj2min ! minimum pt for the second jet in pt
+30.0   = ptj1min ! minimum pt for the leading jet in pt
+30.0   = ptj2min ! minimum pt for the second jet in pt
  0.0   = ptj3min ! minimum pt for the third jet in pt
  0.0   = ptj4min ! minimum pt for the fourth jet in pt
  -1.0  = ptj1max ! maximum pt for the leading jet in pt 
