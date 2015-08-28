@@ -171,6 +171,7 @@
 #          different lepton masses for each flavor!                  *           
 #*********************************************************************
   30.0  = dijet_pt  ! min pT of at least one jet pair
+   2.5  = dijet_eta ! min delta era of at least one jet pair
  800.0  = dijet_mjj ! min invariant mass of at least one jet pair
   0.0   = mmjj      ! min invariant mass of a jet pair 
   0.0   = mmbb      ! min invariant mass of a b pair 
