@@ -1498,6 +1498,7 @@ class RunCardLO(RunCard):
         self.add_param("dralmax", -1.0, cut=True)
         # Dijet 
         self.add_param("dijet_pt", 0.0, cut=True)
+        self.add_param("dijet_eta",0.0, cut=True)
         self.add_param("dijet_mjj",0.0, cut=True)
         # invariant mass
         self.add_param("mmjj", 0.0, cut=True)
@@ -1639,6 +1640,8 @@ class RunCardLO(RunCard):
                 self.get_default('issgridfile', 'issudgrid.dat', log_level=20)
             if self['dijet_pt']:
               print "==> dijet_pt:", self['dijet_pt']
+            if self['dijet_eta']:
+              print "==> dijet_eta:", self['dijet_eta']
             if self['dijet_mjj']:
               print "==> dijet_mjj:", self['dijet_mjj']
 

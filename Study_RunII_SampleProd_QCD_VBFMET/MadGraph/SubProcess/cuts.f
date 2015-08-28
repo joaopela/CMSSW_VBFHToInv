@@ -469,7 +469,10 @@ c
                ! Testing if at least on dijet passes mmjjany cut
                if(doDijetCuts .and. is_a_j(i) .and. is_a_j(j) .and. .not.passDijetCuts) then
                  
-                 if(pt(p(0,i)).gt.DIJET_PT .and. pt(p(0,j)).gt.DIJET_PT .and. tmp.gt.s_any(j,i)) then
+                 if(pt(p(0,i)).gt.DIJET_PT 
+     $                  .and. pt(p(0,j)).gt.DIJET_PT 
+     $                  .and. tmp.gt.s_any(j,i) 
+     $                  .and. abs(rap(p(0,i))-rap(p(0,j))).gt.DIJET_ETA) then
                    if(DEBUG_DIJET) write(*,*) 'cuts.f: pt1=',pt(p(0,i)),' eta=',rap(p(0,i))
                    if(DEBUG_DIJET) write(*,*) 'cuts.f: pt2=',pt(p(0,j)),' eta=',rap(p(0,j))
                    if(DEBUG_DIJET) write(*,*) 'cuts.f: mjj=',DSQRT(tmp), "ptCut=",DIJET_PT

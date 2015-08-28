@@ -6,7 +6,7 @@ C
       REAL*8 ETAJ,ETAB,ETAA,ETAL ! min rapidity
       REAL*8 DRJJ,DRBB,DRLL,DRAA,DRBJ,DRAJ,DRJL,DRAB,DRBL,DRAL ! min distance
       REAL*8 MMJJ,MMLL,MMAA,MMBB !min inv mass
-      REAL*8 DIJET_PT,DIJET_MJJ
+      REAL*8 DIJET_PT,DIJET_ETA,DIJET_MJJ
       COMMON /TO_AUTO_CUTS/
      &     PTJ ,PTB ,PTA ,PTL ,PTONIUM, ! pt
      &     EJ  ,EB  ,EA  ,EL  , ! energy
@@ -14,7 +14,7 @@ C
      &     DRJJ,DRAJ,DRBJ,DRJL, ! delta R
      &     DRBB,DRAB,DRBL,
      &     DRAA,DRAL,
-     &     DRLL,DIJET_PT,DIJET_MJJ,
+     &     DRLL,DIJET_PT,DIJET_ETA,DIJET_MJJ,
      &     MMJJ,MMLL,MMAA,MMBB ! invariant masses of opposite sign
 
 C     

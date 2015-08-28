@@ -185,6 +185,11 @@ c           is expected to correct this already.
           doDijetCuts=.TRUE.
         endif
         
+        if(DIJET_ETA.gt.0d0) then
+          write(*,*) 'DIJET_ETA cut is enabled!'
+          doDijetCuts=.TRUE.
+        endif
+        
         if(DIJET_PT.gt.0d0) then
           write(*,*) 'DIJET_PT cut is enabled!'
           doDijetCuts=.TRUE.
