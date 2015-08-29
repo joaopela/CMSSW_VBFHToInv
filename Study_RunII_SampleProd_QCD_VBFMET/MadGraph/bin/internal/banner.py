@@ -1496,9 +1496,12 @@ class RunCardLO(RunCard):
         self.add_param("drabmax", -1.0, cut=True)
         self.add_param("drblmax", -1.0, cut=True)
         self.add_param("dralmax", -1.0, cut=True)
+        # Dijet 
+        self.add_param("dijet_pt", 0.0, cut=True)
+        self.add_param("dijet_eta",0.0, cut=True)
+        self.add_param("dijet_mjj",0.0, cut=True)
         # invariant mass
         self.add_param("mmjj", 0.0, cut=True)
-        self.add_param("mmjjany", 0.0, cut=True)
         self.add_param("mmbb", 0.0, cut=True)
         self.add_param("mmaa", 0.0, cut=True)
         self.add_param("mmll", 0.0, cut=True)
@@ -1635,8 +1638,12 @@ class RunCardLO(RunCard):
                 # add warning if ckkw selected but the associate parameter are empty
                 self.get_default('highestmult', log_level=20)                   
                 self.get_default('issgridfile', 'issudgrid.dat', log_level=20)
-            if self['mmjjany']:
-              print "==> mmjjany:", self['mmjjany']
+            if self['dijet_pt']:
+              print "==> dijet_pt:", self['dijet_pt']
+            if self['dijet_eta']:
+              print "==> dijet_eta:", self['dijet_eta']
+            if self['dijet_mjj']:
+              print "==> dijet_mjj:", self['dijet_mjj']
 
         # check validity of the pdf set
         possible_set = ['lhapdf','mrs02nl','mrs02nn', 'mrs0119','mrs0117','mrs0121','mrs01_j', 'mrs99_1','mrs99_2','mrs99_3','mrs99_4','mrs99_5','mrs99_6', 'mrs99_7','mrs99_8','mrs99_9','mrs9910','mrs9911','mrs9912', 'mrs98z1','mrs98z2','mrs98z3','mrs98z4','mrs98z5','mrs98ht', 'mrs98l1','mrs98l2','mrs98l3','mrs98l4','mrs98l5', 'cteq3_m','cteq3_l','cteq3_d', 'cteq4_m','cteq4_d','cteq4_l','cteq4a1','cteq4a2', 'cteq4a3','cteq4a4','cteq4a5','cteq4hj','cteq4lq', 'cteq5_m','cteq5_d','cteq5_l','cteq5hj','cteq5hq', 'cteq5f3','cteq5f4','cteq5m1','ctq5hq1','cteq5l1', 'cteq6_m','cteq6_d','cteq6_l','cteq6l1', 'nn23lo','nn23lo1','nn23nlo']
