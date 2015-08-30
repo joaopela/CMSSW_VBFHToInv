@@ -58,9 +58,16 @@ private:
   double getGenPaticle_mjj (HepMC::GenParticle *p0, HepMC::GenParticle *p1);
   double getGenPaticle_deta(HepMC::GenParticle *p0, HepMC::GenParticle *p1);
   
+  double getGenJet_mjj (const reco::GenJet *p0, const reco::GenJet *p1);
+  double getGenJet_deta(const reco::GenJet *p0, const reco::GenJet *p1);
+  
   // ----------member data ---------------------------
   
   bool m_verbose;
+  
+  double dijet_pt;
+  double dijet_eta;
+  double dijet_mjj;
   
   // Parameter related variables
   edm::ParameterSet ps;
@@ -84,6 +91,21 @@ private:
   TH1D* m_Parton_Dijet1_Mjj;
   TH1D* m_Parton_Dijet1_DEta;
   TH1D* m_Parton_Dijet1_DPhi;
+  
+  TH1D *m_SelDiParton_N;
+  TH1D *m_SelDiParton_Parton1_Pt;
+  TH1D *m_SelDiParton_Parton2_Pt;
+  TH1D *m_SelDiParton_Parton1_Eta;
+  TH1D *m_SelDiParton_Parton2_Eta;
+  TH1D *m_SelDiParton_DEta;
+  TH1D *m_SelDiParton_Mjj;
+  
+  TH2D *m_SelDiParton_MatchedGenJet_Parton1_Pt;
+  TH2D *m_SelDiParton_MatchedGenJet_Parton2_Pt;
+  TH2D *m_SelDiParton_MatchedGenJet_Parton1_Eta;
+  TH2D *m_SelDiParton_MatchedGenJet_Parton2_Eta;
+  TH2D *m_SelDiParton_MatchedGenJet_DEta;
+  TH2D *m_SelDiParton_MatchedGenJet_Mjj;
   
   TH1D* m_PartonvsGenJet_DiffPt;
   TH1D* m_PartonvsGenJet_DiffEta;
