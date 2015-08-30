@@ -54,7 +54,10 @@ private:
   void endLuminosityBlock(edm::LuminosityBlock const&, edm::EventSetup const&);
   
   void analyze(const edm::Event&, const edm::EventSetup&);
-    
+  
+  double getGenPaticle_mjj (HepMC::GenParticle *p0, HepMC::GenParticle *p1);
+  double getGenPaticle_deta(HepMC::GenParticle *p0, HepMC::GenParticle *p1);
+  
   // ----------member data ---------------------------
   
   bool m_verbose;
@@ -68,18 +71,19 @@ private:
   TFile* fOut;
   
   // Histograms
-  TH1D* m_EventCount;
-  TH1D* m_MatchingResults;
+  TH1D *m_EventCount;
+  TH1D *m_Counters;
+  
   TH1D* m_Parton_N;
+  TH1D *m_Parton_NMatched;
+  TH1D* m_Parton_Type;
   
-  TH1D* m_Parton_Jet1_Pt;
-  TH1D* m_Parton_Jet2_Pt;
+  TH1D *m_Parton_Jet1_Pt, *m_Parton_Jet2_Pt, *m_Parton_Jet3_Pt, *m_Parton_Jet4_Pt;
+  TH1D *m_Parton_Jet1_Eta,*m_Parton_Jet2_Eta,*m_Parton_Jet3_Eta,*m_Parton_Jet4_Eta;
   
-  TH1D* m_Parton_Jet1_Eta;
-  TH1D* m_Parton_Jet2_Eta;
-  
-  TH1D* m_Parton_Dijet1_DEta;
   TH1D* m_Parton_Dijet1_Mjj;
+  TH1D* m_Parton_Dijet1_DEta;
+  TH1D* m_Parton_Dijet1_DPhi;
   
   TH1D* m_PartonvsGenJet_DiffPt;
   TH1D* m_PartonvsGenJet_DiffEta;
@@ -89,6 +93,7 @@ private:
   
   TH2D* m_PartonvsGenJet_Pt;
   TH2D* m_PartonvsGenJet_Eta;
+  
   TH2D* m_PartonvsGenJet_minDr_Pt;
   TH2D* m_PartonvsGenJet_minDr_Eta;
   

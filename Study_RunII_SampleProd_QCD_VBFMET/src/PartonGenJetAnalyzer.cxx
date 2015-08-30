@@ -30,24 +30,29 @@ PartonGenJetAnalyzer::PartonGenJetAnalyzer(const edm::ParameterSet& pset){
   fOut = new TFile(outputFilename.c_str(),"RECREATE");
   
   // This histogram will be used to count our events (for normalisation later)
-  m_EventCount  = new TH1D("EventCount", "EventCount",   4,-0.5,3.5); m_EventCount ->SetDirectory(fOut);
+  m_EventCount  = new TH1D("EventCount","EventCount",1,-0.5,0.5); m_EventCount->SetDirectory(fOut);
+  m_Counters    = new TH1D("Counters",  "Counters",  1, 0.5,1.5); m_Counters  ->SetDirectory(fOut);
+  m_Counters->GetXaxis()->SetBinLabel(1,"Jet Matched not lowest DeltaR");
   
-  m_MatchingResults = new TH1D("MatchingResults","MatchingResults",4,0.5,4.5); m_MatchingResults->SetDirectory(fOut);
-  m_MatchingResults->GetXaxis()->SetBinLabel(1,"Matched 2");
-  m_MatchingResults->GetXaxis()->SetBinLabel(2,"Matched 1");
-  m_MatchingResults->GetXaxis()->SetBinLabel(3,"Matched 0");
-  m_MatchingResults->GetXaxis()->SetBinLabel(4,"Jet Matched not lowest DeltaR");
+  m_Parton_NMatched = new TH1D("Parton_NMatched","Parton_NMatched",10,-0.5,9.5); m_Parton_NMatched->SetDirectory(fOut);
+  
+  m_Parton_N    = new TH1D("Parton_N",   "Parton_N",   11,-0.5,10.5); m_Parton_N   ->SetDirectory(fOut);
+  m_Parton_Type = new TH1D("Parton_Type","Parton_Type", 2,-0.5, 2.5); m_Parton_Type->SetDirectory(fOut);
+  m_Parton_Type->GetXaxis()->SetBinLabel(1,"Status 23");
+  m_Parton_Type->GetXaxis()->SetBinLabel(2,"Status 24");
   
   m_Parton_Jet1_Pt = new TH1D("Parton_Jet1_Pt","Parton_Jet1_Pt",500,  0,500); m_Parton_Jet1_Pt->SetDirectory(fOut);
   m_Parton_Jet2_Pt = new TH1D("Parton_Jet2_Pt","Parton_Jet2_Pt",500,  0,500); m_Parton_Jet2_Pt->SetDirectory(fOut);
+  m_Parton_Jet3_Pt = new TH1D("Parton_Jet3_Pt","Parton_Jet3_Pt",500,  0,500); m_Parton_Jet3_Pt->SetDirectory(fOut);
+  m_Parton_Jet4_Pt = new TH1D("Parton_Jet4_Pt","Parton_Jet4_Pt",500,  0,500); m_Parton_Jet4_Pt->SetDirectory(fOut);
   
   m_Parton_Jet1_Eta = new TH1D("Parton_Jet1_Eta","Parton_Jet1_Eta",100, -5,   5); m_Parton_Jet1_Eta->SetDirectory(fOut);
   m_Parton_Jet2_Eta = new TH1D("Parton_Jet2_Eta","Parton_Jet2_Eta",100, -5,   5); m_Parton_Jet2_Eta->SetDirectory(fOut);
+  m_Parton_Jet3_Eta = new TH1D("Parton_Jet3_Eta","Parton_Jet3_Eta",100, -5,   5); m_Parton_Jet3_Eta->SetDirectory(fOut);
+  m_Parton_Jet4_Eta = new TH1D("Parton_Jet4_Eta","Parton_Jet4_Eta",100, -5,   5); m_Parton_Jet4_Eta->SetDirectory(fOut);
   
   m_Parton_Dijet1_DEta = new TH1D("Parton_Dijet1_DEta","Parton_Dijet1_DEta",100,  0,  10); m_Parton_Dijet1_DEta->SetDirectory(fOut);
   m_Parton_Dijet1_Mjj  = new TH1D("Parton_Dijet1_Mjj" ,"Parton_Dijet1_Mjj" ,500,  0,5000); m_Parton_Dijet1_Mjj ->SetDirectory(fOut);
-  
-  m_Parton_N = new TH1D("Parton_N","Parton_N",11,-0.5,10.5); m_Parton_N->SetDirectory(fOut);
   
   m_PartonvsGenJet_DiffPt  = new TH1D("PartonvsGenJet_DiffPt", "PartonvsGenJet_DiffPt", 100, 0,100); m_PartonvsGenJet_DiffPt ->SetDirectory(fOut);
   m_PartonvsGenJet_DiffEta = new TH1D("PartonvsGenJet_DiffEta","PartonvsGenJet_DiffEta",200,-1,  1); m_PartonvsGenJet_DiffEta->SetDirectory(fOut);
@@ -89,10 +94,12 @@ void PartonGenJetAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSet
   for ( HepMC::GenEvent::particle_const_iterator p = genEvent->particles_begin(); p != genEvent->particles_end(); ++p ) {
 //     cout << "Particle st=" << (*p)->status() << " id=" << (*p)->pdg_id() << " pT=" << (*p)->momentum().perp() << endl;
     if((*p)->status()==23){
+      m_Parton_Type->Fill(0);
       hardScatterParticles.push_back(*p);
       //cout << "Particle st=23 id=" << (*p)->pdg_id() << " pT=" << (*p)->momentum().perp() << endl;
     }
     if((*p)->status()==24){
+      m_Parton_Type->Fill(1);
       hardScatterParticles.push_back(*p);
       //cout << "Particle st=24 id=" << (*p)->pdg_id() << " pT=" << (*p)->momentum().perp() << endl;
     }
@@ -101,25 +108,26 @@ void PartonGenJetAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSet
   sort(hardScatterParticles.begin(),hardScatterParticles.end(),greater_GenParticle());
   
   m_Parton_N->Fill(hardScatterParticles.size());
-//   if(hardScatterParticles.size()!=2){return;}
   
-  m_Parton_Jet1_Pt->Fill(hardScatterParticles[0]->momentum().perp());
-  m_Parton_Jet2_Pt->Fill(hardScatterParticles[1]->momentum().perp());
+  // Filling parton pT
+  if(hardScatterParticles.size()>0){
+    m_Parton_Jet1_Pt ->Fill(hardScatterParticles[0]->momentum().perp());
+    m_Parton_Jet1_Eta->Fill(hardScatterParticles[0]->momentum().eta());
+  }
+  if(hardScatterParticles.size()>1){
+    m_Parton_Jet2_Pt ->Fill(hardScatterParticles[1]->momentum().perp());
+    m_Parton_Jet2_Eta->Fill(hardScatterParticles[1]->momentum().eta());
+  }
+  if(hardScatterParticles.size()>2){
+    m_Parton_Jet3_Pt ->Fill(hardScatterParticles[2]->momentum().perp());
+    m_Parton_Jet3_Eta->Fill(hardScatterParticles[2]->momentum().eta());
+  }
+  if(hardScatterParticles.size()>3){
+    m_Parton_Jet4_Pt ->Fill(hardScatterParticles[3]->momentum().perp());
+    m_Parton_Jet4_Eta->Fill(hardScatterParticles[3]->momentum().eta());
+  }
   
-  m_Parton_Jet1_Eta->Fill(hardScatterParticles[0]->momentum().eta());
-  m_Parton_Jet2_Eta->Fill(hardScatterParticles[1]->momentum().eta());
-  
-  double deta = fabs(hardScatterParticles[0]->momentum().eta()-hardScatterParticles[1]->momentum().eta());
-  
-  double px     = hardScatterParticles[0]->momentum().px() + hardScatterParticles[1]->momentum().px();
-  double py     = hardScatterParticles[0]->momentum().py() + hardScatterParticles[1]->momentum().py();
-  double pz     = hardScatterParticles[0]->momentum().pz() + hardScatterParticles[1]->momentum().pz();
-  double normaP = pow(px,2) + pow(py,2) + pow(pz,2);
-  double mass   = sqrt(pow(hardScatterParticles[0]->momentum().e()+hardScatterParticles[1]->momentum().e(),2) - normaP);
-  
-  m_Parton_Dijet1_DEta->Fill(deta);
-  m_Parton_Dijet1_Mjj ->Fill(mass);
-  
+  // Mow matching partons to jets
   int totalMatched = 0;
   
   for(unsigned i=0; i<hardScatterParticles.size(); i++) {
@@ -173,7 +181,7 @@ void PartonGenJetAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSet
     if(genJet_minDiffPt!=genJet_minDiffDr){
 //       cout << "Found a match but its not the minDr!" << endl;
       genJet_matched = genJet_minDiffPt;
-      m_MatchingResults->Fill(4);
+      m_Counters->Fill(1);
     }else{
 //       cout << "Found a match." << endl;
       genJet_matched = genJet_minDiffDr;
@@ -193,9 +201,15 @@ void PartonGenJetAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSet
     
   }
   
-  if     (totalMatched==0){m_MatchingResults->Fill(3);}
-  else if(totalMatched==1){m_MatchingResults->Fill(2);}
-  else if(totalMatched==2){m_MatchingResults->Fill(1);}
+  m_Parton_NMatched->Fill(totalMatched);
+  
+  // For next calculations we need at least 2 jets
+  if(hardScatterParticles.size()<2){return;}
+  
+  // Filling lead dijet 
+  m_Parton_Dijet1_DEta->Fill(getGenPaticle_deta(hardScatterParticles[0],hardScatterParticles[1]));
+  m_Parton_Dijet1_Mjj ->Fill(getGenPaticle_mjj (hardScatterParticles[0],hardScatterParticles[1]));
+  
 }
 
 void PartonGenJetAnalyzer::beginJob(){}
@@ -210,6 +224,23 @@ void PartonGenJetAnalyzer::beginLuminosityBlock(edm::LuminosityBlock const&, edm
 
 void PartonGenJetAnalyzer::endLuminosityBlock(edm::LuminosityBlock const&, edm::EventSetup const&){}
 
+double PartonGenJetAnalyzer::getGenPaticle_mjj(HepMC::GenParticle *p0, HepMC::GenParticle *p1){
+  
+  double px     = p0->momentum().px() + p1->momentum().px();
+  double py     = p0->momentum().py() + p1->momentum().py();
+  double pz     = p0->momentum().pz() + p1->momentum().pz();
+  double energy = p0->momentum().e()  + p1->momentum().e();
+  double mass   = sqrt(pow(energy,2) - (pow(px,2) + pow(py,2) + pow(pz,2)));
+  
+  return mass;
+  
+}
+
+double PartonGenJetAnalyzer::getGenPaticle_deta(HepMC::GenParticle *p0, HepMC::GenParticle *p1){
+  
+  return fabs(p0->momentum().eta()-p1->momentum().eta());
+  
+}
 
 //define this as a plug-in
 DEFINE_FWK_MODULE(PartonGenJetAnalyzer);
