@@ -9,6 +9,23 @@ import FWCore.ParameterSet.VarParsing as VarParsing
 # setup 'analysis'  options
 options = VarParsing.VarParsing ('analysis')
 
+options.register ('dijetPt',
+                  0, # default value
+                  VarParsing.VarParsing.multiplicity.singleton, # singleton or list
+                  VarParsing.VarParsing.varType.float,          # string, int, or float
+                  "Dijet minimum pT (default 0)")
+options.register ('dijetEta',
+                  0, # default value
+                  VarParsing.VarParsing.multiplicity.singleton, # singleton or list
+                  VarParsing.VarParsing.varType.float,          # string, int, or float
+                  "Dijet minimum eta (default 0)")
+options.register ('dijetMjj',
+                  0, # default value
+                  VarParsing.VarParsing.multiplicity.singleton, # singleton or list
+                  VarParsing.VarParsing.varType.float,          # string, int, or float
+                  "Dijet minimum mjj (default 0)")
+
+
 # setup any defaults you want
 options.inputFiles = 'CMSSW_7_1_18_Hadronizer_pp_jj_etaj4p8_ptj1min30_ptj2min30_mmjj800_unweighted_events.root'
 options.outputFile = 'PartonGenJetAnalyzer_Results_mg5_pp_jj_etaj4p8_ptj1min30_ptj2min30_mmjj800_unweighted_events.root'
@@ -36,7 +53,10 @@ process.source = cms.Source ("PoolSource",
 )
 
 process.analyzer = cms.EDAnalyzer('PartonGenJetAnalyzer',
-  outputFilename = cms.untracked.string(options.outputFile),
+  dijet_pt       = cms.untracked.double(options.dijetPt),
+  dijet_eta      = cms.untracked.double(options.dijetEta),
+  dijet_mjj      = cms.untracked.double(options.dijetMjj),
+  outputFilename = cms.untracked.string(options.outputFile)
 )
 
 # Path and EndPath definitions
