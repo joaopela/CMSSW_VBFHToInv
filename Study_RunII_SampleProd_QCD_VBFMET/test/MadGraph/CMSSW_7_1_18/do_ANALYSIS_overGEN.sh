@@ -23,5 +23,5 @@ cmsRun run_ANALYSIS_overGEN_cfg.py print inputFiles=file:v2/CMSSW_7_1_18_Hadroni
 # Run over version 3 files
 cmsRun run_ANALYSIS_overGEN_cfg.py print inputFiles=file:v3/CMSSW_7_1_18_Hadronizer_QCD_VBFLike_jj.root   outputFile=file:v3/PartonGenJetAnalyzer_QCD_VBFLike_jj.root   maxEvents=-1 dijetPt=40 dijetMjj=800 dijetEta=3.0
 cmsRun run_ANALYSIS_overGEN_cfg.py print inputFiles=file:v3/CMSSW_7_1_18_Hadronizer_QCD_VBFLike_jjj.root  outputFile=file:v3/PartonGenJetAnalyzer_QCD_VBFLike_jjj.root  maxEvents=-1 dijetPt=40 dijetMjj=800 dijetEta=3.0
-# cmsRun run_ANALYSIS_overGEN_cfg.py print inputFiles=file:v3/CMSSW_7_1_18_Hadronizer_QCD_VBFLike_jjjj.root outputFile=file:v3/PartonGenJetAnalyzer_QCD_VBFLike_jjjj.root maxEvents=-1 dijetPt=40 dijetMjj=800 dijetEta=3.0
+cmsRun run_ANALYSIS_overGEN_cfg.py print inputFiles=file:v3/CMSSW_7_1_18_Hadronizer_QCD_VBFLike_jjjj.root outputFile=file:v3/PartonGenJetAnalyzer_QCD_VBFLike_jjjj.root maxEvents=-1 dijetPt=40 dijetMjj=800 dijetEta=3.0
 cmsRun run_ANALYSIS_overGEN_cfg.py print inputFiles=file:v3/CMSSW_7_1_18_Hadronizer_QCD_VBFLike_all.root  outputFile=file:v3/PartonGenJetAnalyzer_QCD_VBFLike_all.root  maxEvents=-1 dijetPt=40 dijetMjj=800 dijetEta=3.0
