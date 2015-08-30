@@ -21,81 +21,219 @@
 
 using namespace std;
 
-void drawPlot(string filename,TFile* f){
+void drawPlot(TFile* f,string outDir){
   
   TH1D* hEventCount = (TH1D*) f->Get("EventCount");
   double evTotal = hEventCount->GetBinContent(1);
   cout << "Total number of events: " << evTotal << endl;
+  cout << endl;
   
-  TH1D* hMatchingResults = (TH1D*) f->Get("MatchingResults");
-  hMatchingResults->Draw();
-  cout << hMatchingResults->GetXaxis()->GetBinLabel(1) << " : " << hMatchingResults->GetBinContent(1) << endl;
-  cout << hMatchingResults->GetXaxis()->GetBinLabel(2) << " : " << hMatchingResults->GetBinContent(2) << endl;
-  cout << hMatchingResults->GetXaxis()->GetBinLabel(3) << " : " << hMatchingResults->GetBinContent(3) << endl;
-  cout << hMatchingResults->GetXaxis()->GetBinLabel(4) << " : " << hMatchingResults->GetBinContent(4) << endl;  
+  cout << "=> Event counters:" << endl;
+  TH1D* hCounters = (TH1D*) f->Get("Counters");
+  for(int i=1; i<=hCounters->GetNbinsX(); i++){
+    double value = hCounters->GetBinContent(i);
+    cout << hCounters->GetXaxis()->GetBinLabel(i) << " : " << value << endl;
+  }
+  cout << endl;
+  
+  cout << "=> Parton to GenJet matching results:" << endl;
+  TH1D* hParton_NMatched = (TH1D*) f->Get("Parton_NMatched");
+  for(int i=1; i<=hParton_NMatched->GetNbinsX(); i++){
+    double value = hParton_NMatched->GetBinContent(i);
+    if(value>0){
+      cout << "Matched #" << i << " partons: " << value << " fraction: " << value/evTotal << endl;
+    }
+  }
+  cout << endl;
+  
+  map<string,TH1D*>     hist1D;
+  map<string,TH2D*>     hist2D;
+  map<string,TProfile*> histPr;
   
   TCanvas c;
+  string    name = "";
+  TH1D     *h1D  = 0;
+  TH2D     *h2D  = 0;
+  TProfile *hPr  = 0;
   
-  string name = "PartonvsGenJet_DiffPt";
-  TH1D* hPartonvsGenJet_DiffPt  = (TH1D*) f->Get(name.c_str());
-  hPartonvsGenJet_DiffPt->GetXaxis()->SetTitle("Parton - Matched Generator Jet p_{#perp}");
-  hPartonvsGenJet_DiffPt->GetYaxis()->SetTitle("Number of events");
-  hPartonvsGenJet_DiffPt->GetYaxis()->SetTitleOffset(1.75);
-  hPartonvsGenJet_DiffPt->Draw();
-  c.SaveAs(Form("%s.C",  name.c_str()));
-  c.SaveAs(Form("%s.jpg",name.c_str()));
-  c.SaveAs(Form("%s.pdf",name.c_str()));
+  // Parton pT
+  name = "Parton_Jet1_Pt";
+  h1D  = (TH1D*) f->Get(name.c_str());
+  hist1D[name] = h1D;
+  h1D->GetXaxis()->SetTitle("Parton #1 - p_{#perp}");
+  h1D->GetYaxis()->SetTitle("Number of events");
+  h1D->GetYaxis()->SetTitleOffset(1.75);
+  
+  name = "Parton_Jet2_Pt";
+  h1D  = (TH1D*) f->Get(name.c_str());
+  hist1D[name] = h1D;
+  h1D->GetXaxis()->SetTitle("Parton #2 - p_{#perp}");
+  h1D->GetYaxis()->SetTitle("Number of events");
+  h1D->GetYaxis()->SetTitleOffset(1.75);
+  
+  name = "Parton_Jet3_Pt";
+  h1D  = (TH1D*) f->Get(name.c_str());
+  hist1D[name] = h1D;
+  h1D->GetXaxis()->SetTitle("Parton #3 - p_{#perp}");
+  h1D->GetYaxis()->SetTitle("Number of events");
+  h1D->GetYaxis()->SetTitleOffset(1.75);
+  
+  name = "Parton_Jet4_Pt";
+  h1D  = (TH1D*) f->Get(name.c_str());
+  hist1D[name] = h1D;
+  h1D->GetXaxis()->SetTitle("Parton #4 - p_{#perp}");
+  h1D->GetYaxis()->SetTitle("Number of events");
+  h1D->GetYaxis()->SetTitleOffset(1.75);
+  
+  // Parton eta
+  name = "Parton_Jet1_Eta";
+  h1D  = (TH1D*) f->Get(name.c_str());
+  hist1D[name] = h1D;
+  h1D->GetXaxis()->SetTitle("Parton #1 - p_{#perp}");
+  h1D->GetYaxis()->SetTitle("Number of events");
+  h1D->GetYaxis()->SetTitleOffset(1.75);
+  
+  name = "Parton_Jet2_Eta";
+  h1D  = (TH1D*) f->Get(name.c_str());
+  hist1D[name] = h1D;
+  h1D->GetXaxis()->SetTitle("Parton #2 - p_{#perp}");
+  h1D->GetYaxis()->SetTitle("Number of events");
+  h1D->GetYaxis()->SetTitleOffset(1.75);
+  
+  name = "Parton_Jet3_Eta";
+  h1D  = (TH1D*) f->Get(name.c_str());
+  hist1D[name] = h1D;
+  h1D->GetXaxis()->SetTitle("Parton #3 - p_{#perp}");
+  h1D->GetYaxis()->SetTitle("Number of events");
+  h1D->GetYaxis()->SetTitleOffset(1.75);
+  
+  name = "Parton_Jet4_Eta";
+  h1D  = (TH1D*) f->Get(name.c_str());
+  hist1D[name] = h1D;
+  h1D->GetXaxis()->SetTitle("Parton #4 - p_{#perp}");
+  h1D->GetYaxis()->SetTitle("Number of events");
+  h1D->GetYaxis()->SetTitleOffset(1.75);
+  
+  name = "PartonvsGenJet_DiffPt";
+  h1D  = (TH1D*) f->Get(name.c_str());
+  hist1D[name] = h1D;
+  h1D->GetXaxis()->SetTitle("Parton - Matched Generator Jet p_{#perp}");
+  h1D->GetYaxis()->SetTitle("Number of events");
+  h1D->GetYaxis()->SetTitleOffset(1.75);
 
   name = "PartonvsGenJet_DiffEta";
-  TH1D* hPartonvsGenJet_DiffEta = (TH1D*) f->Get(name.c_str());
-  hPartonvsGenJet_DiffEta->GetXaxis()->SetTitle("Parton - Matched Generator Jet #eta");
-  hPartonvsGenJet_DiffEta->GetYaxis()->SetTitle("Number of events");
-  hPartonvsGenJet_DiffEta->GetYaxis()->SetTitleOffset(1.75);
-  hPartonvsGenJet_DiffEta->Draw();
-  c.SaveAs(Form("%s.C",  name.c_str()));
-  c.SaveAs(Form("%s.jpg",name.c_str()));
-  c.SaveAs(Form("%s.pdf",name.c_str()));
+  h1D  = (TH1D*) f->Get(name.c_str());
+  hist1D[name] = h1D;
+  h1D->GetXaxis()->SetTitle("Parton - Matched Generator Jet #eta");
+  h1D->GetYaxis()->SetTitle("Number of events");
+  h1D->GetYaxis()->SetTitleOffset(1.75);
   
+  
+  //###############################################################
+  // TProfile
+  //###############################################################
   name = "Profile_PartonvsGenJet_DiffPt";
-  TProfile* hProfile_PartonvsGenJet_DiffPt  = (TProfile*) f->Get(name.c_str());
-  hProfile_PartonvsGenJet_DiffPt->Rebin(10);
-  hProfile_PartonvsGenJet_DiffPt->GetXaxis()->SetTitle("Parton p_{#perp}");
-  hProfile_PartonvsGenJet_DiffPt->GetYaxis()->SetTitle("abs(Parton - Matched Generator Jet pT)");
-  hProfile_PartonvsGenJet_DiffPt->GetYaxis()->SetTitleOffset(1.75);
-  hProfile_PartonvsGenJet_DiffPt->Draw();
-  c.SaveAs(Form("%s.C",  name.c_str()));
-  c.SaveAs(Form("%s.jpg",name.c_str()));
-  c.SaveAs(Form("%s.pdf",name.c_str()));
+  hPr  = (TProfile*) f->Get(name.c_str());
+  histPr[name] = hPr;
+  hPr->Rebin(10);
+  hPr->GetXaxis()->SetTitle("Parton p_{#perp}");
+  hPr->GetYaxis()->SetTitle("abs(Parton - Matched Generator Jet pT)");
+  hPr->GetYaxis()->SetTitleOffset(1.75);
   
   name = "Profile_PartonvsGenJet_DiffEta";
-  TProfile* hProfile_PartonvsGenJet_DiffEta = (TProfile*) f->Get(name.c_str());
-  hProfile_PartonvsGenJet_DiffEta->Rebin(2);
-  hProfile_PartonvsGenJet_DiffEta->GetXaxis()->SetTitle("Parton #eta");
-  hProfile_PartonvsGenJet_DiffEta->GetYaxis()->SetTitle("abs(Parton - Matched Generator Jet #eta)");
-  hProfile_PartonvsGenJet_DiffEta->GetYaxis()->SetTitleOffset(1.75);
-  hProfile_PartonvsGenJet_DiffEta->Draw();
-  c.SaveAs(Form("%s.C",  name.c_str()));
-  c.SaveAs(Form("%s.jpg",name.c_str()));
-  c.SaveAs(Form("%s.pdf",name.c_str()));
+  hPr  = (TProfile*) f->Get(name.c_str());
+  histPr[name] = hPr;
+  hPr->Rebin(2);
+  hPr->GetXaxis()->SetTitle("Parton #eta");
+  hPr->GetYaxis()->SetTitle("abs(Parton - Matched Generator Jet #eta)");
+  hPr->GetYaxis()->SetTitleOffset(1.75);
   
+  //###############################################################
+  // 2D Plots
+  //###############################################################
   name = "PartonvsGenJet_Pt";
-  TH2D* hPartonvsGenJet_Pt  = (TH2D*) f->Get(name.c_str());
-  hPartonvsGenJet_Pt->GetXaxis()->SetTitle("Parton p_{#perp}");
-  hPartonvsGenJet_Pt->GetYaxis()->SetTitle("Matched Generator Jet p_{#perp}");
-  hPartonvsGenJet_Pt->GetYaxis()->SetTitleOffset(1.75);
-  hPartonvsGenJet_Pt->Draw("colz");
-  c.SaveAs(Form("%s.C",  name.c_str()));
-  c.SaveAs(Form("%s.jpg",name.c_str()));
-  c.SaveAs(Form("%s.pdf",name.c_str()));
+  h2D  = (TH2D*) f->Get(name.c_str());
+  hist2D[name] = h2D;
+  h2D->GetXaxis()->SetTitle("Parton p_{#perp}");
+  h2D->GetYaxis()->SetTitle("Matched Generator Jet p_{#perp}");
+  h2D->GetYaxis()->SetTitleOffset(1.75);
 
   name = "PartonvsGenJet_Eta";
-  TH2D* hPartonvsGenJet_Eta = (TH2D*) f->Get(name.c_str());
-  hPartonvsGenJet_Eta->GetXaxis()->SetTitle("Parton #eta");
-  hPartonvsGenJet_Eta->GetYaxis()->SetTitle("Matched Generator Jet #eta");
-  hPartonvsGenJet_Eta->Draw("colz");
-  c.SaveAs(Form("%s.C",  name.c_str()));
-  c.SaveAs(Form("%s.jpg",name.c_str()));
-  c.SaveAs(Form("%s.pdf",name.c_str()));
+  h2D  = (TH2D*) f->Get(name.c_str());
+  hist2D[name] = h2D;
+  h2D->GetXaxis()->SetTitle("Parton #eta");
+  h2D->GetYaxis()->SetTitle("Matched Generator Jet #eta");
+  
+  // Selected Diparton - Generator jet match
+  name = "SelDiParton_MatchedGenJet_Parton1_Pt";
+  h2D  = (TH2D*) f->Get(name.c_str());
+  hist2D[name] = h2D;
+  h2D->GetXaxis()->SetTitle("Diparton Lead Parton p_{#perp}");
+  h2D->GetYaxis()->SetTitle("Matched generator jet p_{#perp}");
+  h2D->GetYaxis()->SetTitleOffset(1.75);
+  
+  name = "SelDiParton_MatchedGenJet_Parton2_Pt";
+  h2D  = (TH2D*) f->Get(name.c_str());
+  hist2D[name] = h2D;
+  h2D->GetXaxis()->SetTitle("Diparton sublead parton p_{#perp}");
+  h2D->GetYaxis()->SetTitle("Matched generator jet p_{#perp}");
+  h2D->GetYaxis()->SetTitleOffset(1.75);
+  
+  name = "SelDiParton_MatchedGenJet_Parton1_Eta";
+  h2D  = (TH2D*) f->Get(name.c_str());
+  hist2D[name] = h2D;
+  h2D->GetXaxis()->SetTitle("Diparton Lead Parton #eta");
+  h2D->GetYaxis()->SetTitle("Matched generator jet #eta");
+  h2D->GetYaxis()->SetTitleOffset(1.75);
+  
+  name = "SelDiParton_MatchedGenJet_Parton2_Eta";
+  h2D  = (TH2D*) f->Get(name.c_str());
+  hist2D[name] = h2D;
+  h2D->GetXaxis()->SetTitle("Diparton sublead parton #eta");
+  h2D->GetYaxis()->SetTitle("Matched generator jet #eta");
+  h2D->GetYaxis()->SetTitleOffset(1.75);
+  
+  name = "SelDiParton_MatchedGenJet_DEta";
+  h2D  = (TH2D*) f->Get(name.c_str());
+  hist2D[name] = h2D;
+  h2D->GetXaxis()->SetTitle("Diparton #Delta#eta");
+  h2D->GetYaxis()->SetTitle("Matched generator dijet #Delta#eta");
+  h2D->GetYaxis()->SetTitleOffset(1.75);
+  
+  name = "SelDiParton_MatchedGenJet_Mjj";
+  h2D  = (TH2D*) f->Get(name.c_str());
+  hist2D[name] = h2D;
+  h2D->GetXaxis()->SetTitle("Diparton m_{jj}");
+  h2D->GetYaxis()->SetTitle("Matched generator dijet m_{jj}");
+  h2D->GetYaxis()->SetTitleOffset(1.75);
+  
+  //###############################################################
+  // Output of the plots
+  //###############################################################
+  for(auto i=hist1D.begin(); i!=hist1D.end(); i++){
+    TCanvas c;
+    i->second->Draw();
+    c.SaveAs(Form("%s/%s.C",  outDir.c_str(),name.c_str()));
+    c.SaveAs(Form("%s/%s.png",outDir.c_str(),name.c_str()));
+    c.SaveAs(Form("%s/%s.pdf",outDir.c_str(),name.c_str()));
+  }
+  
+  for(auto i=histPr.begin(); i!=histPr.end(); i++){
+    TCanvas c;
+    i->second->Draw("colz");
+    c.SaveAs(Form("%s/%s.C",  outDir.c_str(),name.c_str()));
+    c.SaveAs(Form("%s/%s.png",outDir.c_str(),name.c_str()));
+    c.SaveAs(Form("%s/%s.pdf",outDir.c_str(),name.c_str()));
+  }
+  
+  for(auto i=hist2D.begin(); i!=hist2D.end(); i++){
+    TCanvas c;
+    i->second->Draw("colz");
+    c.SaveAs(Form("%s/%s.C",  outDir.c_str(),name.c_str()));
+    c.SaveAs(Form("%s/%s.png",outDir.c_str(),name.c_str()));
+    c.SaveAs(Form("%s/%s.pdf",outDir.c_str(),name.c_str()));
+  }
+  
   
 //   TLegend l(0.55,0.75,0.85,0.95);
 //   l.SetHeader("QCD p_{T} Hat");
@@ -139,14 +277,45 @@ bool checkFiles(map<string,string> files){
   return out;
 }
 
-int main(){
+int main(int argc, char* argv[]){
+ 
+  // Check the number of parameters
+  if (argc < 2) {
+    // Tell the user how to run the program
+    std::cerr << "Usage: " << argv[0] << " file" << std::endl;
+    std::cerr << "Usage: -i INPUTFILE" << std::endl;
+    std::cerr << "Usage: -d OUTPUTDIR" << std::endl;
+    return 1;
+  }
+  
+  std::string inputFile = "";
+  std::string outputDir = "";
+  
+  for (int i = 1; i < argc; ++i) {
+    std::string arg = argv[i];
+    if((arg == "-h") || (arg == "--help")) {
+      std::cerr << "Usage: " << argv[0] << " file" << std::endl;
+      return 0;
+    }else if(arg == "-i"){
+      if(i + 1 < argc){
+        i++;
+        inputFile = argv[i];
+      } 
+    }else if(arg == "-d"){
+      if(i + 1 < argc){
+        i++;
+        outputDir = argv[i];
+      } 
+    } 
+  }
+  
   
   hepfw::Style myStyle;
   myStyle.setTDRStyle();
   
   // Defining all alias for the input filenames
   map<string,string> fileNames;
-  fileNames["30to50"]   = "PartonGenJetAnalyzerResults_pp_jj_etaj4p8_ptj1min40_ptj2min40_mmjj800_ev1000k.root";
+  fileNames["30to50"]   = inputFile;
   
   if(!checkFiles(fileNames)){
     cout << "FATAL ERROR: One or more files missing!" << endl;
@@ -155,9 +324,9 @@ int main(){
   
   map<string,TFile*> files;
   for(auto i=fileNames.begin(); i!=fileNames.end(); i++){
-    files[i->first] = new TFile(i->second.c_str(),"READ");
+    TFile* file = new TFile(inputFile.c_str(),"READ");
     
-    drawPlot(i->first,files[i->first]);
+    drawPlot(file,outputDir);
   }
   
   return 0;
