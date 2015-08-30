@@ -213,25 +213,25 @@ void drawPlot(TFile* f,string outDir){
   for(auto i=hist1D.begin(); i!=hist1D.end(); i++){
     TCanvas c;
     i->second->Draw();
-    c.SaveAs(Form("%s/%s.C",  outDir.c_str(),name.c_str()));
-    c.SaveAs(Form("%s/%s.png",outDir.c_str(),name.c_str()));
-    c.SaveAs(Form("%s/%s.pdf",outDir.c_str(),name.c_str()));
+    c.SaveAs(Form("%s/%s.C",  outDir.c_str(),i->first.c_str()));
+    c.SaveAs(Form("%s/%s.png",outDir.c_str(),i->first.c_str()));
+    c.SaveAs(Form("%s/%s.pdf",outDir.c_str(),i->first.c_str()));
   }
   
   for(auto i=histPr.begin(); i!=histPr.end(); i++){
     TCanvas c;
     i->second->Draw("colz");
-    c.SaveAs(Form("%s/%s.C",  outDir.c_str(),name.c_str()));
-    c.SaveAs(Form("%s/%s.png",outDir.c_str(),name.c_str()));
-    c.SaveAs(Form("%s/%s.pdf",outDir.c_str(),name.c_str()));
+    c.SaveAs(Form("%s/%s.C",  outDir.c_str(),i->first.c_str()));
+    c.SaveAs(Form("%s/%s.png",outDir.c_str(),i->first.c_str()));
+    c.SaveAs(Form("%s/%s.pdf",outDir.c_str(),i->first.c_str()));
   }
   
   for(auto i=hist2D.begin(); i!=hist2D.end(); i++){
     TCanvas c;
     i->second->Draw("colz");
-    c.SaveAs(Form("%s/%s.C",  outDir.c_str(),name.c_str()));
-    c.SaveAs(Form("%s/%s.png",outDir.c_str(),name.c_str()));
-    c.SaveAs(Form("%s/%s.pdf",outDir.c_str(),name.c_str()));
+    c.SaveAs(Form("%s/%s.C",  outDir.c_str(),i->first.c_str()));
+    c.SaveAs(Form("%s/%s.png",outDir.c_str(),i->first.c_str()));
+    c.SaveAs(Form("%s/%s.pdf",outDir.c_str(),i->first.c_str()));
   }
   
   
