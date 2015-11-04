@@ -254,6 +254,104 @@ genFilterAnalyzer = cms.EDAnalyzer("GenFilterAnalyzer",
       dijetMinMjj             = cms.untracked.double(1000)
     ),
     
+    cms.PSet(
+      name                    = cms.untracked.string("Pt45_Eta4p8_DEta3p0_Dphi2p0_Mjj1000"),
+      jetMinPt                = cms.untracked.double(45.0),
+      jetMaxEta               = cms.untracked.double(4.8),
+      dijetOppositeHemisphere = cms.untracked.double(True),
+      dijetMinDeltaEta        = cms.untracked.double(3.0),
+      dijetMaxDeltaPhi        = cms.untracked.double(2.0),
+      dijetMinMjj             = cms.untracked.double(1000)
+    ),
+    
+    cms.PSet(
+      name                    = cms.untracked.string("Pt40_Eta4p8_DEta3p0_Dphi2p0_Mjj1000"),
+      jetMinPt                = cms.untracked.double(40.0),
+      jetMaxEta               = cms.untracked.double(4.8),
+      dijetOppositeHemisphere = cms.untracked.double(True),
+      dijetMinDeltaEta        = cms.untracked.double(3.0),
+      dijetMaxDeltaPhi        = cms.untracked.double(2.0),
+      dijetMinMjj             = cms.untracked.double(1000)
+    ),
+
+     cms.PSet(
+      name                    = cms.untracked.string("Pt40_Eta4p8_DEta3p0_Dphi2p15_Mjj1000"),
+      jetMinPt                = cms.untracked.double(40.0),
+      jetMaxEta               = cms.untracked.double(4.8),
+      dijetOppositeHemisphere = cms.untracked.double(True),
+      dijetMinDeltaEta        = cms.untracked.double(3.0),
+      dijetMaxDeltaPhi        = cms.untracked.double(2.15),
+      dijetMinMjj             = cms.untracked.double(1000)
+    ),
+    
+    
+    cms.PSet(
+      name                    = cms.untracked.string("Pt50_Eta4p8_DEta3p0_Mjj1000"),
+      jetMinPt                = cms.untracked.double(50.),
+      jetMaxEta               = cms.untracked.double(4.8),
+      dijetOppositeHemisphere = cms.untracked.double(True),
+      dijetMinDeltaEta        = cms.untracked.double(3.0),
+      dijetMinMjj             = cms.untracked.double(1000)
+    ),
+
+    cms.PSet(
+      name                    = cms.untracked.string("Pt45_Eta4p8_DEta3p0_Mjj1000"),
+      jetMinPt                = cms.untracked.double(45.),
+      jetMaxEta               = cms.untracked.double(4.8),
+      dijetOppositeHemisphere = cms.untracked.double(True),
+      dijetMinDeltaEta        = cms.untracked.double(3.0),
+      dijetMinMjj             = cms.untracked.double(1000)
+    ),
+    
+    cms.PSet(
+      name                    = cms.untracked.string("Pt40_Eta4p8_DEta3p0_Mjj1000"),
+      jetMinPt                = cms.untracked.double(40.),
+      jetMaxEta               = cms.untracked.double(4.8),
+      dijetOppositeHemisphere = cms.untracked.double(True),
+      dijetMinDeltaEta        = cms.untracked.double(3.0),
+      dijetMinMjj             = cms.untracked.double(1000)
+    ),
+    
+    
+    cms.PSet(
+      name                    = cms.untracked.string("Pt40_Eta4p8_DEta3p0_Dphi2p15_Mjj900"),
+      jetMinPt                = cms.untracked.double(40.),
+      jetMaxEta               = cms.untracked.double(4.8),
+      dijetOppositeHemisphere = cms.untracked.double(True),
+      dijetMinDeltaEta        = cms.untracked.double(3.0),
+      dijetMaxDeltaPhi        = cms.untracked.double(2.15),
+      dijetMinMjj             = cms.untracked.double(900)
+    ),
+
+    cms.PSet(
+      name                    = cms.untracked.string("Pt40_Eta4p8_DEta3p0_Dphi2p15_Mjj800"),
+      jetMinPt                = cms.untracked.double(40.),
+      jetMaxEta               = cms.untracked.double(4.8),
+      dijetOppositeHemisphere = cms.untracked.double(True),
+      dijetMinDeltaEta        = cms.untracked.double(3.0),
+      dijetMaxDeltaPhi        = cms.untracked.double(2.15),
+      dijetMinMjj             = cms.untracked.double(800)
+    ),
+    
+    cms.PSet(
+      name                    = cms.untracked.string("Pt40_Eta4p8_DEta3p0_Dphi2p15_Mjj700"),
+      jetMinPt                = cms.untracked.double(40.),
+      jetMaxEta               = cms.untracked.double(4.8),
+      dijetOppositeHemisphere = cms.untracked.double(True),
+      dijetMinDeltaEta        = cms.untracked.double(3.0),
+      dijetMaxDeltaPhi        = cms.untracked.double(2.15),
+      dijetMinMjj             = cms.untracked.double(700)
+    ),
+
+    cms.PSet(
+      name                    = cms.untracked.string("Pt40_Eta4p8_DEta3p0_Dphi2p15_Mjj600"),
+      jetMinPt                = cms.untracked.double(40.),
+      jetMaxEta               = cms.untracked.double(4.8),
+      dijetOppositeHemisphere = cms.untracked.double(True),
+      dijetMinDeltaEta        = cms.untracked.double(3.0),
+      dijetMinMjj             = cms.untracked.double(600)
+    ),
+
      cms.PSet(
       name                    = cms.untracked.string("Pt50_Eta4p8_DEta3p25_Dphi2p0_Mjj1000"),
       jetMinPt                = cms.untracked.double(50.0),
