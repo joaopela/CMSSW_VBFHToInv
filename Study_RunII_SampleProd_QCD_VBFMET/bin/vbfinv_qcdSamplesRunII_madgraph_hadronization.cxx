@@ -38,10 +38,45 @@ void drawPlot(TFile* f,string outDir){
   
   cout << "=> Parton to GenJet matching results:" << endl;
   TH1D* hParton_NMatched = (TH1D*) f->Get("Parton_NMatched");
+  double totalParton = hParton_NMatched->GetEntries();
+  cout << "all partons entries " <<  totalParton << endl;
   for(int i=1; i<=hParton_NMatched->GetNbinsX(); i++){
     double value = hParton_NMatched->GetBinContent(i);
     if(value>0){
-      cout << "Matched #" << i << " partons: " << value << " fraction: " << value/evTotal << endl;
+      cout << "Matched #" << i-1 << " partons: " << value << " fraction: " << value/totalParton << endl;
+    }
+  }
+  cout << endl;
+  
+  TH1D* hParton_NMatched_jj = (TH1D*) f->Get("Parton_NMatched_jj");
+  double totalPartonjj = hParton_NMatched_jj->GetEntries();
+  cout << "jj partons entries " <<  totalPartonjj << endl;
+  for(int i=1; i<=hParton_NMatched_jj->GetNbinsX(); i++){
+    double value = hParton_NMatched_jj->GetBinContent(i);
+    if(value>0){
+      cout << "Matched #" << i-1 << " partons: " << value << " fraction: " << value/totalPartonjj << endl;
+    }
+  }
+  cout << endl;
+  
+  TH1D* hParton_NMatched_jjj = (TH1D*) f->Get("Parton_NMatched_jjj");
+  double totalPartonjjj = hParton_NMatched_jjj->GetEntries();
+  cout << "jjj partons entries " <<  totalPartonjjj << endl;
+  for(int i=1; i<=hParton_NMatched_jjj->GetNbinsX(); i++){
+    double value = hParton_NMatched_jjj->GetBinContent(i);
+    if(value>0){
+      cout << "Matched #" << i-1 << " partons: " << value << " fraction: " << value/totalPartonjjj << endl;
+    }
+  }
+  cout << endl;
+  
+  TH1D* hParton_NMatched_jjjj = (TH1D*) f->Get("Parton_NMatched_jjjj");
+  double totalPartonjjjj = hParton_NMatched_jjjj->GetEntries();
+  cout << "jjjj partons entries " <<  totalPartonjjjj << endl;
+  for(int i=1; i<=hParton_NMatched_jjjj->GetNbinsX(); i++){
+    double value = hParton_NMatched_jjjj->GetBinContent(i);
+    if(value>0){
+      cout << "Matched #" << i-1 << " partons: " << value << " fraction: " << value/totalPartonjjjj << endl;
     }
   }
   cout << endl;
@@ -223,6 +258,32 @@ void drawPlot(TFile* f,string outDir){
   h2D->GetYaxis()->SetTitle("Matched generator jet p_{#perp}");
   h2D->GetYaxis()->SetTitleOffset(1.75);
   
+  int nxbin = h2D->GetXaxis()->GetNbins();
+  int nybin = h2D->GetYaxis()->GetNbins();
+  
+  cout << nxbin << endl;
+  cout << nybin << endl;
+  
+  for(int x=1; x<nxbin; x++){
+    
+    double sumy   = 0;
+    double sumy30 = 0;
+    
+    for(int y=1; y<nybin; y++){
+      
+      sumy+= h2D->GetBinContent(x,y);
+      
+      if(h2D->GetYaxis()->GetBinLowEdge(y)>=40){
+        sumy30+= h2D->GetBinContent(x,y);
+      }
+      
+      
+    }
+    cout << "pt>" << h2D->GetXaxis()->GetBinLowEdge(x) << " : " << sumy << " : " << sumy30 << " : " << sumy30/sumy << endl;
+  }
+  
+  
+  
   name = "SelDiParton_MatchedGenJet_Parton2_Pt";
   h2D  = (TH2D*) f->Get(name.c_str());
   hist2D[name] = h2D;
@@ -232,6 +293,30 @@ void drawPlot(TFile* f,string outDir){
   h2D->GetXaxis()->SetTitle("Diparton sublead parton p_{#perp}");
   h2D->GetYaxis()->SetTitle("Matched generator jet p_{#perp}");
   h2D->GetYaxis()->SetTitleOffset(1.75);
+  
+   nxbin = h2D->GetXaxis()->GetNbins();
+   nybin = h2D->GetYaxis()->GetNbins();
+  
+  cout << nxbin << endl;
+  cout << nybin << endl;
+  
+  for(int x=1; x<nxbin; x++){
+    
+    double sumy   = 0;
+    double sumy30 = 0;
+    
+    for(int y=1; y<nybin; y++){
+      
+      sumy+= h2D->GetBinContent(x,y);
+      
+      if(h2D->GetYaxis()->GetBinLowEdge(y)>=40){
+        sumy30+= h2D->GetBinContent(x,y);
+      }
+      
+      
+    }
+    cout << "pt>" << h2D->GetXaxis()->GetBinLowEdge(x) << " : " << sumy << " : " << sumy30 << " : " << sumy30/sumy << endl;
+  }
   
   name = "SelDiParton_MatchedGenJet_Parton1_Eta";
   h2D  = (TH2D*) f->Get(name.c_str());
@@ -264,6 +349,25 @@ void drawPlot(TFile* f,string outDir){
   h2D->GetXaxis()->SetTitle("Diparton m_{jj}");
   h2D->GetYaxis()->SetTitle("Matched generator dijet m_{jj}");
   h2D->GetYaxis()->SetTitleOffset(1.75);
+  
+  for(int x=1; x<nxbin; x++){
+    
+    double sumy   = 0;
+    double sumy900 = 0;
+    
+    for(int y=1; y<nybin; y++){
+      
+      sumy+= h2D->GetBinContent(x,y);
+      
+      if(h2D->GetYaxis()->GetBinLowEdge(y)>=900){
+        sumy900+= h2D->GetBinContent(x,y);
+      }
+      
+      
+    }
+    cout << "mjj>" << h2D->GetXaxis()->GetBinLowEdge(x) << " : " << sumy << " : " << sumy900 << " : " << sumy900/sumy << endl;
+  }
+  
   
   //###############################################################
   // Output of the plots
