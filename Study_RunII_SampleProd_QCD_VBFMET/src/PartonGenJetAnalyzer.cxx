@@ -39,7 +39,10 @@ PartonGenJetAnalyzer::PartonGenJetAnalyzer(const edm::ParameterSet& pset){
   m_Counters->GetXaxis()->SetBinLabel(1,"Jet Matched not lowest DeltaR");
   m_Counters->GetXaxis()->SetBinLabel(2,"Selected diparton has a match");
   
-  m_Parton_NMatched = new TH1D("Parton_NMatched","Parton_NMatched",10,-0.5,9.5); m_Parton_NMatched->SetDirectory(fOut);
+  m_Parton_NMatched      = new TH1D("Parton_NMatched"     ,"Parton_NMatched"     ,10,-0.5,9.5); m_Parton_NMatched     ->SetDirectory(fOut);
+  m_Parton_NMatched_jj   = new TH1D("Parton_NMatched_jj"  ,"Parton_NMatched_jj"  ,10,-0.5,9.5); m_Parton_NMatched_jj  ->SetDirectory(fOut);
+  m_Parton_NMatched_jjj  = new TH1D("Parton_NMatched_jjj" ,"Parton_NMatched_jjj" ,10,-0.5,9.5); m_Parton_NMatched_jjj ->SetDirectory(fOut);
+  m_Parton_NMatched_jjjj = new TH1D("Parton_NMatched_jjjj","Parton_NMatched_jjjj",10,-0.5,9.5); m_Parton_NMatched_jjjj->SetDirectory(fOut);
   
   m_Parton_N    = new TH1D("Parton_N",   "Parton_N",   11,-0.5,10.5); m_Parton_N   ->SetDirectory(fOut);
   m_Parton_Type = new TH1D("Parton_Type","Parton_Type", 2,-0.5, 2.5); m_Parton_Type->SetDirectory(fOut);
@@ -270,6 +273,10 @@ void PartonGenJetAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSet
   }
   
   m_Parton_NMatched->Fill(totalMatched);
+  
+  if(hardScatterParticles.size()==2){m_Parton_NMatched_jj  ->Fill(totalMatched);}
+  if(hardScatterParticles.size()==3){m_Parton_NMatched_jjj ->Fill(totalMatched);}
+  if(hardScatterParticles.size()==4){m_Parton_NMatched_jjjj->Fill(totalMatched);}
   
   if(dipartonA!=0 && dipartonB!=0 && genJetA!=0 && genJetB!=0){
     m_Counters->Fill(2);

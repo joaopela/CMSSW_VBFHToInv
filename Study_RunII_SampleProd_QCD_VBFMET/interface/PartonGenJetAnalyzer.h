@@ -83,6 +83,9 @@ private:
   
   TH1D* m_Parton_N;
   TH1D *m_Parton_NMatched;
+  TH1D *m_Parton_NMatched_jj;
+  TH1D *m_Parton_NMatched_jjj;
+  TH1D *m_Parton_NMatched_jjjj;
   TH1D* m_Parton_Type;
   
   TH1D *m_Parton_Jet1_Pt, *m_Parton_Jet2_Pt, *m_Parton_Jet3_Pt, *m_Parton_Jet4_Pt;
