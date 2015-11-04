@@ -24,5 +24,3 @@ cmsRun run_ANALYSISFILTER_overGEN_cfg.py print inputFiles=file:v3/CMSSW_7_1_18_H
 cmsRun run_ANALYSISFILTER_overGEN_cfg.py print inputFiles=file:v3/CMSSW_7_1_18_Hadronizer_QCD_VBFLike_jjjj.root outputFile=file:v3/FilterAnalyzer_QCD_VBFLike_jjjj.root maxEvents=-1
 cmsRun run_ANALYSISFILTER_overGEN_cfg.py print inputFiles=file:v3/CMSSW_7_1_18_Hadronizer_QCD_VBFLike_all.root  outputFile=file:v3/FilterAnalyzer_QCD_VBFLike_all.root  maxEvents=-1
 
-
-
