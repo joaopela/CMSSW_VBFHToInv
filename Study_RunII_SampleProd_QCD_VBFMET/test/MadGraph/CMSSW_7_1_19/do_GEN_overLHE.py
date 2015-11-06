@@ -31,7 +31,7 @@ for f in files:
     fOut.write("\n")
     fOut.write("");
     fOut.write("cd "+runDir+"\n")
-    fOut.write("scramv1 p CMSSW CMSSW_7_1_19\n")
+    fOut.write("eval `scramv1 runtime -sh`\n")
     fOut.write("\n")
     fOut.write("cmsRun run_GEN_overLHE_cfg.py print inputFiles=file:"+args.d+"/"+f+" outputFile="+args.d+"/CMSSW_7_1_19_Hadronizer_"+str(jobNumber)+".root maxEvents=-1")
 
