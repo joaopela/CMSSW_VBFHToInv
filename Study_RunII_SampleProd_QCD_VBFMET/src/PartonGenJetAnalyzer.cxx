@@ -35,9 +35,11 @@ PartonGenJetAnalyzer::PartonGenJetAnalyzer(const edm::ParameterSet& pset){
   
   // This histogram will be used to count our events (for normalisation later)
   m_EventCount  = new TH1D("EventCount","EventCount",1,-0.5,0.5); m_EventCount->SetDirectory(fOut);
-  m_Counters    = new TH1D("Counters",  "Counters",  2, 0.5,2.5); m_Counters  ->SetDirectory(fOut);
+  m_Counters    = new TH1D("Counters",  "Counters",  4, 0.5,4.5); m_Counters  ->SetDirectory(fOut);
   m_Counters->GetXaxis()->SetBinLabel(1,"Jet Matched not lowest DeltaR");
   m_Counters->GetXaxis()->SetBinLabel(2,"Selected diparton has a match");
+  m_Counters->GetXaxis()->SetBinLabel(3,"Matched GenJet (jpt>40 AND mjj>1000)");
+  m_Counters->GetXaxis()->SetBinLabel(4,"Matched GenJet (jpt>40 AND mjj>1000) AND Parton (jpt<30 OR mjj<800)");
   
   m_Parton_NMatched      = new TH1D("Parton_NMatched"     ,"Parton_NMatched"     ,10,-0.5,9.5); m_Parton_NMatched     ->SetDirectory(fOut);
   m_Parton_NMatched_jj   = new TH1D("Parton_NMatched_jj"  ,"Parton_NMatched_jj"  ,10,-0.5,9.5); m_Parton_NMatched_jj  ->SetDirectory(fOut);
@@ -280,13 +282,23 @@ void PartonGenJetAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSet
   
   if(dipartonA!=0 && dipartonB!=0 && genJetA!=0 && genJetB!=0){
     m_Counters->Fill(2);
+
+    double genPar_mjj = getGenPaticle_mjj(dipartonA,dipartonB);    
+    double genJet_mjj = getGenJet_mjj    (genJetA,genJetB);
     
     m_SelDiParton_MatchedGenJet_Parton1_Pt ->Fill(dipartonA->momentum().perp(),genJetA->pt());
     m_SelDiParton_MatchedGenJet_Parton2_Pt ->Fill(dipartonB->momentum().perp(),genJetB->pt());
     m_SelDiParton_MatchedGenJet_Parton1_Eta->Fill(dipartonA->momentum().eta(), genJetA->eta());
     m_SelDiParton_MatchedGenJet_Parton2_Eta->Fill(dipartonB->momentum().eta(), genJetB->eta());
     m_SelDiParton_MatchedGenJet_DEta       ->Fill(getGenPaticle_deta(dipartonA,dipartonB),getGenJet_deta(genJetA,genJetB));
-    m_SelDiParton_MatchedGenJet_Mjj        ->Fill(getGenPaticle_mjj (dipartonA,dipartonB),getGenJet_mjj (genJetA,genJetB));
+    m_SelDiParton_MatchedGenJet_Mjj        ->Fill(genPar_mjj,genJet_mjj);
+    
+    if(genJetA->pt()>40 && genJetB->pt()>40 && genJet_mjj>1000){
+      m_Counters->Fill(3);
+      if(dipartonA->momentum().perp()<=30 || dipartonB->momentum().perp()<=30 || genPar_mjj<=800){
+        m_Counters->Fill(4);
+      }
+    }
     
   }
   
