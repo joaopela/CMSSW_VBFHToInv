@@ -2,7 +2,10 @@
 
 import argparse
 parser = argparse.ArgumentParser(description='Run CMSSW ANALYSIS step over GEN Files')
-parser.add_argument('-d',type=str,help='Target directory')
+parser.add_argument('-d',       type=str,help='Target directory')
+parser.add_argument('-n',       type=str,help='Max events')
+parser.add_argument('-dijetPt', type=str,help='dijet pT')
+parser.add_argument('-dijetMjj',type=str,help='dijet Mjj')
 args = parser.parse_args()
 
 import os
@@ -17,12 +20,9 @@ for f in files:
   
     inputFiles += 'file:'+args.d+'/'+f
 
-
 outputFile  = "file:"+args.d+"/PartonGenJetAnalyzer_QCD_VBFLike_all.root"
-bashCommand = "cmsRun run_GEN_overLHE_cfg.py print inputFiles="+inputFiles+" outputFile="+outputFile+" maxEvents=-1"
-
-print bashCommand
+bashCommand = "cmsRun run_ANALYSIS_overGEN_cfg.py print inputFiles="+inputFiles+" outputFile="+outputFile+" maxEvents="+args.n+" dijetPt="+args.dijetPt+" dijetMjj="+args.dijetMjj
 
 import subprocess
-process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
-output = process.communicate()[0]
+p = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+stdout, stderr = p.communicate()
