@@ -261,28 +261,47 @@ void drawPlot(TFile* f,string outDir){
   int nxbin = h2D->GetXaxis()->GetNbins();
   int nybin = h2D->GetYaxis()->GetNbins();
   
-  cout << nxbin << endl;
-  cout << nybin << endl;
+  double below30NotMigrated = 0;
+  double below30Migrated    = 0;
+  double above30NotMigrated = 0;
+  double above30Migrated    = 0;
   
   for(int x=1; x<nxbin; x++){
     
     double sumy   = 0;
     double sumy30 = 0;
     
+    double lowX_edge = h2D->GetXaxis()->GetBinLowEdge(x);
+    
     for(int y=1; y<nybin; y++){
       
-      sumy+= h2D->GetBinContent(x,y);
+      double lowY_edge  = h2D->GetYaxis()->GetBinLowEdge(y);
+      double binContent = h2D->GetBinContent(x,y);
       
-      if(h2D->GetYaxis()->GetBinLowEdge(y)>=40){
-        sumy30+= h2D->GetBinContent(x,y);
+      if     (lowX_edge <30 && lowY_edge <40){below30NotMigrated += binContent;}
+      else if(lowX_edge <30 && lowY_edge>=40){below30Migrated    += binContent;}
+      else if(lowX_edge>=30 && lowY_edge <40){above30NotMigrated += binContent;}
+      else if(lowX_edge>=30 && lowY_edge>=40){above30Migrated    += binContent;}
+      
+      sumy+= binContent;
+      
+      if(lowY_edge>=40){
+        sumy30+= binContent;
       }
       
       
     }
-    cout << "pt>" << h2D->GetXaxis()->GetBinLowEdge(x) << " : " << sumy << " : " << sumy30 << " : " << sumy30/sumy << endl;
+    if(lowX_edge==30){cout << "pt>" << lowX_edge << " : " << sumy << " : " << sumy30 << " : " << sumy30/sumy << endl;}
   }
   
-  
+  cout << "###########################" << endl;
+  cout << "lowX_edge <30 && lowY_edge <40 : " << below30NotMigrated << endl;
+  cout << "lowX_edge <30 && lowY_edge>=40 : " << below30Migrated    << endl;
+  cout << "lowX_edge>=30 && lowY_edge <40 : " << above30NotMigrated << endl;
+  cout << "lowX_edge>=30 && lowY_edge>=40 : " << above30Migrated    << endl;
+  cout << "Migration                      : " << below30Migrated/(below30Migrated+above30Migrated) << endl;
+  cout << "###########################" << endl;
+  cout << endl;
   
   name = "SelDiParton_MatchedGenJet_Parton2_Pt";
   h2D  = (TH2D*) f->Get(name.c_str());
@@ -294,29 +313,50 @@ void drawPlot(TFile* f,string outDir){
   h2D->GetYaxis()->SetTitle("Matched generator jet p_{#perp}");
   h2D->GetYaxis()->SetTitleOffset(1.75);
   
-   nxbin = h2D->GetXaxis()->GetNbins();
-   nybin = h2D->GetYaxis()->GetNbins();
+  nxbin = h2D->GetXaxis()->GetNbins();
+  nybin = h2D->GetYaxis()->GetNbins();
   
-  cout << nxbin << endl;
-  cout << nybin << endl;
+  below30NotMigrated = 0;
+  below30Migrated    = 0;
+  above30NotMigrated = 0;
+  above30Migrated    = 0;
   
   for(int x=1; x<nxbin; x++){
     
     double sumy   = 0;
     double sumy30 = 0;
     
+    double lowX_edge = h2D->GetXaxis()->GetBinLowEdge(x);
+    
     for(int y=1; y<nybin; y++){
       
-      sumy+= h2D->GetBinContent(x,y);
+      double lowY_edge  = h2D->GetYaxis()->GetBinLowEdge(y);
+      double binContent = h2D->GetBinContent(x,y);
       
-      if(h2D->GetYaxis()->GetBinLowEdge(y)>=40){
-        sumy30+= h2D->GetBinContent(x,y);
+      if     (lowX_edge <30 && lowY_edge <40){below30NotMigrated += binContent;}
+      else if(lowX_edge <30 && lowY_edge>=40){below30Migrated    += binContent;}
+      else if(lowX_edge>=30 && lowY_edge <40){above30NotMigrated += binContent;}
+      else if(lowX_edge>=30 && lowY_edge>=40){above30Migrated    += binContent;}
+      
+      sumy+= binContent;
+      
+      if(lowY_edge>=40){
+        sumy30+= binContent;
       }
       
       
     }
-    cout << "pt>" << h2D->GetXaxis()->GetBinLowEdge(x) << " : " << sumy << " : " << sumy30 << " : " << sumy30/sumy << endl;
+    if(lowX_edge==30){cout << "pt>" << lowX_edge << " : " << sumy << " : " << sumy30 << " : " << sumy30/sumy << endl;}
   }
+  
+  cout << "###########################" << endl;
+  cout << "lowX_edge <30 && lowY_edge <40 : " << below30NotMigrated << endl;
+  cout << "lowX_edge <30 && lowY_edge>=40 : " << below30Migrated    << endl;
+  cout << "lowX_edge>=30 && lowY_edge <40 : " << above30NotMigrated << endl;
+  cout << "lowX_edge>=30 && lowY_edge>=40 : " << above30Migrated    << endl;
+  cout << "Migration                      : " << below30Migrated/(below30Migrated+above30Migrated) << endl;
+  cout << "###########################" << endl;
+  cout << endl;
   
   name = "SelDiParton_MatchedGenJet_Parton1_Eta";
   h2D  = (TH2D*) f->Get(name.c_str());
@@ -350,23 +390,50 @@ void drawPlot(TFile* f,string outDir){
   h2D->GetYaxis()->SetTitle("Matched generator dijet m_{jj}");
   h2D->GetYaxis()->SetTitleOffset(1.75);
   
+  nxbin = h2D->GetXaxis()->GetNbins();
+  nybin = h2D->GetYaxis()->GetNbins();
+  
+  below30NotMigrated = 0;
+  below30Migrated    = 0;
+  above30NotMigrated = 0;
+  above30Migrated    = 0;
+  
   for(int x=1; x<nxbin; x++){
     
     double sumy   = 0;
-    double sumy900 = 0;
+    double sumy30 = 0;
+    
+    double lowX_edge = h2D->GetXaxis()->GetBinLowEdge(x);
     
     for(int y=1; y<nybin; y++){
       
-      sumy+= h2D->GetBinContent(x,y);
+      double lowY_edge  = h2D->GetYaxis()->GetBinLowEdge(y);
+      double binContent = h2D->GetBinContent(x,y);
       
-      if(h2D->GetYaxis()->GetBinLowEdge(y)>=900){
-        sumy900+= h2D->GetBinContent(x,y);
+      if     (lowX_edge <800 && lowY_edge <1000){below30NotMigrated += binContent;}
+      else if(lowX_edge <800 && lowY_edge>=1000){below30Migrated    += binContent;}
+      else if(lowX_edge>=800 && lowY_edge <1000){above30NotMigrated += binContent;}
+      else if(lowX_edge>=800 && lowY_edge>=1000){above30Migrated    += binContent;}
+      
+      sumy+= binContent;
+      
+      if(lowY_edge>=40){
+        sumy30+= binContent;
       }
       
       
     }
-    cout << "mjj>" << h2D->GetXaxis()->GetBinLowEdge(x) << " : " << sumy << " : " << sumy900 << " : " << sumy900/sumy << endl;
+    if(lowX_edge==800){cout << "pt>" << lowX_edge << " : " << sumy << " : " << sumy30 << " : " << sumy30/sumy << endl;}
   }
+  
+  cout << "###########################" << endl;
+  cout << "lowX_edge <800 && lowY_edge <1000 : " << below30NotMigrated << endl;
+  cout << "lowX_edge <800 && lowY_edge>=1000 : " << below30Migrated    << endl;
+  cout << "lowX_edge>=800 && lowY_edge <1000 : " << above30NotMigrated << endl;
+  cout << "lowX_edge>=800 && lowY_edge>=1000 : " << above30Migrated    << endl;
+  cout << "Migration                      : " << below30Migrated/(below30Migrated+above30Migrated) << endl;
+  cout << "###########################" << endl;
+  cout << endl;
   
   
   //###############################################################
