@@ -49,7 +49,8 @@ process.maxEvents = cms.untracked.PSet(
 )
 
 process.source = cms.Source ("PoolSource",
-  fileNames      = cms.untracked.vstring (options.inputFiles),
+  fileNames          = cms.untracked.vstring (options.inputFiles),
+  duplicateCheckMode = cms.untracked.string("noDuplicateCheck"),
 )
 
 process.analyzer = cms.EDAnalyzer('PartonGenJetAnalyzer',
