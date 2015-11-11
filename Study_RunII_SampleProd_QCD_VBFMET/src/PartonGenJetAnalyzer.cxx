@@ -1,7 +1,9 @@
 #include "CMSSW_VBFHToInv/Study_RunII_SampleProd_QCD_VBFMET/interface/PartonGenJetAnalyzer.h"
 
 #include "DataFormats/Math/interface/deltaR.h"
+#include "DataFormats/Math/interface/deltaPhi.h"
 
+#include "TMath.h"
 #include <stdio.h>
 #include <math.h>
 
@@ -61,23 +63,26 @@ PartonGenJetAnalyzer::PartonGenJetAnalyzer(const edm::ParameterSet& pset){
   m_Parton_Jet3_Eta = new TH1D("Parton_Jet3_Eta","Parton_Jet3_Eta",100, -5,   5); m_Parton_Jet3_Eta->SetDirectory(fOut);
   m_Parton_Jet4_Eta = new TH1D("Parton_Jet4_Eta","Parton_Jet4_Eta",100, -5,   5); m_Parton_Jet4_Eta->SetDirectory(fOut);
   
-  m_Parton_Dijet1_DEta = new TH1D("Parton_Dijet1_DEta","Parton_Dijet1_DEta",100,  0,  10); m_Parton_Dijet1_DEta->SetDirectory(fOut);
-  m_Parton_Dijet1_Mjj  = new TH1D("Parton_Dijet1_Mjj" ,"Parton_Dijet1_Mjj" ,500,  0,5000); m_Parton_Dijet1_Mjj ->SetDirectory(fOut);
+  m_Parton_Dijet1_DEta = new TH1D("Parton_Dijet1_DEta","Parton_Dijet1_DEta",100,  0,  10);        m_Parton_Dijet1_DEta->SetDirectory(fOut);
+  m_Parton_Dijet1_DPhi = new TH1D("Parton_Dijet1_DPhi","Parton_Dijet1_DPhi",100,  0,3.15); m_Parton_Dijet1_DPhi->SetDirectory(fOut);
+  m_Parton_Dijet1_Mjj  = new TH1D("Parton_Dijet1_Mjj" ,"Parton_Dijet1_Mjj" ,500,  0,5000);        m_Parton_Dijet1_Mjj ->SetDirectory(fOut);
   
-  m_SelDiParton_N           = new TH1D("SelDiParton_N",          "SelDiParton_N",           11,-0.5,10.5); m_SelDiParton_N   ->SetDirectory(fOut);
-  m_SelDiParton_Parton1_Pt  = new TH1D("SelDiParton_Parton1_Pt", "SelDiParton_Parton1_Pt", 500,   0, 500); m_SelDiParton_Parton1_Pt->SetDirectory(fOut);
-  m_SelDiParton_Parton2_Pt  = new TH1D("SelDiParton_Parton2_Pt", "SelDiParton_Parton2_Pt", 500,   0, 500); m_SelDiParton_Parton2_Pt->SetDirectory(fOut);
-  m_SelDiParton_Parton1_Eta = new TH1D("SelDiParton_Parton1_Eta","SelDiParton_Parton1_Eta",100,  -5,   5); m_SelDiParton_Parton1_Eta->SetDirectory(fOut);
-  m_SelDiParton_Parton2_Eta = new TH1D("SelDiParton_Parton2_Eta","SelDiParton_Parton2_Eta",100,  -5,   5); m_SelDiParton_Parton2_Eta->SetDirectory(fOut);
-  m_SelDiParton_DEta        = new TH1D("SelDiParton_DEta",       "SelDiParton_DEta",       100,   0,  10); m_SelDiParton_DEta->SetDirectory(fOut);
-  m_SelDiParton_Mjj         = new TH1D("SelDiParton_Mjj",        "SelDiParton_Mjj",        500,   0,5000); m_SelDiParton_Mjj ->SetDirectory(fOut);
+  m_SelDiParton_N           = new TH1D("SelDiParton_N",          "SelDiParton_N",           11,-0.5,       10.5); m_SelDiParton_N   ->SetDirectory(fOut);
+  m_SelDiParton_Parton1_Pt  = new TH1D("SelDiParton_Parton1_Pt", "SelDiParton_Parton1_Pt", 500,   0,        500); m_SelDiParton_Parton1_Pt->SetDirectory(fOut);
+  m_SelDiParton_Parton2_Pt  = new TH1D("SelDiParton_Parton2_Pt", "SelDiParton_Parton2_Pt", 500,   0,        500); m_SelDiParton_Parton2_Pt->SetDirectory(fOut);
+  m_SelDiParton_Parton1_Eta = new TH1D("SelDiParton_Parton1_Eta","SelDiParton_Parton1_Eta",100,  -5,          5); m_SelDiParton_Parton1_Eta->SetDirectory(fOut);
+  m_SelDiParton_Parton2_Eta = new TH1D("SelDiParton_Parton2_Eta","SelDiParton_Parton2_Eta",100,  -5,          5); m_SelDiParton_Parton2_Eta->SetDirectory(fOut);
+  m_SelDiParton_DEta        = new TH1D("SelDiParton_DEta",       "SelDiParton_DEta",       100,   0,         10); m_SelDiParton_DEta->SetDirectory(fOut);
+  m_SelDiParton_DPhi        = new TH1D("SelDiParton_DPhi",       "SelDiParton_DPhi",       100,   0,       3.15); m_SelDiParton_DPhi->SetDirectory(fOut);
+  m_SelDiParton_Mjj         = new TH1D("SelDiParton_Mjj",        "SelDiParton_Mjj",        500,   0,       5000); m_SelDiParton_Mjj ->SetDirectory(fOut);
   
-  m_SelDiParton_MatchedGenJet_Parton1_Pt  = new TH2D("SelDiParton_MatchedGenJet_Parton1_Pt", "SelDiParton_MatchedGenJet_Parton1_Pt", 500,   0, 500,500,   0, 500); m_SelDiParton_MatchedGenJet_Parton1_Pt ->SetDirectory(fOut);
-  m_SelDiParton_MatchedGenJet_Parton2_Pt  = new TH2D("SelDiParton_MatchedGenJet_Parton2_Pt", "SelDiParton_MatchedGenJet_Parton2_Pt", 500,   0, 500,500,   0, 500); m_SelDiParton_MatchedGenJet_Parton2_Pt ->SetDirectory(fOut);
-  m_SelDiParton_MatchedGenJet_Parton1_Eta = new TH2D("SelDiParton_MatchedGenJet_Parton1_Eta","SelDiParton_MatchedGenJet_Parton1_Eta",100,  -5,   5,100,  -5,   5); m_SelDiParton_MatchedGenJet_Parton1_Eta->SetDirectory(fOut);
-  m_SelDiParton_MatchedGenJet_Parton2_Eta = new TH2D("SelDiParton_MatchedGenJet_Parton2_Eta","SelDiParton_MatchedGenJet_Parton2_Eta",100,  -5,   5,100,  -5,   5); m_SelDiParton_MatchedGenJet_Parton2_Eta->SetDirectory(fOut);
-  m_SelDiParton_MatchedGenJet_DEta        = new TH2D("SelDiParton_MatchedGenJet_DEta",       "SelDiParton_MatchedGenJet_DEta",       100,   0,  10,100,   0,  10); m_SelDiParton_MatchedGenJet_DEta       ->SetDirectory(fOut);
-  m_SelDiParton_MatchedGenJet_Mjj         = new TH2D("SelDiParton_MatchedGenJet_Mjj",        "SelDiParton_MatchedGenJet_Mjj",        500,   0,5000,500,   0,5000); m_SelDiParton_MatchedGenJet_Mjj        ->SetDirectory(fOut);
+  m_SelDiParton_MatchedGenJet_Parton1_Pt  = new TH2D("SelDiParton_MatchedGenJet_Parton1_Pt", "SelDiParton_MatchedGenJet_Parton1_Pt", 500,   0,        500,500,   0,        500); m_SelDiParton_MatchedGenJet_Parton1_Pt ->SetDirectory(fOut);
+  m_SelDiParton_MatchedGenJet_Parton2_Pt  = new TH2D("SelDiParton_MatchedGenJet_Parton2_Pt", "SelDiParton_MatchedGenJet_Parton2_Pt", 500,   0,        500,500,   0,        500); m_SelDiParton_MatchedGenJet_Parton2_Pt ->SetDirectory(fOut);
+  m_SelDiParton_MatchedGenJet_Parton1_Eta = new TH2D("SelDiParton_MatchedGenJet_Parton1_Eta","SelDiParton_MatchedGenJet_Parton1_Eta",100,  -5,          5,100,  -5,          5); m_SelDiParton_MatchedGenJet_Parton1_Eta->SetDirectory(fOut);
+  m_SelDiParton_MatchedGenJet_Parton2_Eta = new TH2D("SelDiParton_MatchedGenJet_Parton2_Eta","SelDiParton_MatchedGenJet_Parton2_Eta",100,  -5,          5,100,  -5,          5); m_SelDiParton_MatchedGenJet_Parton2_Eta->SetDirectory(fOut);
+  m_SelDiParton_MatchedGenJet_DEta        = new TH2D("SelDiParton_MatchedGenJet_DEta",       "SelDiParton_MatchedGenJet_DEta",       100,   0,         10,100,   0,         10); m_SelDiParton_MatchedGenJet_DEta       ->SetDirectory(fOut);
+  m_SelDiParton_MatchedGenJet_DPhi        = new TH2D("SelDiParton_MatchedGenJet_DPhi",       "SelDiParton_MatchedGenJet_DPhi",       100,   0,       3.15,100,   0,       3.15); m_SelDiParton_MatchedGenJet_DPhi       ->SetDirectory(fOut);
+  m_SelDiParton_MatchedGenJet_Mjj         = new TH2D("SelDiParton_MatchedGenJet_Mjj",        "SelDiParton_MatchedGenJet_Mjj",        500,   0,       5000,500,   0,       5000); m_SelDiParton_MatchedGenJet_Mjj        ->SetDirectory(fOut);
   
   m_PartonvsGenJet_DiffPt  = new TH1D("PartonvsGenJet_DiffPt", "PartonvsGenJet_DiffPt", 100, 0,100); m_PartonvsGenJet_DiffPt ->SetDirectory(fOut);
   m_PartonvsGenJet_DiffEta = new TH1D("PartonvsGenJet_DiffEta","PartonvsGenJet_DiffEta",200,-1,  1); m_PartonvsGenJet_DiffEta->SetDirectory(fOut);
@@ -152,6 +157,15 @@ void PartonGenJetAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSet
     m_Parton_Jet4_Eta->Fill(hardScatterParticles[3]->momentum().eta());
   }
   
+  // For next calculations we need at least 2 jets
+  if(hardScatterParticles.size()>=2){
+    
+    // Filling lead dijet 
+    m_Parton_Dijet1_DEta->Fill(getGenPaticle_deta(hardScatterParticles[0],hardScatterParticles[1]));
+    m_Parton_Dijet1_DPhi->Fill(getGenPaticle_dphi(hardScatterParticles[0],hardScatterParticles[1]));
+    m_Parton_Dijet1_Mjj ->Fill(getGenPaticle_mjj (hardScatterParticles[0],hardScatterParticles[1]));
+  }
+  
   HepMC::GenParticle *dipartonA = 0;
   HepMC::GenParticle *dipartonB = 0;
   
@@ -178,6 +192,8 @@ void PartonGenJetAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSet
         double mjj = getGenPaticle_mjj(pA,pB);
         if(mjj<=dijet_mjj){continue;}
         
+        double dphi = getGenPaticle_dphi(pA,pB);
+        
         nSelDiParton++;
         
         // Filling with the 
@@ -189,6 +205,7 @@ void PartonGenJetAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSet
           m_SelDiParton_Parton1_Eta->Fill(pA->momentum().eta());
           m_SelDiParton_Parton2_Eta->Fill(pB->momentum().eta());
           m_SelDiParton_DEta       ->Fill(deta);
+          m_SelDiParton_DPhi       ->Fill(dphi);
           m_SelDiParton_Mjj        ->Fill(mjj);
         }
       }
@@ -291,6 +308,7 @@ void PartonGenJetAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSet
     m_SelDiParton_MatchedGenJet_Parton1_Eta->Fill(dipartonA->momentum().eta(), genJetA->eta());
     m_SelDiParton_MatchedGenJet_Parton2_Eta->Fill(dipartonB->momentum().eta(), genJetB->eta());
     m_SelDiParton_MatchedGenJet_DEta       ->Fill(getGenPaticle_deta(dipartonA,dipartonB),getGenJet_deta(genJetA,genJetB));
+    m_SelDiParton_MatchedGenJet_DPhi       ->Fill(getGenPaticle_dphi(dipartonA,dipartonB),getGenJet_dphi(genJetA,genJetB));
     m_SelDiParton_MatchedGenJet_Mjj        ->Fill(genPar_mjj,genJet_mjj);
     
     if(genJetA->pt()>40 && genJetB->pt()>40 && genJet_mjj>1000){
@@ -301,14 +319,6 @@ void PartonGenJetAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSet
     }
     
   }
-  
-  
-  // For next calculations we need at least 2 jets
-  if(hardScatterParticles.size()<2){return;}
-  
-  // Filling lead dijet 
-  m_Parton_Dijet1_DEta->Fill(getGenPaticle_deta(hardScatterParticles[0],hardScatterParticles[1]));
-  m_Parton_Dijet1_Mjj ->Fill(getGenPaticle_mjj (hardScatterParticles[0],hardScatterParticles[1]));
   
 }
 
@@ -342,6 +352,12 @@ double PartonGenJetAnalyzer::getGenPaticle_deta(HepMC::GenParticle *p0, HepMC::G
   
 }
 
+double PartonGenJetAnalyzer::getGenPaticle_dphi(HepMC::GenParticle *p0, HepMC::GenParticle *p1){
+  
+  return fabs(reco::deltaPhi(p0->momentum().phi(),p1->momentum().phi()));
+
+}
+  
 double PartonGenJetAnalyzer::getGenJet_mjj(const reco::GenJet *p0,const  reco::GenJet *p1){
   
   double px     = p0->px() + p1->px();
@@ -357,6 +373,12 @@ double PartonGenJetAnalyzer::getGenJet_mjj(const reco::GenJet *p0,const  reco::G
 double PartonGenJetAnalyzer::getGenJet_deta(const reco::GenJet *p0, const reco::GenJet *p1){
   
   return fabs(p0->eta()-p1->eta());
+  
+}
+
+double PartonGenJetAnalyzer::getGenJet_dphi(const reco::GenJet *p0, const reco::GenJet *p1){
+  
+  return fabs(reco::deltaPhi(p0->phi(),p1->phi()));
   
 }
 
