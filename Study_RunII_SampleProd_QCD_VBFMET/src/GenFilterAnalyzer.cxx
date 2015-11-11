@@ -1,5 +1,7 @@
 #include "CMSSW_VBFHToInv/Study_RunII_SampleProd_QCD_VBFMET/interface/GenFilterAnalyzer.h"
 
+#include "DataFormats/Math/interface/deltaPhi.h"
+
 #include <HepMC/GenVertex.h>
 
 // ROOT includes
@@ -44,7 +46,7 @@ GenFilterAnalyzer::GenFilterAnalyzer(const edm::ParameterSet& iConfig){
   m_Jet1_Pt           = new TH1D("Jet1_Pt",          "Jet1_Pt",          1000,   0,       2000); m_Jet1_Pt          ->SetDirectory(plots);
   m_Dijet_MaxMjj      = new TH1D("Dijet_MaxMjj",     "Dijet_MaxMjj",      500,   0,       5000); m_Dijet_MaxMjj     ->SetDirectory(plots);
   m_Dijet_MaxDEta     = new TH1D("Dijet_MaxDEta",    "Dijet_MaxDEta",     200,   0,         10); m_Dijet_MaxDEta    ->SetDirectory(plots);
-  m_Dijet_MinDPhi     = new TH1D("Dijet_MinDPhi",    "Dijet_MinDPhi",     128,   0,TMath::Pi()); m_Dijet_MinDPhi    ->SetDirectory(plots);
+  m_Dijet_MinDPhi     = new TH1D("Dijet_MinDPhi",    "Dijet_MinDPhi",     100,   0,TMath::Pi()); m_Dijet_MinDPhi    ->SetDirectory(plots);
   
 }
 
@@ -84,7 +86,7 @@ void GenFilterAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup&
       math::XYZTLorentzVector diJet = pA->p4() + pB->p4();
       
       // Calculating quantities
-      double dPhi    = fabs(pA->p4().phi()-pB->p4().phi());
+      double dPhi    = fabs(reco::deltaPhi(pA->p4().phi(),pB->p4().phi()));
       double dEta    = fabs(pA->p4().eta()-pB->p4().eta());
       double invMass = diJet.mass();
       
