@@ -4,8 +4,14 @@ from CMSSW_VBFHToInv.GenFilters.VBFGenJetFilter_cfi import *
 from RecoJets.Configuration.GenJetParticles_cff import *
 from RecoJets.Configuration.RecoGenJets_cff import *
 
-vbfGenJetFilterSeq = cms.Sequence(
+vbfGenJetFilterASeq = cms.Sequence(
   genParticlesForJetsNoNu*
   ak4GenJetsNoNu*
-  vbfGenJetFilter
+  vbfGenJetFilterA
+)
+
+vbfGenJetFilterBSeq = cms.Sequence(
+  genParticlesForJetsNoNu*
+  ak4GenJetsNoNu*
+  vbfGenJetFilterB
 )
