@@ -83,15 +83,15 @@ bool VBFGenJetFilter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup)
       
       // Testing dijet mass
       double invMass = diJet.mass();
-      if(invMass<=minInvMass || invMass>=maxInvMass){continue;}
+      if(invMass<=minInvMass || invMass>maxInvMass){continue;}
       
       // Testing dijet delta eta
       double dEta = fabs(pA->p4().eta()-pB->p4().eta());
-      if(dEta<=minDeltaEta || dEta>=maxDeltaEta){continue;}
+      if(dEta<=minDeltaEta || dEta>maxDeltaEta){continue;}
 
       // Testing dijet delta phi
       double dPhi = fabs(reco::deltaPhi(pA->p4().phi(),pB->p4().phi()));
-      if(dPhi<=minDeltaPhi || dPhi>=maxDeltaPhi){continue;}
+      if(dPhi<=minDeltaPhi || dPhi>maxDeltaPhi){continue;}
       
       return true;
     }
