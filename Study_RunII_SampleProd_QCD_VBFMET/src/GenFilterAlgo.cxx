@@ -17,7 +17,7 @@ GenFilterAlgo::GenFilterAlgo(edm::ParameterSet& pset){
   if(pset.exists("jetMinPt")) {m_doJetMinPt  = true; m_valJetMinPt  = pset.getUntrackedParameter<double>("jetMinPt");}
   if(pset.exists("jetMaxEta")){m_doJetMaxEta = true; m_valJetMaxEta = pset.getUntrackedParameter<double>("jetMaxEta");}
   
-  if(pset.exists("dijetOppositeHemisphere")){m_doOppositeHemisphere = true;}
+  if(pset.exists("dijetOppositeHemisphere")){m_doOppositeHemisphere = pset.getUntrackedParameter<bool>("dijetOppositeHemisphere");}
   if(pset.exists("dijetMinDeltaEta"))       {m_doDijetMinDeltaEta   = true; m_valDijetMinDeltaEta = pset.getUntrackedParameter<double>("dijetMinDeltaEta");}
   if(pset.exists("dijetMaxDeltaPhi"))       {m_doDijetMaxDeltaPhi   = true; m_valDijetMaxDeltaPhi = pset.getUntrackedParameter<double>("dijetMaxDeltaPhi");}
   if(pset.exists("dijetMinMjj"))            {m_doDijetMinMjj        = true; m_valDijetMinMjj      = pset.getUntrackedParameter<double>("dijetMinMjj");}
