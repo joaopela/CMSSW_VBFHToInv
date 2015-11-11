@@ -15,3 +15,9 @@ vbfGenJetFilterBSeq = cms.Sequence(
   ak4GenJetsNoNu*
   vbfGenJetFilterB
 )
+
+vbfGenJetFilterCSeq = cms.Sequence(
+  genParticlesForJetsNoNu*
+  ak4GenJetsNoNu*
+  vbfGenJetFilterC
+)
