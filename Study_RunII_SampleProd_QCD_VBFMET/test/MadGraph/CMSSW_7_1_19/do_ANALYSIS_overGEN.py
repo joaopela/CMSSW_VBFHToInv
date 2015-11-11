@@ -14,7 +14,7 @@ files = os.listdir(args.d)
 inputFiles = ''
 for f in files:
   
-  if "CMSSW_7_1_19_Hadronizer" in f:
+  if "CMSSW_7_1_19_Hadronizer" in f and "all" not in f:
     if inputFiles is not '':
       inputFiles += ','
   
@@ -23,6 +23,8 @@ for f in files:
 outputFile  = "file:"+args.d+"/PartonGenJetAnalyzer_QCD_VBFLike_all.root"
 bashCommand = "cmsRun run_ANALYSIS_overGEN_cfg.py print inputFiles="+inputFiles+" outputFile="+outputFile+" maxEvents="+args.n+" dijetPt="+args.dijetPt+" dijetMjj="+args.dijetMjj
 
+print bashCommand
+
 import subprocess
-p = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-stdout, stderr = p.communicate()
+p = subprocess.Popen(bashCommand.split(), shell=True)
+p.communicate()
