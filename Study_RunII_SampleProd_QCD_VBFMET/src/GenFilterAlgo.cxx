@@ -3,6 +3,7 @@
 using namespace std;
 
 #include "TMath.h"
+#include "DataFormats/Math/interface/deltaPhi.h"
 
 GenFilterAlgo::GenFilterAlgo(){
   this->init();
@@ -93,7 +94,7 @@ bool GenFilterAlgo::evaluate(const vector<reco::GenJet>* genJets){
 
       // Dijet cut: Max delta(phi)
       if(m_doDijetMaxDeltaPhi){
-        dPhi = fabs(pA->p4().phi()-pB->p4().phi());
+        dPhi = fabs(reco::deltaPhi(pA->phi(),pB->phi()));
         if(dPhi>=m_valDijetMaxDeltaPhi){continue;}
       }
       
@@ -113,6 +114,12 @@ bool GenFilterAlgo::evaluate(const vector<reco::GenJet>* genJets){
       }
       
       if(m_doPlots){
+        
+        if(!m_doOppositeHemisphere){etaProd = pA->p4().eta()*pB->p4().eta();}
+        if(!m_doDijetMaxDeltaPhi)  {dPhi = fabs(reco::deltaPhi(pA->phi(),pB->phi()));}
+        if(!m_doDijetMinDeltaEta)  {dEta = fabs(pA->p4().eta()-pB->p4().eta());}
+        if(!m_doDijetMinMjj)       {math::XYZTLorentzVector diJet = pA->p4() + pB->p4(); invMass = diJet.mass();}
+        
         m_Jets_Multiplicity->Fill(filGenJets.size());
         m_Jet0_Pt          ->Fill(pA->pt());
         m_Jet1_Pt          ->Fill(pB->pt());
@@ -154,8 +161,8 @@ vector<const reco::GenJet*> GenFilterAlgo::filterGenJets(const vector<reco::GenJ
     
     const reco::GenJet* j = &((*jets)[i]);
     
-    if(m_doJetMinPt) {if(j->p4().pt() <=m_valJetMinPt) {continue;}}
-    if(m_doJetMaxEta){if(j->p4().eta()>=m_valJetMaxEta){continue;}}
+    if(m_doJetMinPt) {if(j->p4().pt()       <=m_valJetMinPt) {continue;}}
+    if(m_doJetMaxEta){if(fabs(j->p4().eta())>=m_valJetMaxEta){continue;}}
     
     out.push_back(j);
   }
