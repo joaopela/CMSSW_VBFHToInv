@@ -15,16 +15,16 @@ using namespace std;
 
 
 VBFGenJetFilter::VBFGenJetFilter(const edm::ParameterSet& iConfig) :
-oppositeHemisphere(iConfig.getUntrackedParameter<bool>  ("bool",          true)),
-ptMin             (iConfig.getUntrackedParameter<double>("minPt",           20)),
-etaMin            (iConfig.getUntrackedParameter<double>("minEta",        -5.0)),
-etaMax            (iConfig.getUntrackedParameter<double>("maxEta",         5.0)),
-minInvMass        (iConfig.getUntrackedParameter<double>("minInvMass",     0.0)),
-maxInvMass        (iConfig.getUntrackedParameter<double>("maxInvMass", 99999.0)),
-minDeltaPhi       (iConfig.getUntrackedParameter<double>("minDeltaPhi",   -1.0)),
-maxDeltaPhi       (iConfig.getUntrackedParameter<double>("maxDeltaPhi",99999.0)),
-minDeltaEta       (iConfig.getUntrackedParameter<double>("minDeltaEta",   -1.0)),
-maxDeltaEta       (iConfig.getUntrackedParameter<double>("maxDeltaEta",99999.0))
+oppositeHemisphere(iConfig.getUntrackedParameter<bool>  ("oppositeHemisphere",false)),
+ptMin             (iConfig.getUntrackedParameter<double>("minPt",                20)),
+etaMin            (iConfig.getUntrackedParameter<double>("minEta",             -5.0)),
+etaMax            (iConfig.getUntrackedParameter<double>("maxEta",              5.0)),
+minInvMass        (iConfig.getUntrackedParameter<double>("minInvMass",          0.0)),
+maxInvMass        (iConfig.getUntrackedParameter<double>("maxInvMass",      99999.0)),
+minDeltaPhi       (iConfig.getUntrackedParameter<double>("minDeltaPhi",        -1.0)),
+maxDeltaPhi       (iConfig.getUntrackedParameter<double>("maxDeltaPhi",     99999.0)),
+minDeltaEta       (iConfig.getUntrackedParameter<double>("minDeltaEta",        -1.0)),
+maxDeltaEta       (iConfig.getUntrackedParameter<double>("maxDeltaEta",     99999.0))
 {
   
   m_inputTag_GenJetCollection = consumes<reco::GenJetCollection>(iConfig.getUntrackedParameter<edm::InputTag>("inputTag_GenJetCollection",edm::InputTag("ak5GenJetsNoNu")));
