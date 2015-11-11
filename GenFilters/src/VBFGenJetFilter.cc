@@ -1,5 +1,6 @@
 #include "CMSSW_VBFHToInv/GenFilters/interface/VBFGenJetFilter.h"
 
+#include "DataFormats/Math/interface/deltaPhi.h"
 
 #include <HepMC/GenVertex.h>
 
@@ -14,18 +15,16 @@ using namespace std;
 
 
 VBFGenJetFilter::VBFGenJetFilter(const edm::ParameterSet& iConfig) :
-oppositeHemisphere(iConfig.getUntrackedParameter<bool>  ("bool",   true)),
-ptMin             (iConfig.getUntrackedParameter<double>("MinPt",    20)),
-etaMin            (iConfig.getUntrackedParameter<double>("MinEta", -5.0)),
-etaMax            (iConfig.getUntrackedParameter<double>("MaxEta",  5.0)),
-minInvMass        (iConfig.getUntrackedParameter("MinInvMass",    0.)),
-maxInvMass        (iConfig.getUntrackedParameter("MaxInvMass",    14000.)),
-minDeltaPhi       (iConfig.getUntrackedParameter("MinDeltaPhi",   0.)),
-maxDeltaPhi       (iConfig.getUntrackedParameter("MaxDeltaPhi",   3.2)),
-minDeltaEta       (iConfig.getUntrackedParameter("MinDeltaEta",   0.)),
-maxDeltaEta       (iConfig.getUntrackedParameter("MaxDeltaEta",   10000.)),
-minDeltaR         (iConfig.getUntrackedParameter("MinDeltaR",     0.)),
-maxDeltaR         (iConfig.getUntrackedParameter("MaxDeltaR",     10000.))
+oppositeHemisphere(iConfig.getUntrackedParameter<bool>  ("bool",          true)),
+ptMin             (iConfig.getUntrackedParameter<double>("minPt",           20)),
+etaMin            (iConfig.getUntrackedParameter<double>("minEta",        -5.0)),
+etaMax            (iConfig.getUntrackedParameter<double>("maxEta",         5.0)),
+minInvMass        (iConfig.getUntrackedParameter<double>("minInvMass",     0.0)),
+maxInvMass        (iConfig.getUntrackedParameter<double>("maxInvMass", 99999.0)),
+minDeltaPhi       (iConfig.getUntrackedParameter<double>("minDeltaPhi",   -1.0)),
+maxDeltaPhi       (iConfig.getUntrackedParameter<double>("maxDeltaPhi",99999.0)),
+minDeltaEta       (iConfig.getUntrackedParameter<double>("minDeltaEta",   -1.0)),
+maxDeltaEta       (iConfig.getUntrackedParameter<double>("maxDeltaEta",99999.0))
 {
   
   m_inputTag_GenJetCollection = consumes<reco::GenJetCollection>(iConfig.getUntrackedParameter<edm::InputTag>("inputTag_GenJetCollection",edm::InputTag("ak5GenJetsNoNu")));
@@ -81,7 +80,7 @@ bool VBFGenJetFilter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup)
       // Testing opposite hemispheres
       double dijetProd = pA->p4().eta()*pB->p4().eta();
       if(oppositeHemisphere && dijetProd>=0){continue;}
-
+      
       // Testing dijet mass
       double invMass = diJet.mass();
       if(invMass<=minInvMass || invMass>=maxInvMass){continue;}
@@ -91,13 +90,13 @@ bool VBFGenJetFilter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup)
       if(dEta<=minDeltaEta || dEta>=maxDeltaEta){continue;}
 
       // Testing dijet delta phi
-      double dPhi = fabs(pA->p4().phi()-pB->p4().phi());
+      double dPhi = fabs(reco::deltaPhi(pA->p4().phi(),pB->p4().phi()));
       if(dPhi<=minDeltaPhi || dPhi>=maxDeltaPhi){continue;}
       
       return true;
     }
   }
-  
+
   return false;
 }
 

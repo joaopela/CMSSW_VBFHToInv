@@ -61,10 +61,6 @@ private:
   double maxDeltaPhi;
   double minDeltaEta;
   double maxDeltaEta;
-  double minDeltaR;
-  double maxDeltaR;
-
-  
   
   // Input tags
   edm::EDGetTokenT< reco::GenJetCollection > m_inputTag_GenJetCollection;
