@@ -20,6 +20,89 @@
 
 using namespace std;
 
+
+void drawPlot(TFile* f,string outDir){
+  
+  TH1D* hEventCount = (TH1D*) f->Get("EventCount");
+  double evTotal = hEventCount->GetBinContent(1);
+  cout << "Total number of events: " << evTotal << endl;
+  cout << endl;
+  
+  
+  cout << "=> Event counters:" << endl;
+  for(int i=2; i<=hEventCount->GetNbinsX(); i++){
+    double value = hEventCount->GetBinContent(i);
+    cout << hEventCount->GetXaxis()->GetBinLabel(i) << " : " << value << endl;
+  }
+  cout << endl;
+  
+  map<string,TH1D*>     hist1D;
+//   map<string,TH2D*>     hist2D;
+//   map<string,TProfile*> histPr;
+  
+  TCanvas c;
+  string    name = "";
+  TH1D     *h1D  = 0;
+//   TH2D     *h2D  = 0;
+//   TProfile *hPr  = 0;
+  
+  // Parton pT
+  name = "plots/Jets_Multiplicity";
+  h1D  = (TH1D*) f->Get(name.c_str());
+  hist1D[name] = h1D;
+  h1D->GetXaxis()->SetTitle("Generator Jet Multiplicity");
+  h1D->GetYaxis()->SetTitle("Events");
+  h1D->GetYaxis()->SetTitleOffset(1.75);
+  
+  name = "plots/Jet0_Pt";
+  h1D  = (TH1D*) f->Get(name.c_str());
+  hist1D[name] = h1D;
+  h1D->GetXaxis()->SetTitle("Leading Generator Jet p_{T}");
+  h1D->GetYaxis()->SetTitle("Events");
+  h1D->GetYaxis()->SetTitleOffset(1.75);
+  
+  //###############################################################
+  // Output of the plots
+  //###############################################################
+  for(auto i=hist1D.begin(); i!=hist1D.end(); i++){
+    TCanvas c;
+    i->second->Draw();
+    c.SaveAs(Form("%s/%s.C",  outDir.c_str(),i->first.c_str()));
+    c.SaveAs(Form("%s/%s.png",outDir.c_str(),i->first.c_str()));
+    c.SaveAs(Form("%s/%s.pdf",outDir.c_str(),i->first.c_str()));
+  }
+  
+//   for(auto i=histPr.begin(); i!=histPr.end(); i++){
+//     TCanvas c;
+//     i->second->Draw("colz");
+//     c.SaveAs(Form("%s/%s.C",  outDir.c_str(),i->first.c_str()));
+//     c.SaveAs(Form("%s/%s.png",outDir.c_str(),i->first.c_str()));
+//     c.SaveAs(Form("%s/%s.pdf",outDir.c_str(),i->first.c_str()));
+//   }
+//   
+//   for(auto i=hist2D.begin(); i!=hist2D.end(); i++){
+//     TCanvas c;
+//     i->second->Draw("colz");
+//     c.SaveAs(Form("%s/%s.C",  outDir.c_str(),i->first.c_str()));
+//     c.SaveAs(Form("%s/%s.png",outDir.c_str(),i->first.c_str()));
+//     c.SaveAs(Form("%s/%s.pdf",outDir.c_str(),i->first.c_str()));
+//   }
+}
+
+bool checkFiles(string files){
+
+  bool out = true;
+  
+  ifstream my_file(files);
+  if (!my_file.good()){
+    cout << "File '" << files << "' does not exist!" << endl;
+    out = false;
+  }
+  my_file.close();
+
+  return out;
+}
+
 bool checkFiles(map<string,string> files){
   
   bool out = true;
@@ -69,25 +152,18 @@ int main(int argc, char* argv[]){
     } 
   }
   
-  
   hepfw::Style myStyle;
   myStyle.setTDRStyle();
   
-  // Defining all alias for the input filenames
-  map<string,string> fileNames;
-  fileNames["30to50"]   = inputFile;
-  
-  if(!checkFiles(fileNames)){
-    cout << "FATAL ERROR: One or more files missing!" << endl;
+  if(!checkFiles(inputFile)){
+    cout << "FATAL ERROR: files missing!" << endl;
     return 1;
   }
   
+  
   map<string,TFile*> files;
-  for(auto i=fileNames.begin(); i!=fileNames.end(); i++){
-    TFile* file = new TFile(inputFile.c_str(),"READ");
-    
-//     drawPlot(file,outputDir);
-  }
+  TFile* file = new TFile(inputFile.c_str(),"READ");
+  drawPlot(file,outputDir);
   
   return 0;
 }
