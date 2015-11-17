@@ -46,12 +46,21 @@ private:
   // Options
   bool  m_doPlots;
   TH1D* m_Jets_Multiplicity;
-  TH1D* m_Jet0_Pt;
-  TH1D* m_Jet1_Pt;
-  TH1D* m_Dijet_EtaProduct;
+  TH1D* m_Jet0_maxPt;
+  TH1D* m_Jet1_maxPt;
+  TH1D* m_Dijet_minEtaProduct;
   TH1D* m_Dijet_MaxMjj;
   TH1D* m_Dijet_MaxDEta;
   TH1D* m_Dijet_MinDPhi;
+
+  TH1D* m_Dijet_MultiplicityPass;
+  TH1D* m_LeadDijet_Jet0_Pt;
+  TH1D* m_LeadDijet_Jet1_Pt;
+  TH1D* m_LeadDijet_Jet0_Eta;
+  TH1D* m_LeadDijet_Jet1_Eta;
+  TH1D* m_LeadDijet_Mjj;
+  TH1D* m_LeadDijet_DEta;
+  TH1D* m_LeadDijet_DPhi;
   
   // Jet cuts
   bool m_doJetMinPt;         double m_valJetMinPt;
