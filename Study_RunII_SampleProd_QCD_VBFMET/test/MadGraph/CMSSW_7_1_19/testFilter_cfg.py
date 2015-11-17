@@ -54,7 +54,7 @@ process.filterB = cms.Path(
 )
 
 process.filterC = cms.Path(
-  process.vbfGenJetFilterBSeq
+  process.vbfGenJetFilterCSeq
   #*process.genFilterAnalyzer
 )
 
