@@ -35,8 +35,13 @@ process.genFilterAnalyzer                           = genFilterAnalyzer
 process.genFilterAnalyzer.outFile                   = cms.untracked.string('test2.root')
 process.genFilterAnalyzer.inputTag_GenJetCollection = cms.untracked.InputTag('ak4GenJetsNoNu')
 
+#This parts of the sequence are not necessary since they were already done in test files
 process.vbfGenJetFilterASeq.remove(process.genParticlesForJetsNoNu)
 process.vbfGenJetFilterASeq.remove(process.ak4GenJetsNoNu)
+process.vbfGenJetFilterBSeq.remove(process.genParticlesForJetsNoNu)
+process.vbfGenJetFilterBSeq.remove(process.ak4GenJetsNoNu)
+process.vbfGenJetFilterCSeq.remove(process.genParticlesForJetsNoNu)
+process.vbfGenJetFilterCSeq.remove(process.ak4GenJetsNoNu)
 
 process.filterA = cms.Path(
   process.vbfGenJetFilterASeq
