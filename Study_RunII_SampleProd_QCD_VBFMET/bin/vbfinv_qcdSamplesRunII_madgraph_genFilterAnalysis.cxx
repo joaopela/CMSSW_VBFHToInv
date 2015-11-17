@@ -57,7 +57,119 @@ void drawPlot(TFile* f,string outDir){
   name = "plots/Jet0_Pt";
   h1D  = (TH1D*) f->Get(name.c_str());
   hist1D[name] = h1D;
-  h1D->GetXaxis()->SetTitle("Leading Generator Jet p_{T}");
+  h1D->GetXaxis()->SetTitle("Leading Generator Jet p_{T} [GeV]");
+  h1D->GetYaxis()->SetTitle("Events");
+  h1D->GetYaxis()->SetTitleOffset(1.75);
+  
+  name = "plots/Jet1_Pt";
+  h1D  = (TH1D*) f->Get(name.c_str());
+  hist1D[name] = h1D;
+  h1D->GetXaxis()->SetTitle("Subeading Generator Jet p_{T} [GeV]");
+  h1D->GetYaxis()->SetTitle("Events");
+  h1D->GetYaxis()->SetTitleOffset(1.75);
+  
+  name = "plots/Dijet_MaxMjj";
+  h1D  = (TH1D*) f->Get(name.c_str());
+  hist1D[name] = h1D;
+  h1D->GetXaxis()->SetTitle("Dijet Max(m_{jj}) [GeV]");
+  h1D->GetYaxis()->SetTitle("Events");
+  h1D->GetYaxis()->SetTitleOffset(1.75);
+  
+  name = "plots/Dijet_MaxDEta";
+  h1D  = (TH1D*) f->Get(name.c_str());
+  hist1D[name] = h1D;
+  h1D->GetXaxis()->SetTitle("Dijet Min(#Delta#eta)");
+  h1D->GetYaxis()->SetTitle("Events");
+  h1D->GetYaxis()->SetTitleOffset(1.75);
+  
+  name = "plots/Dijet_MinDPhi";
+  h1D  = (TH1D*) f->Get(name.c_str());
+  hist1D[name] = h1D;
+  h1D->GetXaxis()->SetTitle("Dijet Min(#Delta#phi)");
+  h1D->GetYaxis()->SetTitle("Events");
+  h1D->GetYaxis()->SetTitleOffset(1.75);
+  
+  name = "Pt40_Eta4p8_DEta3p0_Mjj1000/Jets_Multiplicity";
+  h1D  = (TH1D*) f->Get(name.c_str());
+  hist1D[name] = h1D;
+  h1D->GetXaxis()->SetTitle("Generator Jet Multiplicity");
+  h1D->GetYaxis()->SetTitle("Events");
+  h1D->GetYaxis()->SetTitleOffset(1.75);
+  
+  name = "Pt40_Eta4p8_DEta3p0_Mjj1000/Jet0_Pt";
+  h1D  = (TH1D*) f->Get(name.c_str());
+  hist1D[name] = h1D;
+  h1D->GetXaxis()->SetTitle("Leading Generator Jet p_{T} [GeV]");
+  h1D->GetYaxis()->SetTitle("Events");
+  h1D->GetYaxis()->SetTitleOffset(1.75);
+  
+  name = "Pt40_Eta4p8_DEta3p0_Mjj1000/Jet1_Pt";
+  h1D  = (TH1D*) f->Get(name.c_str());
+  hist1D[name] = h1D;
+  h1D->GetXaxis()->SetTitle("Subeading Generator Jet p_{T} [GeV]");
+  h1D->GetYaxis()->SetTitle("Events");
+  h1D->GetYaxis()->SetTitleOffset(1.75);
+  
+  name = "Pt40_Eta4p8_DEta3p0_Mjj1000/Dijet_MaxMjj";
+  h1D  = (TH1D*) f->Get(name.c_str());
+  hist1D[name] = h1D;
+  h1D->GetXaxis()->SetTitle("Dijet Max(m_{jj}) [GeV]");
+  h1D->GetYaxis()->SetTitle("Events");
+  h1D->GetYaxis()->SetTitleOffset(1.75);
+  
+  name = "Pt40_Eta4p8_DEta3p0_Mjj1000/Dijet_MaxDEta";
+  h1D  = (TH1D*) f->Get(name.c_str());
+  hist1D[name] = h1D;
+  h1D->GetXaxis()->SetTitle("Dijet Min(#Delta#eta)");
+  h1D->GetYaxis()->SetTitle("Events");
+  h1D->GetYaxis()->SetTitleOffset(1.75);
+  
+  name = "Pt40_Eta4p8_DEta3p0_Mjj1000/Dijet_MinDPhi";
+  h1D  = (TH1D*) f->Get(name.c_str());
+  hist1D[name] = h1D;
+  h1D->GetXaxis()->SetTitle("Dijet Min(#Delta#phi)");
+  h1D->GetYaxis()->SetTitle("Events");
+  h1D->GetYaxis()->SetTitleOffset(1.75);
+  
+  name = "Pt40_Eta4p8_DEta3p0_Dphi2p15_Mjj1000/Jets_Multiplicity";
+  h1D  = (TH1D*) f->Get(name.c_str());
+  hist1D[name] = h1D;
+  h1D->GetXaxis()->SetTitle("Generator Jet Multiplicity");
+  h1D->GetYaxis()->SetTitle("Events");
+  h1D->GetYaxis()->SetTitleOffset(1.75);
+  
+  name = "Pt40_Eta4p8_DEta3p0_Dphi2p15_Mjj1000/Jet0_Pt";
+  h1D  = (TH1D*) f->Get(name.c_str());
+  hist1D[name] = h1D;
+  h1D->GetXaxis()->SetTitle("Leading Generator Jet p_{T} [GeV]");
+  h1D->GetYaxis()->SetTitle("Events");
+  h1D->GetYaxis()->SetTitleOffset(1.75);
+  
+  name = "Pt40_Eta4p8_DEta3p0_Dphi2p15_Mjj1000/Jet1_Pt";
+  h1D  = (TH1D*) f->Get(name.c_str());
+  hist1D[name] = h1D;
+  h1D->GetXaxis()->SetTitle("Subeading Generator Jet p_{T} [GeV]");
+  h1D->GetYaxis()->SetTitle("Events");
+  h1D->GetYaxis()->SetTitleOffset(1.75);
+  
+  name = "Pt40_Eta4p8_DEta3p0_Dphi2p15_Mjj1000/Dijet_MaxMjj";
+  h1D  = (TH1D*) f->Get(name.c_str());
+  hist1D[name] = h1D;
+  h1D->GetXaxis()->SetTitle("Dijet Max(m_{jj}) [GeV]");
+  h1D->GetYaxis()->SetTitle("Events");
+  h1D->GetYaxis()->SetTitleOffset(1.75);
+  
+  name = "Pt40_Eta4p8_DEta3p0_Dphi2p15_Mjj1000/Dijet_MaxDEta";
+  h1D  = (TH1D*) f->Get(name.c_str());
+  hist1D[name] = h1D;
+  h1D->GetXaxis()->SetTitle("Dijet Min(#Delta#eta)");
+  h1D->GetYaxis()->SetTitle("Events");
+  h1D->GetYaxis()->SetTitleOffset(1.75);
+  
+  name = "Pt40_Eta4p8_DEta3p0_Dphi2p15_Mjj1000/Dijet_MinDPhi";
+  h1D  = (TH1D*) f->Get(name.c_str());
+  hist1D[name] = h1D;
+  h1D->GetXaxis()->SetTitle("Dijet Min(#Delta#phi)");
   h1D->GetYaxis()->SetTitle("Events");
   h1D->GetYaxis()->SetTitleOffset(1.75);
   
