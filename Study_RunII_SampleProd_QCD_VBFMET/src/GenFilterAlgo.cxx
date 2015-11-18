@@ -25,6 +25,7 @@ GenFilterAlgo::GenFilterAlgo(edm::ParameterSet& pset){
   
   if(pset.exists("dijetOppositeHemisphere")){m_doOppositeHemisphere = pset.getUntrackedParameter<bool>("dijetOppositeHemisphere");}
   if(pset.exists("dijetMinDeltaEta"))       {m_doDijetMinDeltaEta   = true; m_valDijetMinDeltaEta = pset.getUntrackedParameter<double>("dijetMinDeltaEta");}
+  if(pset.exists("dijetMinDeltaPhi"))       {m_doDijetMinDeltaPhi   = true; m_valDijetMinDeltaPhi = pset.getUntrackedParameter<double>("dijetMinDeltaPhi");}
   if(pset.exists("dijetMaxDeltaPhi"))       {m_doDijetMaxDeltaPhi   = true; m_valDijetMaxDeltaPhi = pset.getUntrackedParameter<double>("dijetMaxDeltaPhi");}
   if(pset.exists("dijetMinMjj"))            {m_doDijetMinMjj        = true; m_valDijetMinMjj      = pset.getUntrackedParameter<double>("dijetMinMjj");}
   
@@ -36,6 +37,7 @@ void GenFilterAlgo::init(){
   m_doJetMaxEta          = false;
   m_doOppositeHemisphere = false;
   m_doDijetMinDeltaEta   = false;
+  m_doDijetMinDeltaPhi   = false;
   m_doDijetMaxDeltaPhi   = false;
   m_doDijetMinMjj        = false;
   
@@ -149,11 +151,15 @@ bool GenFilterAlgo::evaluate(const vector<reco::GenJet>* genJets){
         if(etaProd>=0){continue;}
       }
 
-
       // Dijet cut: Max delta(phi)
       dPhi = fabs(reco::deltaPhi(pA->phi(),pB->phi()));
       if(m_doDijetMaxDeltaPhi){
         if(dPhi>=m_valDijetMaxDeltaPhi){continue;}
+      }
+      
+      // Dijet cut: Min delta(phi)
+      if(m_doDijetMinDeltaPhi){
+        if(dPhi<m_valDijetMinDeltaPhi){continue;}
       }
       
       // Dijet cut: Max delta(eta)

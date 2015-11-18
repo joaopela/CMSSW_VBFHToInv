@@ -70,7 +70,9 @@ private:
   bool m_doOppositeHemisphere;
   bool m_doDijetMinDeltaEta; double m_valDijetMinDeltaEta;
   bool m_doDijetMaxDeltaPhi; double m_valDijetMaxDeltaPhi;
+  bool m_doDijetMinDeltaPhi; double m_valDijetMinDeltaPhi;
   bool m_doDijetMinMjj;      double m_valDijetMinMjj;
+  
   
 };
 
