@@ -303,6 +303,16 @@ genFilterAnalyzer = cms.EDAnalyzer("GenFilterAnalyzer",
       dijetMinMjj             = cms.untracked.double(1000)
     ),
     
+    cms.PSet(
+      name                    = cms.untracked.string("Pt40_Eta4p8_DEta3p0_MinDphi2p15_Mjj1000"),
+      jetMinPt                = cms.untracked.double(40.0),
+      jetMaxEta               = cms.untracked.double(4.8),
+      dijetOppositeHemisphere = cms.untracked.bool  (False),
+      dijetMinDeltaEta        = cms.untracked.double(3.0),
+      dijetMinDeltaPhi        = cms.untracked.double(2.15),
+      dijetMinMjj             = cms.untracked.double(1000)
+    ),
+    
     #cms.PSet(
       #name                    = cms.untracked.string("Pt50_Eta4p8_DEta3p0_Mjj1000"),
       #jetMinPt                = cms.untracked.double(50.),
