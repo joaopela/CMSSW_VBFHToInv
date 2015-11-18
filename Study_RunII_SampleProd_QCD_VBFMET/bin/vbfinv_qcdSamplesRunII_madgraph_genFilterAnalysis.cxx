@@ -8,6 +8,7 @@
 #include "TProfile.h"
 #include "TLegend.h"
 #include "TCanvas.h"
+#include "TMath.h"
 
 // C++ STD includes
 #include <iostream>
@@ -20,6 +21,172 @@
 
 using namespace std;
 
+void drawTDir(TFile* f,string outDir,string dir){
+  
+  //################################################################
+  //## Pt40_Eta4p8_DEta3p0_Dphi2p15_Mjj1000
+  //################################################################
+  // h1D->Rebin(5);
+  // h1D->GetXaxis()->SetRangeUser(0.0,250.0);
+  
+  map<string,TH1D*>     hist1D;
+  
+  TCanvas  c;
+  string   name = "";
+  TH1D    *h1D  = 0;
+
+  cout << "#######################################################" << endl;
+  cout << "Printing cuts: " << dir << endl;
+  cout << endl;
+  
+  name = dir+"/Jets_Multiplicity";
+  h1D  = (TH1D*) f->Get(name.c_str());
+  hist1D[name] = h1D;
+  h1D->GetXaxis()->SetRangeUser(-0.5,10.5);
+  h1D->GetXaxis()->SetTitle("Generator Jet Multiplicity");
+  h1D->GetYaxis()->SetTitle("Events");
+  h1D->GetYaxis()->SetTitleOffset(1.75);
+  
+  cout << endl;
+  cout << "=> Jets Passing cuts multiplicity:" << endl;
+  for(int i=1; i<=11; i++){
+    double value    = h1D->GetBinContent(i);
+    double fraction = value/double(h1D->GetEntries());
+    double error    = TMath::Sqrt(value)/double(h1D->GetEntries());
+    printf("N_Jets=%2d entries=%10d fraction=%8.6f +/- %8.6f\n",(int) h1D->GetBinCenter(i),(int) value,fraction,error);
+  }
+  cout << endl;
+  
+  name = dir+"/Jet0_maxPt";
+  h1D  = (TH1D*) f->Get(name.c_str());
+  hist1D[name] = h1D;
+  h1D->Rebin(2);
+  h1D->GetXaxis()->SetTitle("Leading Generator Jet p_{T} [GeV]");
+  h1D->GetXaxis()->SetRangeUser(0.0,300.0);
+  h1D->GetYaxis()->SetTitle("Events");
+  h1D->GetYaxis()->SetTitleOffset(1.75);
+  
+  name = dir+"/Jet1_maxPt";
+  h1D  = (TH1D*) f->Get(name.c_str());
+  hist1D[name] = h1D;
+  h1D->Rebin(2);
+  h1D->GetXaxis()->SetRangeUser(0.0,300.0);
+  h1D->GetXaxis()->SetTitle("Subleading Generator Jet p_{T} [GeV]");
+  h1D->GetYaxis()->SetTitle("Events");
+  h1D->GetYaxis()->SetTitleOffset(1.75);
+  
+  name = dir+"/Dijet_minEtaProduct";
+  h1D  = (TH1D*) f->Get(name.c_str());
+  hist1D[name] = h1D;
+  h1D->GetXaxis()->SetTitle("Min(Dijet #eta product)");
+  h1D->GetYaxis()->SetTitle("Events");
+  h1D->GetYaxis()->SetTitleOffset(1.75);
+  
+  name = dir+"/Dijet_MaxMjj";
+  h1D  = (TH1D*) f->Get(name.c_str());
+  hist1D[name] = h1D;
+  h1D->Rebin(5);
+  h1D->GetXaxis()->SetRangeUser(0.0,3500.0);
+  h1D->GetXaxis()->SetTitle("Dijet Max(m_{jj}) [GeV]");
+  h1D->GetYaxis()->SetTitle("Events");
+  h1D->GetYaxis()->SetTitleOffset(1.75);
+  
+  name = dir+"/Dijet_MaxDEta";
+  h1D  = (TH1D*) f->Get(name.c_str());
+  hist1D[name] = h1D;
+  h1D->Rebin(4);
+  h1D->GetXaxis()->SetTitle("Dijet Min(#Delta#eta)");
+  h1D->GetYaxis()->SetTitle("Events");
+  h1D->GetYaxis()->SetTitleOffset(1.75);
+  
+  name = dir+"/Dijet_MultiplicityPass";
+  h1D  = (TH1D*) f->Get(name.c_str());
+  hist1D[name] = h1D;
+  h1D->GetXaxis()->SetRangeUser(-0.5,10.5);
+  h1D->GetXaxis()->SetTitle("Dijet Passing All Cuts Multiplicity");
+  h1D->GetYaxis()->SetTitle("Events");
+  h1D->GetYaxis()->SetTitleOffset(1.75);
+  
+  cout << endl;
+  cout << "=> Dijets passing all cuts multiplicity:" << endl;
+  for(int i=1; i<=11; i++){
+    double value    = h1D->GetBinContent(i);
+    double fraction = value/double(h1D->GetEntries());
+    double error    = TMath::Sqrt(value)/double(h1D->GetEntries());
+    printf("N_Dijets=%2d entries=%10d fraction=%8.6f +/- %8.6f\n",(int) h1D->GetBinCenter(i),(int) value,fraction,error);
+  }
+  cout << endl;
+  
+  name = dir+"/LeadDijet_Jet0_Pt";
+  h1D  = (TH1D*) f->Get(name.c_str());
+  hist1D[name] = h1D;
+  h1D->Rebin(2);
+  h1D->GetXaxis()->SetRangeUser(0.0,300.0);
+  h1D->GetXaxis()->SetTitle("Lead Generator Dijet - Leading Jet p_{T} [GeV]");
+  h1D->GetYaxis()->SetTitle("Events");
+  h1D->GetYaxis()->SetTitleOffset(1.75);
+  
+  name = dir+"/LeadDijet_Jet1_Pt";
+  h1D  = (TH1D*) f->Get(name.c_str());
+  hist1D[name] = h1D;
+  h1D->Rebin(2);
+  h1D->GetXaxis()->SetRangeUser(0.0,300.0);
+  h1D->GetXaxis()->SetTitle("Lead Generator Dijet - Subleading Jet p_{T} [GeV]");
+  h1D->GetYaxis()->SetTitle("Events");
+  h1D->GetYaxis()->SetTitleOffset(1.75);
+  
+  name = dir+"/LeadDijet_Jet0_Eta";
+  h1D  = (TH1D*) f->Get(name.c_str());
+  hist1D[name] = h1D;
+  h1D->Rebin(2);
+  h1D->GetXaxis()->SetTitle("Lead Generator Dijet - Leading Jet #eta");
+  h1D->GetYaxis()->SetTitle("Events");
+  h1D->GetYaxis()->SetTitleOffset(1.75);
+  
+  name = dir+"/LeadDijet_Jet1_Eta";
+  h1D  = (TH1D*) f->Get(name.c_str());
+  hist1D[name] = h1D;
+  h1D->Rebin(2);
+  h1D->GetXaxis()->SetTitle("Lead Generator Dijet - Subleading Jet #eta");
+  h1D->GetYaxis()->SetTitle("Events");
+  h1D->GetYaxis()->SetTitleOffset(1.75);
+  
+  name = dir+"/LeadDijet_Mjj";
+  h1D  = (TH1D*) f->Get(name.c_str());
+  hist1D[name] = h1D;
+  h1D->Rebin(5);
+  h1D->GetXaxis()->SetRangeUser(0.0,3500.0);
+  h1D->GetXaxis()->SetTitle("Lead Generator Dijet m_{jj}");
+  h1D->GetYaxis()->SetTitle("Events");
+  h1D->GetYaxis()->SetTitleOffset(1.75);
+  
+  name = dir+"/LeadDijet_DEta";
+  h1D  = (TH1D*) f->Get(name.c_str());
+  hist1D[name] = h1D;
+  h1D->Rebin(4);
+  h1D->GetXaxis()->SetTitle("Lead Generator Dijet #Delta#eta");
+  h1D->GetYaxis()->SetTitle("Events");
+  h1D->GetYaxis()->SetTitleOffset(1.75);
+  
+  name = dir+"/LeadDijet_DPhi";
+  h1D  = (TH1D*) f->Get(name.c_str());
+  hist1D[name] = h1D;
+  h1D->Rebin(2);
+  h1D->GetXaxis()->SetTitle("Lead Generator Dijet #Delta#phi");
+  h1D->GetYaxis()->SetTitle("Events");
+  h1D->GetYaxis()->SetTitleOffset(1.75);
+  
+  //###############################################################
+  // Output of the plots
+  //###############################################################
+  for(auto i=hist1D.begin(); i!=hist1D.end(); i++){
+    TCanvas c;
+    i->second->Draw();
+    c.SaveAs(Form("%s/%s.C",  outDir.c_str(),i->first.c_str()));
+    c.SaveAs(Form("%s/%s.png",outDir.c_str(),i->first.c_str()));
+    c.SaveAs(Form("%s/%s.pdf",outDir.c_str(),i->first.c_str()));
+  }
+}
 
 void drawPlot(TFile* f,string outDir){
   
@@ -36,169 +203,53 @@ void drawPlot(TFile* f,string outDir){
   }
   cout << endl;
   
-  map<string,TH1D*>     hist1D;
-//   map<string,TH2D*>     hist2D;
-//   map<string,TProfile*> histPr;
-  
-  TCanvas c;
-  string    name = "";
-  TH1D     *h1D  = 0;
-//   TH2D     *h2D  = 0;
-//   TProfile *hPr  = 0;
-  
   // Parton pT
-  name = "plots/Jets_Multiplicity";
-  h1D  = (TH1D*) f->Get(name.c_str());
-  hist1D[name] = h1D;
-  h1D->GetXaxis()->SetTitle("Generator Jet Multiplicity");
-  h1D->GetYaxis()->SetTitle("Events");
-  h1D->GetYaxis()->SetTitleOffset(1.75);
-  
-  name = "plots/Jet0_Pt";
-  h1D  = (TH1D*) f->Get(name.c_str());
-  hist1D[name] = h1D;
-  h1D->GetXaxis()->SetTitle("Leading Generator Jet p_{T} [GeV]");
-  h1D->GetYaxis()->SetTitle("Events");
-  h1D->GetYaxis()->SetTitleOffset(1.75);
-  
-  name = "plots/Jet1_Pt";
-  h1D  = (TH1D*) f->Get(name.c_str());
-  hist1D[name] = h1D;
-  h1D->GetXaxis()->SetTitle("Subeading Generator Jet p_{T} [GeV]");
-  h1D->GetYaxis()->SetTitle("Events");
-  h1D->GetYaxis()->SetTitleOffset(1.75);
-  
-  name = "plots/Dijet_MaxMjj";
-  h1D  = (TH1D*) f->Get(name.c_str());
-  hist1D[name] = h1D;
-  h1D->GetXaxis()->SetTitle("Dijet Max(m_{jj}) [GeV]");
-  h1D->GetYaxis()->SetTitle("Events");
-  h1D->GetYaxis()->SetTitleOffset(1.75);
-  
-  name = "plots/Dijet_MaxDEta";
-  h1D  = (TH1D*) f->Get(name.c_str());
-  hist1D[name] = h1D;
-  h1D->GetXaxis()->SetTitle("Dijet Min(#Delta#eta)");
-  h1D->GetYaxis()->SetTitle("Events");
-  h1D->GetYaxis()->SetTitleOffset(1.75);
-  
-  name = "plots/Dijet_MinDPhi";
-  h1D  = (TH1D*) f->Get(name.c_str());
-  hist1D[name] = h1D;
-  h1D->GetXaxis()->SetTitle("Dijet Min(#Delta#phi)");
-  h1D->GetYaxis()->SetTitle("Events");
-  h1D->GetYaxis()->SetTitleOffset(1.75);
-  
-  name = "Pt40_Eta4p8_DEta3p0_Mjj1000/Jets_Multiplicity";
-  h1D  = (TH1D*) f->Get(name.c_str());
-  hist1D[name] = h1D;
-  h1D->GetXaxis()->SetTitle("Generator Jet Multiplicity");
-  h1D->GetYaxis()->SetTitle("Events");
-  h1D->GetYaxis()->SetTitleOffset(1.75);
-  
-  name = "Pt40_Eta4p8_DEta3p0_Mjj1000/Jet0_Pt";
-  h1D  = (TH1D*) f->Get(name.c_str());
-  hist1D[name] = h1D;
-  h1D->GetXaxis()->SetTitle("Leading Generator Jet p_{T} [GeV]");
-  h1D->GetYaxis()->SetTitle("Events");
-  h1D->GetYaxis()->SetTitleOffset(1.75);
-  
-  name = "Pt40_Eta4p8_DEta3p0_Mjj1000/Jet1_Pt";
-  h1D  = (TH1D*) f->Get(name.c_str());
-  hist1D[name] = h1D;
-  h1D->GetXaxis()->SetTitle("Subeading Generator Jet p_{T} [GeV]");
-  h1D->GetYaxis()->SetTitle("Events");
-  h1D->GetYaxis()->SetTitleOffset(1.75);
-  
-  name = "Pt40_Eta4p8_DEta3p0_Mjj1000/Dijet_MaxMjj";
-  h1D  = (TH1D*) f->Get(name.c_str());
-  hist1D[name] = h1D;
-  h1D->GetXaxis()->SetTitle("Dijet Max(m_{jj}) [GeV]");
-  h1D->GetYaxis()->SetTitle("Events");
-  h1D->GetYaxis()->SetTitleOffset(1.75);
-  
-  name = "Pt40_Eta4p8_DEta3p0_Mjj1000/Dijet_MaxDEta";
-  h1D  = (TH1D*) f->Get(name.c_str());
-  hist1D[name] = h1D;
-  h1D->GetXaxis()->SetTitle("Dijet Min(#Delta#eta)");
-  h1D->GetYaxis()->SetTitle("Events");
-  h1D->GetYaxis()->SetTitleOffset(1.75);
-  
-  name = "Pt40_Eta4p8_DEta3p0_Mjj1000/Dijet_MinDPhi";
-  h1D  = (TH1D*) f->Get(name.c_str());
-  hist1D[name] = h1D;
-  h1D->GetXaxis()->SetTitle("Dijet Min(#Delta#phi)");
-  h1D->GetYaxis()->SetTitle("Events");
-  h1D->GetYaxis()->SetTitleOffset(1.75);
-  
-  name = "Pt40_Eta4p8_DEta3p0_Dphi2p15_Mjj1000/Jets_Multiplicity";
-  h1D  = (TH1D*) f->Get(name.c_str());
-  hist1D[name] = h1D;
-  h1D->GetXaxis()->SetTitle("Generator Jet Multiplicity");
-  h1D->GetYaxis()->SetTitle("Events");
-  h1D->GetYaxis()->SetTitleOffset(1.75);
-  
-  name = "Pt40_Eta4p8_DEta3p0_Dphi2p15_Mjj1000/Jet0_Pt";
-  h1D  = (TH1D*) f->Get(name.c_str());
-  hist1D[name] = h1D;
-  h1D->GetXaxis()->SetTitle("Leading Generator Jet p_{T} [GeV]");
-  h1D->GetYaxis()->SetTitle("Events");
-  h1D->GetYaxis()->SetTitleOffset(1.75);
-  
-  name = "Pt40_Eta4p8_DEta3p0_Dphi2p15_Mjj1000/Jet1_Pt";
-  h1D  = (TH1D*) f->Get(name.c_str());
-  hist1D[name] = h1D;
-  h1D->GetXaxis()->SetTitle("Subeading Generator Jet p_{T} [GeV]");
-  h1D->GetYaxis()->SetTitle("Events");
-  h1D->GetYaxis()->SetTitleOffset(1.75);
-  
-  name = "Pt40_Eta4p8_DEta3p0_Dphi2p15_Mjj1000/Dijet_MaxMjj";
-  h1D  = (TH1D*) f->Get(name.c_str());
-  hist1D[name] = h1D;
-  h1D->GetXaxis()->SetTitle("Dijet Max(m_{jj}) [GeV]");
-  h1D->GetYaxis()->SetTitle("Events");
-  h1D->GetYaxis()->SetTitleOffset(1.75);
-  
-  name = "Pt40_Eta4p8_DEta3p0_Dphi2p15_Mjj1000/Dijet_MaxDEta";
-  h1D  = (TH1D*) f->Get(name.c_str());
-  hist1D[name] = h1D;
-  h1D->GetXaxis()->SetTitle("Dijet Min(#Delta#eta)");
-  h1D->GetYaxis()->SetTitle("Events");
-  h1D->GetYaxis()->SetTitleOffset(1.75);
-  
-  name = "Pt40_Eta4p8_DEta3p0_Dphi2p15_Mjj1000/Dijet_MinDPhi";
-  h1D  = (TH1D*) f->Get(name.c_str());
-  hist1D[name] = h1D;
-  h1D->GetXaxis()->SetTitle("Dijet Min(#Delta#phi)");
-  h1D->GetYaxis()->SetTitle("Events");
-  h1D->GetYaxis()->SetTitleOffset(1.75);
-  
-  //###############################################################
-  // Output of the plots
-  //###############################################################
-  for(auto i=hist1D.begin(); i!=hist1D.end(); i++){
-    TCanvas c;
-    i->second->Draw();
-    c.SaveAs(Form("%s/%s.C",  outDir.c_str(),i->first.c_str()));
-    c.SaveAs(Form("%s/%s.png",outDir.c_str(),i->first.c_str()));
-    c.SaveAs(Form("%s/%s.pdf",outDir.c_str(),i->first.c_str()));
-  }
-  
-//   for(auto i=histPr.begin(); i!=histPr.end(); i++){
-//     TCanvas c;
-//     i->second->Draw("colz");
-//     c.SaveAs(Form("%s/%s.C",  outDir.c_str(),i->first.c_str()));
-//     c.SaveAs(Form("%s/%s.png",outDir.c_str(),i->first.c_str()));
-//     c.SaveAs(Form("%s/%s.pdf",outDir.c_str(),i->first.c_str()));
-//   }
+//   name = "plots/Jets_Multiplicity";
+//   h1D  = (TH1D*) f->Get(name.c_str());
+//   hist1D[name] = h1D;
+//   h1D->GetXaxis()->SetTitle("Generator Jet Multiplicity");
+//   h1D->GetYaxis()->SetTitle("Events");
+//   h1D->GetYaxis()->SetTitleOffset(1.75);
 //   
-//   for(auto i=hist2D.begin(); i!=hist2D.end(); i++){
-//     TCanvas c;
-//     i->second->Draw("colz");
-//     c.SaveAs(Form("%s/%s.C",  outDir.c_str(),i->first.c_str()));
-//     c.SaveAs(Form("%s/%s.png",outDir.c_str(),i->first.c_str()));
-//     c.SaveAs(Form("%s/%s.pdf",outDir.c_str(),i->first.c_str()));
-//   }
+//   name = "plots/Jet0_Pt";
+//   h1D  = (TH1D*) f->Get(name.c_str());
+//   hist1D[name] = h1D;
+//   h1D->GetXaxis()->SetTitle("Leading Generator Jet p_{T} [GeV]");
+//   h1D->GetYaxis()->SetTitle("Events");
+//   h1D->GetYaxis()->SetTitleOffset(1.75);
+//   
+//   name = "plots/Jet1_Pt";
+//   h1D  = (TH1D*) f->Get(name.c_str());
+//   hist1D[name] = h1D;
+//   h1D->GetXaxis()->SetTitle("Subleading Generator Jet p_{T} [GeV]");
+//   h1D->GetYaxis()->SetTitle("Events");
+//   h1D->GetYaxis()->SetTitleOffset(1.75);
+//   
+//   name = "plots/Dijet_MaxMjj";
+//   h1D  = (TH1D*) f->Get(name.c_str());
+//   hist1D[name] = h1D;
+//   h1D->GetXaxis()->SetTitle("Dijet Max(m_{jj}) [GeV]");
+//   h1D->GetYaxis()->SetTitle("Events");
+//   h1D->GetYaxis()->SetTitleOffset(1.75);
+//   
+//   name = "plots/Dijet_MaxDEta";
+//   h1D  = (TH1D*) f->Get(name.c_str());
+//   hist1D[name] = h1D;
+//   h1D->GetXaxis()->SetTitle("Dijet Min(#Delta#eta)");
+//   h1D->GetYaxis()->SetTitle("Events");
+//   h1D->GetYaxis()->SetTitleOffset(1.75);
+//   
+//   name = "plots/Dijet_MinDPhi";
+//   h1D  = (TH1D*) f->Get(name.c_str());
+//   hist1D[name] = h1D;
+//   h1D->GetXaxis()->SetTitle("Dijet Min(#Delta#phi)");
+//   h1D->GetYaxis()->SetTitle("Events");
+//   h1D->GetYaxis()->SetTitleOffset(1.75);
+  
+  drawTDir(f,outDir,"Pt40_Eta4p8_DEta3p0_Mjj1000");
+  drawTDir(f,outDir,"Pt40_Eta4p8_DEta3p0_Dphi2p15_Mjj1000");
+
+
 }
 
 bool checkFiles(string files){
