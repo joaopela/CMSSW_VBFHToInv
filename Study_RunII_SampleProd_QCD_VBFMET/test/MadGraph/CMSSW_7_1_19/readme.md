@@ -19,6 +19,12 @@ To run the filter analysis over a set of input files:
 cmsRun run_ANALYSISFILTER_overGEN_cfg.py print inputFiles=[inFile0.root,inFile1.root,...]  outputFile=[outFile0.root] maxEvents=[numberOfEvents]
 ```
 
+To get the plots output:
+
+```bash
+vbfinv_qcdSamplesRunII_madgraph_genFilterAnalysis -i [inFile.root] -d [outputDirectory]
+```
+
 To test the implemented filter:
 
 ```bash
