@@ -135,6 +135,7 @@ void drawPlot(TFile* f,string outDir){
   h1D->GetYaxis()->SetTitle("Number of events");
   h1D->GetYaxis()->SetTitleOffset(1.75);
   
+  
   name = "Parton_Jet3_Eta";
   h1D  = (TH1D*) f->Get(name.c_str());
   hist1D[name] = h1D;
@@ -148,6 +149,30 @@ void drawPlot(TFile* f,string outDir){
   h1D->GetXaxis()->SetTitle("Parton #4 - p_{#perp}");
   h1D->GetYaxis()->SetTitle("Number of events");
   h1D->GetYaxis()->SetTitleOffset(1.75);
+  
+  name = "Parton_Dijet1_DEta";
+  h1D  = (TH1D*) f->Get(name.c_str());
+  hist1D[name] = h1D;
+  h1D->GetXaxis()->SetTitle("Lead Di-parton #Delta#eta");
+  h1D->GetYaxis()->SetTitle("Number of events");
+  h1D->GetYaxis()->SetTitleOffset(1.75);
+  
+  name = "Parton_Dijet1_DPhi";
+  h1D  = (TH1D*) f->Get(name.c_str());
+  hist1D[name] = h1D;
+  h1D->GetXaxis()->SetTitle("Lead Di-parton #Delta#phi");
+  h1D->GetYaxis()->SetTitle("Number of events");
+  h1D->GetYaxis()->SetTitleOffset(1.75);
+  
+  name = "Parton_Dijet1_Mjj";
+  h1D  = (TH1D*) f->Get(name.c_str());
+  hist1D[name] = h1D;
+  h1D->GetXaxis()->SetTitle("Lead Di-parton m_{jj}");
+  h1D->GetYaxis()->SetTitle("Number of events");
+  h1D->GetYaxis()->SetTitleOffset(1.75);
+  
+  //################################################################
+  //################################################################
   
   name = "PartonvsGenJet_DiffPt";
   h1D  = (TH1D*) f->Get(name.c_str());
@@ -163,23 +188,28 @@ void drawPlot(TFile* f,string outDir){
   h1D->GetYaxis()->SetTitle("Number of events");
   h1D->GetYaxis()->SetTitleOffset(1.75);
   
+  //################################################################
+  //################################################################
+  
   name = "SelDiParton_Parton1_Pt";
   h1D  = (TH1D*) f->Get(name.c_str());
   hist1D[name] = h1D;
   h1D->Rebin(5);
   h1D->GetXaxis()->SetRangeUser(0.0,250.0);
-  h1D->GetXaxis()->SetTitle("Selected Diparton - Lead parton p_{#perp}");
+  h1D->GetXaxis()->SetTitle("Selected Diparton - Lead parton p_{T}");
   h1D->GetYaxis()->SetTitle("Number of events");
   h1D->GetYaxis()->SetTitleOffset(1.75);
+  h1D->GetYaxis()->SetLabelSize  (0.03);
   
   name = "SelDiParton_Parton2_Pt";
   h1D  = (TH1D*) f->Get(name.c_str());
   hist1D[name] = h1D;
   h1D->Rebin(5);
   h1D->GetXaxis()->SetRangeUser(0.0,250.0);
-  h1D->GetXaxis()->SetTitle("Selected Diparton - Sublead parton p_{#perp}");
+  h1D->GetXaxis()->SetTitle("Selected Diparton - Sublead parton p_{T}");
   h1D->GetYaxis()->SetTitle("Number of events");
   h1D->GetYaxis()->SetTitleOffset(1.75);
+  h1D->GetYaxis()->SetLabelSize  (0.03);
   
   name = "SelDiParton_Parton1_Eta";
   h1D  = (TH1D*) f->Get(name.c_str());
@@ -202,6 +232,16 @@ void drawPlot(TFile* f,string outDir){
   h1D->GetXaxis()->SetTitle("Selected Diparton - #Delta#eta");
   h1D->GetYaxis()->SetTitle("Number of events");
   h1D->GetYaxis()->SetTitleOffset(1.75);
+  h1D->GetYaxis()->SetLabelSize  (0.03);
+
+  name = "SelDiParton_DPhi";
+  h1D  = (TH1D*) f->Get(name.c_str());
+  hist1D[name] = h1D;
+  h1D->Rebin(2);
+  h1D->GetXaxis()->SetTitle("Selected Diparton - #Delta#phi");
+  h1D->GetYaxis()->SetTitle("Number of events");
+  h1D->GetYaxis()->SetTitleOffset(1.75);
+  h1D->GetYaxis()->SetLabelSize  (0.03);
   
   name = "SelDiParton_Mjj";
   h1D  = (TH1D*) f->Get(name.c_str());
@@ -211,6 +251,7 @@ void drawPlot(TFile* f,string outDir){
   h1D->GetXaxis()->SetTitle("Selected Diparton - m_{jj}");
   h1D->GetYaxis()->SetTitle("Number of events");
   h1D->GetYaxis()->SetTitleOffset(1.75);
+  h1D->GetYaxis()->SetLabelSize  (0.03);
   
   //###############################################################
   // TProfile
