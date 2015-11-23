@@ -9,6 +9,7 @@
 #include "TProfile.h"
 #include "TLegend.h"
 #include "TCanvas.h"
+#include "TMath.h"
 
 // C++ STD includes
 #include <iostream>
@@ -43,7 +44,7 @@ void drawPlot(TFile* f,string outDir){
   for(int i=1; i<=hParton_NMatched->GetNbinsX(); i++){
     double value = hParton_NMatched->GetBinContent(i);
     if(value>0){
-      cout << "Matched #" << i-1 << " partons: " << value << " fraction: " << value/totalParton << endl;
+      printf("Matched #%1d partons: %6d percentage: %5.2f +/- %5.2f\n",i-1,int(value),100*value/totalParton,100*TMath::Sqrt(value)/totalParton);
     }
   }
   cout << endl;
@@ -54,7 +55,7 @@ void drawPlot(TFile* f,string outDir){
   for(int i=1; i<=hParton_NMatched_jj->GetNbinsX(); i++){
     double value = hParton_NMatched_jj->GetBinContent(i);
     if(value>0){
-      cout << "Matched #" << i-1 << " partons: " << value << " fraction: " << value/totalPartonjj << endl;
+      printf("Matched #%1d partons: %6d percentage: %5.2f +/- %5.2f\n",i-1,int(value),100*value/totalPartonjj,100*TMath::Sqrt(value)/totalPartonjj);
     }
   }
   cout << endl;
@@ -65,7 +66,7 @@ void drawPlot(TFile* f,string outDir){
   for(int i=1; i<=hParton_NMatched_jjj->GetNbinsX(); i++){
     double value = hParton_NMatched_jjj->GetBinContent(i);
     if(value>0){
-      cout << "Matched #" << i-1 << " partons: " << value << " fraction: " << value/totalPartonjjj << endl;
+      printf("Matched #%1d partons: %6d percentage: %5.2f +/- %5.2f\n",i-1,int(value),100*value/totalPartonjjj,100*TMath::Sqrt(value)/totalPartonjjj);
     }
   }
   cout << endl;
@@ -76,7 +77,7 @@ void drawPlot(TFile* f,string outDir){
   for(int i=1; i<=hParton_NMatched_jjjj->GetNbinsX(); i++){
     double value = hParton_NMatched_jjjj->GetBinContent(i);
     if(value>0){
-      cout << "Matched #" << i-1 << " partons: " << value << " fraction: " << value/totalPartonjjjj << endl;
+      printf("Matched #%1d partons: %6d percentage: %5.2f +/- %5.2f\n",i-1,int(value),100*value/totalPartonjjjj,100*TMath::Sqrt(value)/totalPartonjjjj);
     }
   }
   cout << endl;
